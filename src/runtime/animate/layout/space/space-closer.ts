@@ -1,3 +1,4 @@
+import { withElementConfig } from "../../options/config-store.ts";
 import { animateDefault } from "../../options/defaults.ts";
 import type { EaseStyle } from "../../modes/easing.ts";
 import type { Keyframes } from "../../options/keyframes.ts";
@@ -42,7 +43,7 @@ export class Closer implements Playable {
     private readonly el: HTMLElement,
     private readonly spec: SpaceSpec,
   ) {
-    [this.easeStyle, this.ease] = easingOf(spec.keyframes);
+    [this.easeStyle, this.ease] = withElementConfig(el, () => easingOf(spec.keyframes));
     this.targets = movingElements(el);
     const before = boxesOf(this.targets);
     const rect = el.getBoundingClientRect();

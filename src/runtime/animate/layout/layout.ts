@@ -13,6 +13,7 @@ import {
 import { copyKey, measureBox } from "./layout-measure.ts";
 import { startListening, stopListening } from "./layout-listen.ts";
 import { observeSize, unobserveSize } from "./layout-sizes.ts";
+import { withElementConfig } from "../options/config-store.ts";
 
 interface Watched {
   el: HTMLElement;
@@ -89,7 +90,7 @@ function writeItem(item: Watched, now: number): void {
   if (item.pending) {
     item.pending = false;
     if (prefersReducedMotion()) clearGlide(glide, el);
-    else startGlide(glide, el, now);
+    else withElementConfig(el, () => startGlide(glide, el, now));
     if (item.once) item.spent = true;
     item.onChange();
   }
