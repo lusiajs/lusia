@@ -5,6 +5,7 @@ export { bindComponent, defineComponent } from "./dom/component/component.ts";
 export type { Host } from "./dom/component/component.ts";
 export { bindContent } from "./dom/component/content.ts";
 export { bindHtml } from "./dom/template/html.ts";
+export { joinClasses, withInheritedClasses } from "./dom/template/classes.ts";
 export type { Leave } from "./dom/component/leave.ts";
 export { createTemplate, instantiate, lazyTemplate } from "./dom/template/template.ts";
 export { lazyComponent } from "./dom/lazy/lazy.ts";

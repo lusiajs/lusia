@@ -1,11 +1,15 @@
-import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "../../markers.ts";
+import { ELEMENT_MARKER, TEXT_MARKER } from "../../markers.ts";
 import type { Binder, Cleanup } from "./bindings.ts";
+import { addClasses } from "./classes.ts";
 import type { Leave } from "../component/leave.ts";
 
 export interface CompiledTemplate {
-  template: HTMLTemplateElement;
+  /** The markup as parsed, with no inherited classes. */
+  content: DocumentFragment;
   /** Child-index path from the fragment root to each binding marker, in document order. */
   paths: number[][];
+  /** One copy of `content` per inherited class list, with those classes on every element. */
+  variants: Map<string, DocumentFragment>;
 }
 
 function isMarker(node: Node): boolean {
@@ -24,13 +28,22 @@ function collectPaths(parent: Node, path: number[], paths: number[][]): void {
   });
 }
 
-export function createTemplate(html: string, id: string): CompiledTemplate {
+export function createTemplate(html: string): CompiledTemplate {
   const template = document.createElement("template");
   template.innerHTML = html;
-  for (const el of template.content.children) el.setAttribute(COMPONENT_ATTR, id);
   const paths: number[][] = [];
   collectPaths(template.content, [], paths);
-  return { template, paths };
+  return { content: template.content, paths, variants: new Map() };
+}
+
+function variantOf(compiled: CompiledTemplate, inherited: string): DocumentFragment {
+  let variant = compiled.variants.get(inherited);
+  if (!variant) {
+    variant = compiled.content.cloneNode(true) as DocumentFragment;
+    addClasses(variant, inherited);
+    compiled.variants.set(inherited, variant);
+  }
+  return variant;
 }
 
 function resolvePath(root: Node, path: number[]): Node {
@@ -40,18 +53,20 @@ function resolvePath(root: Node, path: number[]): Node {
 }
 
 export function instantiate(
-  { template, paths }: CompiledTemplate,
+  compiled: CompiledTemplate,
+  inherited: string,
   binders: Binder[],
   cleanups: Cleanup[],
   leaves: Leave[],
 ): DocumentFragment {
-  const fragment = template.content.cloneNode(true) as DocumentFragment;
-  const nodes = paths.map((path) => resolvePath(fragment, path));
+  const source = inherited === "" ? compiled.content : variantOf(compiled, inherited);
+  const fragment = source.cloneNode(true) as DocumentFragment;
+  const nodes = compiled.paths.map((path) => resolvePath(fragment, path));
   nodes.forEach((node, index) => binders[index]!(node, cleanups, leaves));
   return fragment;
 }
 
-export function lazyTemplate(html: string, id: string): () => CompiledTemplate {
+export function lazyTemplate(html: string): () => CompiledTemplate {
   let compiled: CompiledTemplate | undefined;
-  return () => (compiled ??= createTemplate(html, id));
+  return () => (compiled ??= createTemplate(html));
 }

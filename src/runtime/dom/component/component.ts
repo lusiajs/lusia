@@ -18,6 +18,8 @@ export interface Host {
   props: Props;
   bound: Bound;
   content?: Slot;
+  /** Tree classes of the ancestors, space-separated. The component's elements carry them. */
+  inherited: string;
 }
 
 export interface Rendered {
@@ -88,7 +90,7 @@ export type Place = Component["place"];
 export function componentFrom(place: Place): Component {
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const remove = place(target, null, { props, bound: {} }, leaves);
+    const remove = place(target, null, { props, bound: {}, inherited: "" }, leaves);
     return { root: target, detach: () => leaveThen(leaves, remove) };
   };
   return Object.assign(component, { place });
@@ -117,13 +119,15 @@ export function bindComponent(
   bound: Bound,
   cleanups: Cleanup[],
   leaves: Leave[],
-  content?: Slot,
+  content: Slot | undefined,
+  inherited: string,
 ): void {
   const host: Host = {
     props,
     bound,
     content: content && keepScope(content),
     scope: currentScope(),
+    inherited,
   };
   cleanups.push(component.place(marker.parentNode!, marker, host, leaves));
   (marker as ChildNode).remove();

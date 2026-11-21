@@ -27,7 +27,7 @@ export function hotComponent(id: string, css: string, render: Render): HotCompon
 
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const instance = mountComponent(id, { props, bound: {} }, leaves, target, null);
+    const instance = mountComponent(id, { props, bound: {}, inherited: "" }, leaves, target, null);
     return { root: target, detach: () => leaveThen(leaves, () => unmountInstance(instance)) };
   };
 
