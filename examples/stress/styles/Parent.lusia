@@ -1,11 +1,11 @@
 <script>
-import { attach, onAttach, type Instance } from "lusiajs";
-import Child from "./Child.lusia";
+  import { attach, onAttach, type Instance } from "lusiajs";
+  import Child from "./Child.lusia";
 
-onAttach((root: Element) => {
-  const child: Instance = attach(Child, root.querySelector(".slot")!);
-  return () => child.detach();
-});
+  onAttach((root: Element) => {
+    const child: Instance = attach(Child, root.querySelector(".slot")!);
+    return () => child.detach();
+  });
 </script>
 
 <div class="parent">
@@ -14,9 +14,9 @@ onAttach((root: Element) => {
 </div>
 
 <style>
-.mark { outline: 2px solid rebeccapurple; }
+  .mark { outline: 2px solid rebeccapurple; }
 
-@scoped {
-  .mark { background: lightyellow; }
-}
+  @scoped {
+    .mark { background: lightyellow; }
+  }
 </style>
