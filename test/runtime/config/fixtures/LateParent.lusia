@@ -1,0 +1,14 @@
+<script>
+  import { setConfig } from "lusiajs";
+  import { attachItem } from "./attach-item.ts";
+  import { late } from "./late-state.ts";
+
+  setConfig({ animate: { attach: { animateSpace: true } } });
+</script>
+
+<EACH {late.rows} as={row}>
+  <p class="row" animate={attachItem}>{row}</p>
+</EACH>
+<IF {late.show.value}>
+  <p class="branch" animate={attachItem}>shown</p>
+</IF>

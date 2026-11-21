@@ -1,0 +1,7 @@
+<script>
+  import { setConfig, SCOPE } from "lusiajs";
+
+  setConfig({ animate: { attach: { animateSpace: true } } }, SCOPE.GLOBAL);
+</script>
+
+<div class="own"></div>

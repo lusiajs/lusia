@@ -1,0 +1,9 @@
+<script>
+  import { setConfig } from "lusiajs";
+
+  setConfig({ animate: { attach: { animateSpace: false } } });
+</script>
+
+<div class="wrap">
+  <CONTENT />
+</div>

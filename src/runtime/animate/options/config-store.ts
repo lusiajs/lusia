@@ -32,6 +32,11 @@ export function rememberAnimateConfig(el: Element, config: AnimateConfig): void 
   captured.set(el, config);
 }
 
+/** Tests only: the config an element captured when it bound. */
+export function boundAnimateConfig(el: Element): AnimateConfig | undefined {
+  return captured.get(el);
+}
+
 // Layout and space plays start outside the bind, so they look up what the element captured.
 export function withElementConfig<T>(el: Element, fn: () => T): T {
   return withAnimateConfig(captured.get(el) ?? configured, fn);
