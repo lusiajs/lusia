@@ -119,7 +119,12 @@ export function bindComponent(
   leaves: Leave[],
   content?: Slot,
 ): void {
-  const host: Host = { props, bound, content: content && keepScope(content), scope: currentScope() };
+  const host: Host = {
+    props,
+    bound,
+    content: content && keepScope(content),
+    scope: currentScope(),
+  };
   cleanups.push(component.place(marker.parentNode!, marker, host, leaves));
   (marker as ChildNode).remove();
 }

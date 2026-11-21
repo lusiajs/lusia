@@ -73,7 +73,9 @@ describe("setConfig validation", () => {
   });
 
   test("a rejected call changes nothing", () => {
-    expect(() => setConfig({ animate: { duration: 900 }, speed: 1 } as never, SCOPE.GLOBAL)).toThrow();
+    expect(() =>
+      setConfig({ animate: { duration: 900 }, speed: 1 } as never, SCOPE.GLOBAL),
+    ).toThrow();
     expect(globalConfig()).toEqual({});
   });
 });
@@ -82,7 +84,9 @@ describe("SCOPED and TREE outside a component script", () => {
   test("TREE throws with the fix", () => {
     const error = thrown(() => setConfig({ animate: { duration: 200 } }));
     expect(error.code).toBe("L2075");
-    expect(error.message).toBe("setConfig with SCOPE.TREE must run at the top of a component script");
+    expect(error.message).toBe(
+      "setConfig with SCOPE.TREE must run at the top of a component script",
+    );
     expect(error.hint).toContain("SCOPE.GLOBAL inside onAttach");
   });
 
