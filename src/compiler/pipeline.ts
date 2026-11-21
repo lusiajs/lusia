@@ -1,4 +1,7 @@
+import { scopeClass } from "#runtime/markers.ts";
 import { hash } from "./id.ts";
+import { usesScope } from "./style/modes.ts";
+import { ownsAllMarkup } from "./template/marking.ts";
 import { importsWithSplits } from "./lazy/plan.ts";
 import type { LazyOptions } from "./lazy/options.ts";
 import { splitImports } from "./parse/imports.ts";
@@ -31,7 +34,13 @@ export interface CompileResult {
 }
 
 /** Turns one style section into scoped CSS. The caller decides whether Sass runs. */
-export type StyleCompiler = (style: Section, index: number, id: string) => StyleResult;
+export type StyleCompiler = (
+  style: Section,
+  index: number,
+  id: string,
+  /** True when every element of the component carries its scope class. */
+  marked: boolean,
+) => StyleResult;
 
 export interface PipelineOptions {
   dev: boolean;
@@ -48,7 +57,12 @@ export function compileParts(
 ): CompileResult {
   const parsed = parse(source, file);
   const id = hash(file);
-  const styles = parsed.styles.map((style, index) => options.styles(style, index, id));
+  const { statements, body, components } = splitImports(parsed.script, file);
+  const plain = compileTemplate(parsed.markup, file, parsed.markupLine, components);
+  // A component that imports another one may attach it by hand, so its tree must stay ancestor-based.
+  const importsComponents = components.size > 0;
+  const marked = parsed.styles.some(usesScope) && !importsComponents && ownsAllMarkup(plain);
+  const styles = parsed.styles.map((style, index) => options.styles(style, index, id, marked));
   const css = styles.map((style) => style.css).join("\n");
   const deps = styles.flatMap((style) => style.deps);
   const sassMs = styles.reduce((sum, style) => sum + style.sassMs, 0);
@@ -57,9 +71,10 @@ export function compileParts(
     parsed.script?.attrs,
     parsed.markup,
   ]);
-  const { statements, body, components } = splitImports(parsed.script, file);
   const imports = importsWithSplits(statements, parsed.markup, body, options.lazy);
-  const template = compileTemplate(parsed.markup, file, parsed.markupLine, components);
+  const template = marked
+    ? compileTemplate(parsed.markup, file, parsed.markupLine, components, scopeClass(id))
+    : plain;
   const generated = generate({
     imports,
     body,

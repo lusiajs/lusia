@@ -44,7 +44,7 @@ describe("lusia bun plugin with an Events component", () => {
     expect(textOf(target!, ".status")).toBe("Clicked 0 of 5 times.");
 
     const css = document.querySelector(`style[data-lusia="${id}"]`)!.textContent!;
-    expect(css).toContain(`.status.done:where([data-l="${id}"]`);
+    expect(css).toContain(`.status.done:where(.l-${id})`);
     expect(css).toContain("color: var(--accent)");
   });
 
@@ -64,7 +64,9 @@ describe("lusia bun plugin with an Events component", () => {
     expect(reset.getAttribute("title")).toBe("Start again");
 
     click(root, ".add", 2);
-    expect(root.querySelector(".status")!.getAttribute("class")).toBe("status done");
+    const statusClasses = root.querySelector(".status")!.classList;
+    expect(statusClasses.contains("status")).toBe(true);
+    expect(statusClasses.contains("done")).toBe(true);
     expect(textOf(root, ".hint")).toBe("Limit reached");
     expect(add.hasAttribute("disabled")).toBe(true);
 

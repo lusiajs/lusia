@@ -8,6 +8,7 @@ import { Cursor } from "./cursor.ts";
 import { CONTENT_TAG, claimContent } from "./content.ts";
 import { componentBinding } from "./component.ts";
 import { readComponentChildren } from "./children.ts";
+import { withScopeClass } from "../marking.ts";
 import type { ScanScope } from "./scope.ts";
 import type { AttrBinding } from "../types/attribute.ts";
 import type { Binding, Template } from "../types/template.ts";
@@ -105,7 +106,8 @@ class TemplateScanner {
   }
 
   private addElement(name: string, attrs: AttrBinding[], selfClosing: boolean): void {
-    const { statics, binding } = compileElement(attrs);
+    const marked = this.scope.marker ? withScopeClass(attrs, this.scope.marker) : attrs;
+    const { statics, binding } = compileElement(marked);
     if (binding) this.bindings.push(binding);
     const marker = binding ? ` ${ELEMENT_MARKER}` : "";
     this.html += `<${name}${statics}${marker}${selfClosing ? " />" : ">"}`;
@@ -139,9 +141,10 @@ export function compileTemplate(
   file: string,
   startLine = 1,
   components: ReadonlySet<string> = new Set(),
+  marker?: string,
 ): Template {
   const cursor = new Cursor(markup, file, startLine);
-  const scope: ScanScope = { components, contentUsed: false };
+  const scope: ScanScope = { components, contentUsed: false, marker };
   const template = new TemplateScanner(cursor, scope).scanBody();
   if (cursor.pos < markup.length) failBoundary(cursor);
   return template;

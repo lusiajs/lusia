@@ -28,7 +28,7 @@ export function compileForBrowser(
   const { code } = compileParts(source, file, {
     dev: true,
     displayFile: file,
-    styles: (style, _index, id) => browserStyle(style, file, id, importers),
+    styles: (style, _index, id, marked) => browserStyle(style, file, id, importers, marked),
   });
   return { code: stripTypes(code, file) };
 }
@@ -63,8 +63,9 @@ function browserStyle(
   file: string,
   id: string,
   importers: sass.Importer[],
+  marked: boolean,
 ): StyleResult {
   const css =
     style.attrs.lang === "css" ? style.content : compileSectionScss(style, file, importers);
-  return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
+  return { css: scopeCss(css, id, styleMode(style), marked).trim(), deps: [], sassMs: 0 };
 }
