@@ -42,6 +42,8 @@ const LOOP_ITEM =
 const QUOTED_STRING = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
 const BLOCK_COMMENT = /\/\*[\s\S]*?\*\//g;
 const LINE_COMMENT = /\/\/[^\n]*/g;
+// A class value marked on purpose stays unknown: its classes are not read and no warning is given.
+const ON_PURPOSE_COMMENT = /(?:\/\/|\/\*)\s*@on-purpose\b/;
 const REFERENCED_NAME = /(?<![\w$.])[A-Za-z_][\w$]*/g;
 const KEYWORDS = new Set([
   "true",
@@ -81,7 +83,9 @@ function readExpression(
   names: Set<string>,
   resolveType: ClassTypeResolver | undefined,
 ): ExpressionReading {
-  if (usesConcat(expression.code, script)) return unsafeReading();
+  if (usesConcat(expression.code, script) || ON_PURPOSE_COMMENT.test(expression.code)) {
+    return unsafeReading();
+  }
   const undeclared = undeclaredNames(expression.code, names);
   if (undeclared.length === 0) return { unsafe: false, values: [], wide: [] };
   if (!resolveType) return unsafeReading();

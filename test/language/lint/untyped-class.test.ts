@@ -37,4 +37,16 @@ describe("untyped-class", () => {
     const resolve: ClassTypeResolver = () => undefined;
     expect(lintWith(source, resolve)).toEqual([]);
   });
+
+  test("@on-purpose in a markup block comment skips untyped-class and keeps unused-class silent", () => {
+    const source = `<script>\nimport { tone } from "./palette.ts";\n</script>\n${UNUSED_STYLE}<li class="cell {tone /* @on-purpose */}"></li>`;
+    const resolve: ClassTypeResolver = () => ({ wide: "string" });
+    expect(lintWith(source, resolve)).toEqual([]);
+  });
+
+  test("@on-purpose in a markup line comment skips untyped-class and keeps unused-class silent", () => {
+    const source = `<script>\nimport { tone } from "./palette.ts";\n</script>\n${UNUSED_STYLE}<li class={tone // @on-purpose\n}></li>`;
+    const resolve: ClassTypeResolver = () => ({ wide: "string" });
+    expect(lintWith(source, resolve)).toEqual([]);
+  });
 });

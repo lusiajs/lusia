@@ -10,6 +10,9 @@ import { parseLusiaImports } from "../../parse/imports.ts";
 import { scriptSection } from "../../parse/sections.ts";
 import type { ChildSourceLookup, LintContext, LintFinding, LintRule } from "../types.ts";
 
+const SCSS_ON_PURPOSE = /(?:\/\/|\/\*)\s*@on-purpose\b/;
+const PLAIN_CSS_ON_PURPOSE = /\/\*\s*@on-purpose\b/;
+
 interface Usage {
   used: Set<string>;
   unsafeDynamic: boolean;
@@ -49,12 +52,32 @@ function unusedInSection(
   if (css === undefined) return [];
   return styleClasses(css, mode)
     .filter((item) => !isUsed(item))
-    .map((item) => ({
-      offset: classOffset(section, item.name),
+    .flatMap((item) => unusedFinding(context.source, section, item.name));
+}
+
+// Compiled CSS has no comments, so the marker is read from the source line of the class.
+function unusedFinding(source: string, section: Section, name: string): LintFinding[] {
+  const token = classToken(section, name);
+  if (token !== undefined && isOnPurpose(source, token, section)) return [];
+  return [
+    {
+      offset: token ?? section.from,
       code: "unused-class",
-      message: `".${item.name}" is not used. No element in this component or its child components has this class.`,
+      message: `".${name}" is not used. No element in this component or its child components has this class.`,
       severity: "warning",
-    }));
+    },
+  ];
+}
+
+function isOnPurpose(source: string, offset: number, section: Section): boolean {
+  const marker = section.attrs.lang === "css" ? PLAIN_CSS_ON_PURPOSE : SCSS_ON_PURPOSE;
+  return marker.test(lineAt(source, offset));
+}
+
+function lineAt(source: string, offset: number): string {
+  const start = source.lastIndexOf("\n", offset) + 1;
+  const end = source.indexOf("\n", offset);
+  return source.slice(start, end === -1 ? source.length : end);
 }
 
 interface CompiledStyle {
@@ -96,9 +119,9 @@ function readDep(url: URL): StyleDep {
   return { path, text: readFileSync(path, "utf8") };
 }
 
-function classOffset(section: Section, name: string): number {
+function classToken(section: Section, name: string): number | undefined {
   const match = new RegExp(`\\.${escapeName(name)}(?![\\w-])`).exec(section.content);
-  return section.from + (match?.index ?? 0);
+  return match ? section.from + match.index : undefined;
 }
 
 function escapeName(name: string): string {

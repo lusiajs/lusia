@@ -145,4 +145,44 @@ describe("unused-class", () => {
       '".other" is not used. No element in this component or its child components has this class.',
     ]);
   });
+
+  test("@on-purpose after a Sass // comment on the class line skips that class", () => {
+    const source =
+      "<style>\n.legacy { color: red; } // @on-purpose\n.other { color: red; }\n</style>\n<p></p>";
+    expect(unusedClasses(source)).toEqual([
+      [
+        '".other" is not used. No element in this component or its child components has this class.',
+        3,
+      ],
+    ]);
+  });
+
+  test("@on-purpose in a Sass /* */ comment on the class line skips that class", () => {
+    const source =
+      "<style>\n.legacy { /* @on-purpose */ color: red; }\n.other { color: red; }\n</style>\n<p></p>";
+    expect(unusedClasses(source)).toEqual([
+      [
+        '".other" is not used. No element in this component or its child components has this class.',
+        3,
+      ],
+    ]);
+  });
+
+  test("@on-purpose with /* */ skips a class in plain CSS, but // does not", () => {
+    const marked =
+      '<style lang="css">\n.legacy { color: red; } /* @on-purpose */\n.other { color: red; }\n</style>\n<p></p>';
+    const slashed = '<style lang="css">\n.legacy { color: red; } // @on-purpose\n</style>\n<p></p>';
+    expect(unusedClasses(marked)).toEqual([
+      [
+        '".other" is not used. No element in this component or its child components has this class.',
+        3,
+      ],
+    ]);
+    expect(unusedClasses(slashed)).toEqual([
+      [
+        '".legacy" is not used. No element in this component or its child components has this class.',
+        2,
+      ],
+    ]);
+  });
 });
