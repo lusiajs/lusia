@@ -4,6 +4,7 @@ import { RUNTIME_ANIMATE_MORE_CODES } from "./runtime/animate-more.ts";
 import { RUNTIME_ANIMATE_OPTIONS_CODES } from "./runtime/animate-options.ts";
 import { RUNTIME_ANIMATE_CODES } from "./runtime/animate.ts";
 import { RUNTIME_COMPONENT_CODES } from "./runtime/component.ts";
+import { RUNTIME_CONFIG_CODES } from "./runtime/config.ts";
 import { RUNTIME_DOM_CODES } from "./runtime/dom.ts";
 import { RUNTIME_LAZY_CODES } from "./runtime/lazy.ts";
 import { RUNTIME_VARIABLE_CODES } from "./runtime/variable.ts";
@@ -13,6 +14,7 @@ export const RUNTIME_CODES = {
   ...RUNTIME_ANIMATE_KEYFRAMES_CODES,
   ...RUNTIME_ANIMATE_OPTIONS_CODES,
   ...RUNTIME_COMPONENT_CODES,
+  ...RUNTIME_CONFIG_CODES,
   ...RUNTIME_DOM_CODES,
   ...RUNTIME_ANIMATE_MORE_CODES,
   ...RUNTIME_VARIABLE_CODES,
