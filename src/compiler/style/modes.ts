@@ -5,8 +5,8 @@ import { scopeFilter, scopeSelectorList } from "./scope.ts";
 /** `tree`: this component and everything inside it. `scoped`: only its own markup. `global`: the whole page. */
 export type StyleMode = "tree" | "scoped" | "global";
 
-const UNSCOPED_AT_RULES = /^@(-webkit-)?(keyframes|font-face|page|property|counter-style)\b/;
-const MODE_BLOCK = /^@(scoped|global)\s*$/;
+export const UNSCOPED_AT_RULES = /^@(-webkit-)?(keyframes|font-face|page|property|counter-style)\b/;
+export const MODE_BLOCK = /^@(scoped|global)\s*$/;
 
 export function styleMode(style: Section): StyleMode {
   if ("global" in style.attrs) return "global";

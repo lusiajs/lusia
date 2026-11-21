@@ -1,6 +1,6 @@
-import { buildContext } from "#language/lint/context.ts";
+import { blankSections, scriptSection } from "#language/parse/sections.ts";
 import { mapRules } from "./css-blocks.ts";
-import type { StyleMode } from "./modes.ts";
+import { MODE_BLOCK, type StyleMode, UNSCOPED_AT_RULES } from "./modes.ts";
 import { closingParen, splitTopLevel } from "./selector.ts";
 
 export interface StyleClass {
@@ -12,10 +12,6 @@ export interface MarkupClasses {
   used: Set<string>;
   unsafeDynamic: boolean;
 }
-
-// Same patterns as modes.ts, which does not export them.
-const MODE_BLOCK = /^@(scoped|global)\s*$/;
-const UNSCOPED_AT_RULES = /^@(-webkit-)?(keyframes|font-face|page|property|counter-style)\b/;
 
 const GLOBAL = ":global(";
 const CLASS_TOKEN = /\.((?:[A-Za-z_-]|\\.)(?:[\w-]|\\.)*)/g;
@@ -84,7 +80,8 @@ function addClass(name: string, mode: StyleMode, found: Map<string, StyleClass>)
 }
 
 export function markupClasses(source: string): MarkupClasses {
-  const { markup, script } = buildContext(source, () => undefined);
+  const markup = blankSections(source);
+  const script = scriptText(source);
   const used = new Set<string>();
   for (const match of markup.matchAll(STATIC_CLASS)) addTokens(match[1] ?? match[2] ?? "", used);
   addWords(script, used);
@@ -93,6 +90,11 @@ export function markupClasses(source: string): MarkupClasses {
   const classExpressions = findClassExpressions(markup);
   const unsafeDynamic = classExpressions.some((expression) => usesConcat(expression, script));
   return { used, unsafeDynamic };
+}
+
+function scriptText(source: string): string {
+  const section = scriptSection(source);
+  return section ? source.slice(section.contentStart, section.contentEnd) : "";
 }
 
 function addTokens(text: string, used: Set<string>): void {

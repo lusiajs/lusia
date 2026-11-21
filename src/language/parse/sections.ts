@@ -50,6 +50,16 @@ export function scriptSection(text: string): Section | undefined {
   return findSections(text).find((section) => section.kind === "script");
 }
 
+/** The source with every section's content replaced by spaces, keeping line breaks. */
+export function blankSections(source: string): string {
+  let out = source;
+  for (const section of findSections(source).reverse()) {
+    const blank = source.slice(section.contentStart, section.contentEnd).replace(/[^\n]/g, " ");
+    out = out.slice(0, section.contentStart) + blank + out.slice(section.contentEnd);
+  }
+  return out;
+}
+
 /** The `<script>` content, or the whole text when there is no script section. */
 export function scriptSource(text: string): string {
   const section = scriptSection(text);
