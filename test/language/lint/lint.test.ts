@@ -84,7 +84,7 @@ attach(Badge, document.body);
   });
 
   test("known <style> attributes pass", () => {
-    expect(codes('<style lang="css" scoped>\n.a {}\n</style>')).toEqual([]);
+    expect(codes('<style lang="css" scoped>\n.a {}\n</style>\n<p class="a"></p>')).toEqual([]);
   });
 
   test("animate-keyframes flags a static animate value", () => {

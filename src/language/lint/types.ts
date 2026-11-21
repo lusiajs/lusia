@@ -11,6 +11,7 @@ export const LINT_RULE_CODES = [
   "scroll-numeric-line",
   "flow-chain",
   "bind-target",
+  "unused-class",
 ] as const;
 
 export type LintRuleCode = (typeof LINT_RULE_CODES)[number];
@@ -26,7 +27,18 @@ export interface LintOptions {
   rules?: LintRuleSettings;
   /** Read `<!-- lusia-lint-disable ... -->` comments. Default true. */
   disableComments?: boolean;
+  /** The file the source is from. Sass loads relative imports from its folder. */
+  file?: string;
 }
+
+/** An imported component: its file, its source, and the lookup for its own imports. */
+export interface ChildSource {
+  path: string;
+  source: string;
+  childSource: ChildSourceLookup;
+}
+
+export type ChildSourceLookup = (name: string) => ChildSource | undefined;
 
 export type Severity = "warning" | "error";
 
@@ -61,7 +73,9 @@ export interface LintContext {
   scriptOffset: number;
   /** The source with script and style content blanked, so offsets still match. */
   markup: string;
+  file: string | undefined;
   childProps(name: string): PropDef[] | undefined;
+  childSource: ChildSourceLookup;
 }
 
 export type LintRule = (context: LintContext) => LintFinding[];

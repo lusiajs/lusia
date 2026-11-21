@@ -68,7 +68,8 @@
             "animate-key": { "enum": ["off", "warn", "error"] },
             "scroll-numeric-line": { "enum": ["off", "warn", "error"] },
             "flow-chain": { "enum": ["off", "warn", "error"] },
-            "bind-target": { "enum": ["off", "warn", "error"] }
+            "bind-target": { "enum": ["off", "warn", "error"] },
+            "unused-class": { "enum": ["off", "warn", "error"] }
           }
         }
       }
@@ -105,10 +106,7 @@
           "description": "[easing style, direction]. Default: [\"QUART\", \"INOUT\"]",
           "minItems": 2,
           "maxItems": 2,
-          "prefixItems": [
-            { "$ref": "#/$defs/easeStyle" },
-            { "$ref": "#/$defs/ease" }
-          ],
+          "prefixItems": [{ "$ref": "#/$defs/easeStyle" }, { "$ref": "#/$defs/ease" }],
           "items": false
         },
         "keep": {
@@ -150,10 +148,7 @@
           "properties": {
             "margin": {
               "description": "How far inside the screen edge: a number of px, or a CSS length such as \"10%\". Default: \"0px\"",
-              "oneOf": [
-                { "type": "number" },
-                { "type": "string" }
-              ]
+              "oneOf": [{ "type": "number" }, { "type": "string" }]
             },
             "amount": {
               "type": "number",

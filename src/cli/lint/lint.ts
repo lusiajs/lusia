@@ -4,7 +4,7 @@ import { lintLusia, type LintIssue, type LintRuleSettings } from "#language/lint
 import { applyFixes } from "#language/lint/fixes.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 import { relative } from "node:path";
-import { childPropsLookup } from "../build/component-file.ts";
+import { childPropsLookup, childSourceLookup } from "../build/component-file.ts";
 import { ANSI, colorEnabled, paint } from "../log/color.ts";
 import { collectFiles } from "../files.ts";
 import { formatError } from "../format/format-error.ts";
@@ -40,9 +40,7 @@ export async function runLint(options: LintOptions): Promise<number> {
       errors++;
       process.stderr.write(`${formatError(compileError, source, color)}\n`);
     }
-    for (const issue of lintLusia(source, childPropsLookup(file, source), {
-      rules: options.rules,
-    })) {
+    for (const issue of issuesOf(file, source, options.rules)) {
       process.stdout.write(`${formatIssue(file, issue, color)}\n`);
       if (issue.severity === "error") errors++;
       else warnings++;
@@ -55,12 +53,20 @@ export async function runLint(options: LintOptions): Promise<number> {
 function fixedSource(file: string, source: string, rules: LintRuleSettings | undefined): string {
   let current = source;
   for (let round = 0; round < FIX_ROUNDS; round++) {
-    const issues = lintLusia(current, childPropsLookup(file, current), { rules });
-    const next = applyFixes(current, issues);
+    const next = applyFixes(current, issuesOf(file, current, rules));
     if (next === current) break;
     current = next;
   }
   return current;
+}
+
+function issuesOf(file: string, source: string, rules: LintRuleSettings | undefined): LintIssue[] {
+  return lintLusia(
+    source,
+    childPropsLookup(file, source),
+    { rules, file },
+    childSourceLookup(file, source),
+  );
 }
 
 function compileErrorOf(source: string, file: string): LusiaError | undefined {

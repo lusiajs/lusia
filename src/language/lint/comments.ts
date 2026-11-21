@@ -1,4 +1,4 @@
-const DISABLE_COMMENT = /<!--\s*lusia-lint-disable(-next-line)?\b([^>]*?)-->/g;
+const DISABLE_COMMENT = /(?:<!--|\/\*)\s*lusia-lint-disable(-next-line)?\b([^>*]*?)(?:-->|\*\/)/g;
 const CODE = /[A-Za-z][\w-]*/g;
 
 export interface LintDirective {

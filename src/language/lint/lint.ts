@@ -11,11 +11,14 @@ import { propsTwice } from "./rules/props-twice.ts";
 import { scrollLines } from "./rules/scroll-lines.ts";
 import { styleAttribute } from "./rules/style-attribute.ts";
 import { unknownProp } from "./rules/unknown-prop.ts";
+import { unusedClass } from "./rules/unused-class.ts";
 import { unusedImport } from "./rules/unused-import.ts";
-import type { LintFinding, LintIssue, LintOptions, LintRule } from "./types.ts";
+import type { ChildSourceLookup, LintFinding, LintIssue, LintOptions, LintRule } from "./types.ts";
 
 export { LINT_LEVELS, LINT_RULE_CODES } from "./types.ts";
 export type {
+  ChildSource,
+  ChildSourceLookup,
   LintFix,
   LintIssue,
   LintLevel,
@@ -36,15 +39,17 @@ const RULES: LintRule[] = [
   scrollLines,
   flowChain,
   bindTargets,
+  unusedClass,
 ];
 
-/** `childProps` gives the props of an imported component. */
+/** `childProps` gives the props of an imported component, `childSource` its source. */
 export function lintLusia(
   source: string,
   childProps: (name: string) => PropDef[] | undefined,
   options: LintOptions = {},
+  childSource: ChildSourceLookup = () => undefined,
 ): LintIssue[] {
-  const context = buildContext(source, childProps);
+  const context = buildContext(source, options.file, childProps, childSource);
   const directives = options.disableComments === false ? [] : parseLintDirectives(source);
   return RULES.flatMap((rule) => rule(context))
     .sort((a, b) => a.offset - b.offset)
