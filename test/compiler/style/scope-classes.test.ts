@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { compile, hash } from "#compiler/index.ts";
-import { scopeClassesOf } from "#compiler/style/classes.ts";
+import { scopeClassesOf } from "#compiler/style/scope-classes.ts";
 
 const FILE = `${process.cwd()}/test/compiler/Classes.lusia`;
 const ID = hash(FILE);

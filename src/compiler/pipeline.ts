@@ -1,5 +1,5 @@
 import { hash } from "./id.ts";
-import { ownClassNames, scopeClassesOf } from "./style/classes.ts";
+import { ownClassNames, scopeClassesOf } from "./style/scope-classes.ts";
 import { importsWithSplits } from "./lazy/plan.ts";
 import type { LazyOptions } from "./lazy/options.ts";
 import { splitImports } from "./parse/imports.ts";

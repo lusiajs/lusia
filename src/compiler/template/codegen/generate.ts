@@ -2,7 +2,7 @@ import { hotVariables } from "#compiler/hot/variables.ts";
 import { markLines } from "#compiler/sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./context.ts";
 import type { Template } from "../types/template.ts";
-import type { ScopeClasses } from "../../style/classes.ts";
+import type { ScopeClasses } from "../../style/scope-classes.ts";
 
 export interface ComponentParts extends GenOptions {
   imports: string;

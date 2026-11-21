@@ -2,7 +2,7 @@ import { markedCode } from "#compiler/sourcemap/marker.ts";
 import { trailingArg, type GenContext } from "./context.ts";
 import { attrValue, elementBinder, readExpression } from "./element.ts";
 import { eachBinder, forBinder, ifBinder } from "./blocks.ts";
-import { ownClassNames } from "../../style/classes.ts";
+import { ownClassNames } from "../../style/scope-classes.ts";
 import type { ComponentBinding } from "../types/component.ts";
 import type { HtmlBinding } from "../types/html.ts";
 import type { TextBinding } from "../types/text.ts";

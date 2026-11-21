@@ -5,7 +5,7 @@ import { unknownKeysAt } from "../check/animate-keys.ts";
 import type { ScriptRange } from "../check/script-range.ts";
 import type { Expr } from "../types/expression.ts";
 import type { Template } from "../types/template.ts";
-import type { ScopeClasses } from "../../style/classes.ts";
+import type { ScopeClasses } from "../../style/scope-classes.ts";
 
 export interface GenOptions {
   /** The path shown in runtime errors. */
