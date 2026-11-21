@@ -88,7 +88,8 @@ function placeLoading(
     sentinel = document.createElement("span");
     parent.insertBefore(sentinel, marker);
     stopWatch = whenNear(sentinel, show);
-  } else if (prefetch === "idle") {
+  } else if (prefetch === "idle" && loader.prefetch !== "idle") {
+    // A compiled "idle" is already fetching from module load, so only a scope's "idle" waits here.
     whenIdle(() => {
       if (!detached) show();
     });
