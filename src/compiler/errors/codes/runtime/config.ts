@@ -25,4 +25,8 @@ export const RUNTIME_CONFIG_CODES = {
     message: "setConfig with SCOPE.GLOBAL cannot run at the top of a component script",
     hint: "A global setting outlives the component, so it must be a visible step. Move it into onAttach, onDetach or a function.",
   },
+  L2077: {
+    message: "setConfig reach must be SCOPE.SCOPED, SCOPE.TREE or SCOPE.GLOBAL, got $value",
+    hint: "Pass one of the SCOPE values as the second argument, or leave it out for SCOPE.TREE.",
+  },
 } as const satisfies Record<string, ErrorCode>;

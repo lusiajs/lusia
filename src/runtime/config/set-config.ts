@@ -8,8 +8,11 @@ export const SCOPE = Object.freeze({ SCOPED: "scoped", TREE: "tree", GLOBAL: "gl
 
 export type ConfigScope = (typeof SCOPE)[keyof typeof SCOPE];
 
+const REACHES: readonly string[] = Object.values(SCOPE);
+
 /** Sets runtime config for a component and what it renders (SCOPED, TREE), or for the whole app (GLOBAL). */
 export function setConfig(config: RuntimeConfig, reach: ConfigScope = SCOPE.TREE): void {
+  if (!REACHES.includes(reach)) throw runtimeError("L2077", { value: String(reach) });
   const checked = readConfig(config);
   if (reach === SCOPE.GLOBAL) {
     setGlobal(checked);
