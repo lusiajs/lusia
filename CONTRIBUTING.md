@@ -7,28 +7,20 @@ Welcome, and thank you for helping improve Lusia. Start with the [quick start](R
 | Task | Command |
 | ---- | ------- |
 | Install packages | `bun install` |
-| Install docs site packages | `cd docs && bun install` |
 | Run the stress example (port 3000) | `bun run dev:stress` |
-| Run the docs site (port 3000) | `cd docs && bun run dev` |
-| Build the docs site into `docs/dist/` | `cd docs && bun run build` |
-| Run the lusia tests | `bun run test` |
-| Run the docs site tests | `cd docs && bun run test` |
+| Run the tests | `bun run test` |
 | Run one test file | `bun test test/compiler/style/modes.test.ts` |
 | Run tests by name | `bun test -t "diamond"` |
 | Typecheck | `bun run typecheck` |
 | Format all files | `bun run format` |
 | Check formatting without writing | `bun run format:check` |
-| Check before a commit (lusia) | `bun run check` |
-| Check before a commit (docs site) | `cd docs && bun run check` |
-| Run the editor tests | `bun test test/editor test/editors` |
-| Build the VS Code extension | `cd editors/vscode && bun run build` |
+| Check before a commit | `bun run check` |
+| Pack what npm would ship | `bun pm pack --dry-run` |
 
 > [!TIP]
 > Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
 
-`bun run check` runs the typecheck, the tests and the extension build in parallel. `cd docs && bun run check` runs the docs site typecheck, tests and build.
-
-`cd docs && bun run dev` and `bun run build` first run `docs/scripts/playground-runtime.ts`. Run that script yourself before using the CLI directly.
+`bun run check` runs the typecheck and the tests in parallel.
 
 Tests use small data. The large stress sizes live in `examples/stress` and run only on the stress page.
 
@@ -45,17 +37,25 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `src/bun-plugin` | The Bun loader for `.lusia` files and `?raw` imports |
 | `src/cli` | The `lusia` command |
 | `test/` | Tests. One folder per area, mirroring `src/`. `test/setup.ts` sets up the fake DOM |
-| `docs/` | The docs site, with its own `package.json` |
 | `examples/stress` | Scenarios that push the limits and report timings |
-| `editors/vscode` | The VS Code extension and the `.lusia` grammar |
-| `reference/api.ts` | The API table for the extension and the docs site |
+| `reference/api.ts` | The API table. The extension and the docs site read it as `lusia/api` |
 | `scripts/check.ts` | The steps behind `bun run check` |
+
+## Other repos
+
+| Repo | Depends on `lusia` through |
+| ---- | -------------------------- |
+| [lusiajs/create](https://github.com/lusiajs/create) | The starter app uses the `lusia` package |
+| [lusiajs/vscode](https://github.com/lusiajs/vscode) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/compiler` |
+| [lusiajs/docs](https://github.com/lusiajs/docs) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/errors/*`, `lusia/compiler/*` |
+
+To try a local change in another repo, run `bun link` here, then `bun link lusia` there.
 
 ## Code rules
 
 - Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/` and `dom/`.
 - `utils/` holds only helpers that two or more domains use. One job per file, around 150 lines.
-- Imports across areas use the `@runtime/`, `@compiler/`, `@bun-plugin/`, `@cli/` and `@language/` aliases. Imports inside one area stay relative. `src/runtime` ships as the `lusia` package, so it uses relative imports only.
+- Imports across areas use the `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/` and `#language/` aliases. They are defined in `imports` in `package.json`, so Bun and TypeScript both resolve them, also for apps that install `lusia`. Imports inside one area stay relative. `src/runtime` ships to apps, so it uses relative imports only.
 
 ## Error codes
 
@@ -69,25 +69,20 @@ To add a code, add one entry to `CODES` in `src/compiler/errors/codes.ts`.
 
 ## Syntax and API changes
 
-A change to the API or to `.lusia` markup must update these in the same change:
+A change to the API or to `.lusia` markup must update `reference/api.ts` and `examples/stress` (when it is affected) in the same change. Then follow it up in the other repos:
 
-- `reference/api.ts`
-- The site Guide
-- The demos in `docs`, and `examples/stress` when it is affected
+| Repo | Update |
+| ---- | ------ |
+| `lusiajs/docs` | The Guide, the demos and the Prism `lusia` language |
+| `lusiajs/vscode` | The grammar, completion, hover, lint and formatter |
 
-A `.lusia` syntax change also updates both highlighters: the VS Code grammar, the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language. See the Guide's Editor section.
+Release `lusia` first, then bump it in `docs` and `vscode`.
 
-## VS Code extension
+## Releases
 
-The extension build bundles the compiler from `src/compiler`, so install the repo root first.
-
-1. In `editors/vscode`, run `bun install`.
-2. Run `bun run build`.
-3. Link the folder into VS Code: `ln -s "$PWD" ~/.vscode/extensions/lusia.lusia-vscode-0.2.0`
-
-Run **Developer: Reload Window** after each build.
-
-Check the extension with `bunx tsc --noEmit -p editors/vscode`.
+1. Update `version` in `package.json`.
+2. Run `bun run check`.
+3. Push a tag such as `v0.1.0`. The `publish.yml` workflow publishes to npm with `bun publish`.
 
 ## Workflow
 
