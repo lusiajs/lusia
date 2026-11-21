@@ -47,12 +47,17 @@ describe("unused-class", () => {
   });
 
   test("a class in a ternary string is not flagged", () => {
-    const source = `<style>.on { } .off { }</style>\n<p class={active ? "on" : "off"}></p>`;
+    const source = `<script>\nconst active = true;\n</script>\n<style>.on { color: red; } .off { color: red; }</style>\n<p class={active ? "on" : "off"}></p>`;
     expect(unusedClasses(source)).toEqual([]);
   });
 
   test("a class returned by a helper function string is not flagged", () => {
-    const source = `<style>.pill { }</style>\n<p class={badge("pill")}></p>`;
+    const source = `<script>\nfunction badge(name) { return name; }\n</script>\n<style>.pill { color: red; }</style>\n<p class={badge("pill")}></p>`;
+    expect(unusedClasses(source)).toEqual([]);
+  });
+
+  test("a class value from an import silences the rule", () => {
+    const source = `<script>\nimport { tone } from "./variable.ts";\n</script>\n<style>.odd { color: red; }</style>\n<p class="cell {tone}"></p>`;
     expect(unusedClasses(source)).toEqual([]);
   });
 

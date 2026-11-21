@@ -10,9 +10,7 @@ describe("styleClasses", () => {
   });
 
   test("uses the given mode for every class", () => {
-    expect(styleClasses(".a { color: red; }", "scoped")).toEqual([
-      { name: "a", mode: "scoped" },
-    ]);
+    expect(styleClasses(".a { color: red; }", "scoped")).toEqual([{ name: "a", mode: "scoped" }]);
   });
 
   test("skips every class in global mode", () => {
@@ -85,12 +83,14 @@ describe("markupClasses", () => {
   });
 
   test("ignores style content", () => {
-    const source = "<style>.from-style { color: red; }</style><p class=\"a\"></p>";
+    const source = '<style>.from-style { color: red; }</style><p class="a"></p>';
     expect(markupClasses(source).used).toEqual(new Set(["a"]));
   });
 
   test("reads both branches of a ternary class", () => {
-    const result = markupClasses("<p class={a ? 'done' : ''}></p>");
+    const result = markupClasses(
+      "<script>const a = true;</script>\n<p class={a ? 'done' : ''}></p>",
+    );
     expect(result.used.has("done")).toBe(true);
     expect(result.unsafeDynamic).toBe(false);
   });
@@ -101,11 +101,45 @@ describe("markupClasses", () => {
     return 'row is-active'
   }
 </script>
-<li class={rowClass(i)}></li>`;
+<EACH {rows} index={i}><li class={rowClass(i)}></li></EACH>`;
     const result = markupClasses(source);
     expect(result.used.has("row")).toBe(true);
     expect(result.used.has("is-active")).toBe(true);
     expect(result.unsafeDynamic).toBe(false);
+  });
+
+  test("flags an interpolated static class whose value is imported", () => {
+    const source = `<script>
+import { tone } from "./variable.ts";
+</script>
+<li class="cell {tone}"></li>`;
+    expect(markupClasses(source).unsafeDynamic).toBe(true);
+  });
+
+  test("keeps an interpolated static class safe when the value is declared locally", () => {
+    const source = `<script>
+const tone = 'odd';
+</script>
+<li class="cell {tone}"></li>`;
+    const result = markupClasses(source);
+    expect(result.used.has("odd")).toBe(true);
+    expect(result.unsafeDynamic).toBe(false);
+  });
+
+  test("flags a class expression that reads an imported value", () => {
+    const source = `<script>
+import { active } from "./state.ts";
+</script>
+<li class={active ? 'on' : 'off'}></li>`;
+    expect(markupClasses(source).unsafeDynamic).toBe(true);
+  });
+
+  test("keeps a class expression safe when it reads only loop items and properties", () => {
+    const source = `<script>
+const rows = [];
+</script>
+<EACH {rows} as={row}><li class={row.kind}></li></EACH>`;
+    expect(markupClasses(source).unsafeDynamic).toBe(false);
   });
 
   test("flags string concatenation in a class expression", () => {
