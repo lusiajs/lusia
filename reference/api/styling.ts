@@ -12,6 +12,8 @@ export const stylingEntries: ApiEntry[] = [
 			'SCSS by default. Use lang="css" for plain CSS.',
 			"Tree mode also styles child components inside this one.",
 			"A component can have several style blocks.",
+			"Class matching when the component imports no components and has no <CONTENT />, <HTML> or component tags. Otherwise ancestor matching (data-l).",
+			"Class matching does not style DOM made outside the template (innerHTML, third-party libraries, attach()).",
 		],
 		example: `<style>\nh1 { color: tomato; }\n</style>`,
 	},
@@ -25,6 +27,7 @@ export const stylingEntries: ApiEntry[] = [
 		bullets: [
 			"Stops at child components.",
 			"Adds no specificity to the selectors.",
+			"Matches by class or ancestor, as described in <style>.",
 			"@keyframes and @font-face stay unscoped.",
 		],
 		example: `<style scoped>\n.card { padding: 1rem; }\n</style>`,
