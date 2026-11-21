@@ -10,21 +10,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "@runtime/*": ["./src/runtime/*"],
-      "@compiler/*": ["./src/compiler/*"],
-      "@bun-plugin/*": ["./src/bun-plugin/*"],
-      "@cli/*": ["./src/cli/*"],
-      "@language/*": ["./src/language/*"]
-    }
+    "verbatimModuleSyntax": true
   },
-  "include": [
-    "src",
-    "test",
-    "examples",
-    "reference",
-    "lusia.d.ts",
-    "editors/vscode/src/logic/css/scss/sass-graph.d.ts"
-  ]
+  "include": ["src", "test", "examples", "reference", "lusia.d.ts"]
 }

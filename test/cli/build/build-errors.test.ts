@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
-import { formatBuildFailure, type BuildLog } from "@cli/build/build-errors.ts";
-import { lusia } from "@bun-plugin/index.ts";
+import { formatBuildFailure, type BuildLog } from "#cli/build/build-errors.ts";
+import { lusia } from "#bun-plugin/index.ts";
 
 const REPO = new URL("../../../", import.meta.url).pathname;
 const ACTIVE_IMPORT = `<script>

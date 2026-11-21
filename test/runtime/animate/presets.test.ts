@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { PRESET } from "@runtime/animate/options/presets.ts";
-import { prepareTimeline, type Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { ownTimelines } from "@runtime/animate/play/timeline.ts";
+import { PRESET } from "#runtime/animate/options/presets.ts";
+import { prepareTimeline, type Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { ownTimelines } from "#runtime/animate/play/timeline.ts";
 
 const presets = Object.entries(PRESET) as [string, Keyframes][];
 

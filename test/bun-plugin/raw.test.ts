@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { lusia } from "@bun-plugin/index.ts";
+import { lusia } from "#bun-plugin/index.ts";
 import badge from "./fixtures/Badge.lusia?raw";
 import note from "./fixtures/note.txt?raw";
 

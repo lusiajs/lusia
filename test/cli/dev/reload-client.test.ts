@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { RELOAD_PATH, withReloadClient } from "@cli/dev/reload-client.ts";
+import { RELOAD_PATH, withReloadClient } from "#cli/dev/reload-client.ts";
 
 describe("withReloadClient", () => {
   test("injects the reload client before </body>", () => {

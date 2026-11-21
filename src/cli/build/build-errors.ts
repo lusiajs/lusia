@@ -1,6 +1,6 @@
-import { LusiaError } from "@compiler/errors/error.ts";
-import { CODES, type ErrorCodeName } from "@compiler/errors/codes.ts";
-import { fill, type Values } from "@compiler/errors/create.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
+import { CODES, type ErrorCodeName } from "#compiler/errors/codes.ts";
+import { fill, type Values } from "#compiler/errors/create.ts";
 import { readFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { stripAnsi } from "../log/color.ts";

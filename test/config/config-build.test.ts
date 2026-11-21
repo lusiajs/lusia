@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { PluginBuilder } from "bun";
-import { readConfig } from "@cli/args/config.ts";
-import { lusia } from "@bun-plugin/index.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import { readConfig } from "#cli/args/config.ts";
+import { lusia } from "#bun-plugin/index.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 
 const DEFINE_CONFIG = new URL("../../src/config/index.ts", import.meta.url).pathname;
 const CONFIG_FILE = "lusia.config.ts";

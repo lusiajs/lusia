@@ -1,5 +1,5 @@
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
-import { animateConfigToNames } from "@runtime/animate/options/config-names.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import { animateConfigToNames } from "#runtime/animate/options/config-names.ts";
 
 const IMPORT_LINE = 'import { animateConfigFromNames, setAnimateConfig } from "lusia/internal";';
 const NO_KEYS = "{}";

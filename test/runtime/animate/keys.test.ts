@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { prepareTimeline, type Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { readItem } from "@runtime/animate/options/options.ts";
-import { withWhere } from "@runtime/errors.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { prepareTimeline, type Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { readItem } from "#runtime/animate/options/options.ts";
+import { withWhere } from "#runtime/errors.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
 
 const { QUART } = EASE.STYLE;
 const frames = { 0: { opacity: 0 }, 1: { opacity: 1 } };

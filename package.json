@@ -1,17 +1,58 @@
 {
   "name": "lusia",
-  "private": true,
+  "version": "0.1.0-beta.1",
+  "description": "Write UI in one file. Update it with variables. Built for Bun.",
+  "license": "MIT",
   "type": "module",
+  "keywords": [
+    "ui",
+    "framework",
+    "bun",
+    "typescript",
+    "components",
+    "reactive",
+    "scss",
+    "single-file"
+  ],
+  "homepage": "https://lusia.azpepoze.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lusiajs/lusia.git"
+  },
+  "engines": {
+    "bun": ">=1.4"
+  },
   "bin": {
     "lusia": "./src/cli/index.ts"
   },
+  "files": [
+    "src",
+    "reference",
+    "lusia.d.ts",
+    "config.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": "./src/runtime/index.ts",
     "./internal": "./src/runtime/internal.ts",
     "./markers": "./src/runtime/markers.ts",
     "./compiler": "./src/compiler/index.ts",
     "./bun-plugin": "./src/bun-plugin/index.ts",
-    "./config": "./src/config/index.ts"
+    "./config": "./src/config/index.ts",
+    "./api": "./reference/api.ts",
+    "./language/*": "./src/language/*",
+    "./editor/*": "./src/editor/*",
+    "./errors/*": "./src/compiler/errors/*",
+    "./types": "./lusia.d.ts",
+    "./compiler/*": "./src/compiler/*"
+  },
+  "imports": {
+    "#runtime/*": "./src/runtime/*",
+    "#compiler/*": "./src/compiler/*",
+    "#bun-plugin/*": "./src/bun-plugin/*",
+    "#cli/*": "./src/cli/*",
+    "#language/*": "./src/language/*"
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",

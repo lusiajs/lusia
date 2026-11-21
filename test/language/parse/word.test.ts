@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { dottedNameAt } from "@language/parse/word.ts";
+import { dottedNameAt } from "#language/parse/word.ts";
 
 describe("dottedNameAt", () => {
   const text = "x = EASE.STYLE.QUART;";

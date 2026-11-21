@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { parseLusiaImports, scriptImports } from "@language/parse/imports.ts";
-import { planLusiaImport } from "../../../editors/shared/auto-import.ts";
+import { parseLusiaImports, scriptImports } from "#language/parse/imports.ts";
+import { planLusiaImport } from "../../../src/editor/auto-import.ts";
 
 describe("lusia imports", () => {
   test("reads default imports of .lusia files only", () => {

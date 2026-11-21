@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { animate } from "@runtime/animate/bind.ts";
-import { clearAnimateDefault, setAnimateDefault } from "@runtime/animate/options/defaults.ts";
-import { readItem } from "@runtime/animate/options/options.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
-import type { Leave } from "@runtime/dom/component/leave.ts";
+import { animate } from "#runtime/animate/bind.ts";
+import { clearAnimateDefault, setAnimateDefault } from "#runtime/animate/options/defaults.ts";
+import { readItem } from "#runtime/animate/options/options.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import type { Leave } from "#runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();

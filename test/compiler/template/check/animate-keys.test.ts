@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { unknownKeysAt } from "@compiler/template/check/animate-keys.ts";
-import type { ScriptRange } from "@compiler/template/check/script-range.ts";
+import { unknownKeysAt } from "#compiler/template/check/animate-keys.ts";
+import type { ScriptRange } from "#compiler/template/check/script-range.ts";
 
 /** A script section holding `script`, with the animate value at the first `{{` or `{name}` of `markup`. */
 function check(script: string, markup: string) {

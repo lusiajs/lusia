@@ -3,11 +3,11 @@ import { compileFile } from "./compile.ts";
 import { lazyKeyFor, lazyOptionsFor, type LazySettings } from "./children.ts";
 import { animateNamesJson, animatePrelude } from "./animate-prelude.ts";
 import { setupFallback } from "./fallback.ts";
-import { now, addStep, type Steps } from "@cli/build/timings.ts";
+import { now, addStep, type Steps } from "#cli/build/timings.ts";
 import type { BunPlugin } from "bun";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 
 export interface LusiaPluginOptions {
   /** Dev builds keep runtime error locations. Default false. */

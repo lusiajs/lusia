@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { readDefault, readKey, type PartialEasing } from "@runtime/animate/options/keyform.ts";
-import { prepareTimeline, type Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { writeProgress } from "@runtime/animate/play/timeline.ts";
+import { readDefault, readKey, type PartialEasing } from "#runtime/animate/options/keyform.ts";
+import { prepareTimeline, type Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { writeProgress } from "#runtime/animate/play/timeline.ts";
 
 const { QUAD, CUBIC, LINEAR, QUART } = EASE.STYLE;
 const ENGINE = { easeStyle: QUART, ease: EASE.INOUT, duration: 300 };

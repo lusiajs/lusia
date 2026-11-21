@@ -1,5 +1,5 @@
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import { colorEnabled, stripAnsi } from "../log/color.ts";
 import { buildDev } from "../build/dev-build.ts";
 import type { DevServer } from "./dev-server.ts";

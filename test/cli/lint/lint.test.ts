@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, spyOn, test } from "bun:test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { runLint } from "@cli/lint/lint.ts";
+import { runLint } from "#cli/lint/lint.ts";
 
 const UNUSED = '<script>\nimport Badge from "./Badge.lusia";\n</script>\n<p>hi</p>\n';
 const EMPTY = "<p>{ }</p>\n";

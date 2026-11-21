@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { animate } from "@runtime/animate/bind.ts";
-import type { Animate, AnimateItem } from "@runtime/animate/animation.ts";
-import { PRESET } from "@runtime/animate/options/presets.ts";
-import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
-import { HOVER_AREA } from "@runtime/animate/modes/hover-modes.ts";
-import type { Leave } from "@runtime/dom/component/leave.ts";
+import { animate } from "#runtime/animate/bind.ts";
+import type { Animate, AnimateItem } from "#runtime/animate/animation.ts";
+import { PRESET } from "#runtime/animate/options/presets.ts";
+import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { HOVER_AREA } from "#runtime/animate/modes/hover-modes.ts";
+import type { Leave } from "#runtime/dom/component/leave.ts";
 import { advance, onReset, pendingFrames, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();

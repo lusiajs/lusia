@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { attr, bindText, listen } from "@runtime/dom/template/bindings.ts";
-import { TEXT_MARKER } from "@runtime/markers.ts";
-import { watch } from "@runtime/variable/graph.ts";
-import { variable } from "@runtime/variable/variable.ts";
+import { attr, bindText, listen } from "#runtime/dom/template/bindings.ts";
+import { TEXT_MARKER } from "#runtime/markers.ts";
+import { watch } from "#runtime/variable/graph.ts";
+import { variable } from "#runtime/variable/variable.ts";
 
 describe("bindText", () => {
   test("replaces the marker and updates when the variable changes", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { formatBrowserReady, formatBuildSteps, formatMs, formatRebuild } from "@cli/build/timings.ts";
+import { formatBrowserReady, formatBuildSteps, formatMs, formatRebuild } from "#cli/build/timings.ts";
 
 const STEPS = { wait: 15.2, sass: 3.1, compile: 1.4, bundle: 8.3, send: 0.2, total: 232.6 };
 

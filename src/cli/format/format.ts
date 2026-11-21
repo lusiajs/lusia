@@ -1,5 +1,5 @@
 import { relative } from "node:path";
-import { formatLusia } from "@language/format/format.ts";
+import { formatLusia } from "#language/format/format.ts";
 import { ANSI, colorEnabled, paint } from "../log/color.ts";
 import { collectFiles } from "../files.ts";
 import { openFormatCache, type FormatCache } from "./format-cache.ts";

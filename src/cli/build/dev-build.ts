@@ -1,6 +1,6 @@
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { ModuleUpdate } from "@bun-plugin/update.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { ModuleUpdate } from "#bun-plugin/update.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import { formatBuildFailure } from "./build-errors.ts";
 import { assetKey, bundleApp } from "./bundle.ts";
 import { colorEnabled } from "../log/color.ts";

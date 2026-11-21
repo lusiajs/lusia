@@ -1,4 +1,4 @@
-import { fallbackSource } from "@compiler/index.ts";
+import { fallbackSource } from "#compiler/index.ts";
 import type { BunPlugin } from "bun";
 import { dirname, resolve } from "node:path";
 import { compileFile } from "./compile.ts";

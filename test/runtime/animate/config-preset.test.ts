@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { readItem } from "@runtime/animate/options/options.ts";
-import { setAnimateConfig } from "@runtime/animate/options/config.ts";
-import { PRESET } from "@runtime/animate/options/presets.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { readItem } from "#runtime/animate/options/options.ts";
+import { setAnimateConfig } from "#runtime/animate/options/config.ts";
+import { PRESET } from "#runtime/animate/options/presets.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
 
 const fade = { 0: { opacity: 0 }, 1: { opacity: 1 } };
 

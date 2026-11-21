@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { watchFolder, type Watcher } from "@cli/dev/watch.ts";
+import { watchFolder, type Watcher } from "#cli/dev/watch.ts";
 
 let dir: string;
 let watcher: Watcher | undefined;

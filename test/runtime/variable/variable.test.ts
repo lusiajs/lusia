@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { variable } from "@runtime/variable/variable.ts";
-import { watch } from "@runtime/variable/graph.ts";
+import { variable } from "#runtime/variable/variable.ts";
+import { watch } from "#runtime/variable/graph.ts";
 
 describe("variable", () => {
   test("reads and writes a value", () => {

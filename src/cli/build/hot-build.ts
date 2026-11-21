@@ -1,5 +1,5 @@
-import { lusia } from "@bun-plugin/index.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import { lusia } from "#bun-plugin/index.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import { basename } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
 import { colorEnabled } from "../log/color.ts";

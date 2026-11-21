@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { findSections, scriptSection, sectionAt } from "@language/parse/sections.ts";
-import { regionAt } from "@language/parse/regions.ts";
-import { isTagNameTyping, openTagAt, tagNameAt } from "@language/parse/tag.ts";
+import { findSections, scriptSection, sectionAt } from "#language/parse/sections.ts";
+import { regionAt } from "#language/parse/regions.ts";
+import { isTagNameTyping, openTagAt, tagNameAt } from "#language/parse/tag.ts";
 
 const SOURCE = `<script>\nconst a = 1;\n</script>\n<p>{a}</p>\n<style scoped>\n.card { color: red; }\n</style>\n`;
 

@@ -1,4 +1,4 @@
-import { lusia, type LusiaPluginOptions } from "@bun-plugin/index.ts";
+import { lusia, type LusiaPluginOptions } from "#bun-plugin/index.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";

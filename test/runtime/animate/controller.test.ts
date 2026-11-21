@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { animate } from "@runtime/animate/bind.ts";
-import type { AnimateItem } from "@runtime/animate/animation.ts";
-import { controller } from "@runtime/animate/play/controller.ts";
-import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { animate } from "#runtime/animate/bind.ts";
+import type { AnimateItem } from "#runtime/animate/animation.ts";
+import { controller } from "#runtime/animate/play/controller.ts";
+import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();

@@ -1,4 +1,4 @@
-import type { Section } from "@compiler/parse/sections.ts";
+import type { Section } from "#compiler/parse/sections.ts";
 
 export interface ScriptRange {
   from: number;

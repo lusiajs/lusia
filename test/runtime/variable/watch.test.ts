@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { variable } from "@runtime/variable/variable.ts";
+import { variable } from "#runtime/variable/variable.ts";
 
 describe("variable.watch", () => {
   test("runs once at start by default", () => {

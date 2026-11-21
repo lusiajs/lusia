@@ -6,7 +6,7 @@ import {
   type ChildInfo,
   type LazyOptions,
   type LusiaImport,
-} from "@compiler/index.ts";
+} from "#compiler/index.ts";
 
 export type LazySettings = Pick<LazyOptions, "mode" | "prefetch">;
 

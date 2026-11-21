@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { LusiaError } from "@compiler/errors/error.ts";
-import { compileStyle, compileStyleResult, forgetStyles } from "@compiler/style/sass.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
+import { compileStyle, compileStyleResult, forgetStyles } from "#compiler/style/sass.ts";
 import { FILE, ID, SCOPED, ROOT, TREE } from "./fixtures.ts";
 
 describe("compileStyle", () => {

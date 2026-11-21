@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 interface Step {
@@ -16,11 +15,10 @@ interface StepResult {
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 
-// The three steps touch separate outputs, so they run at the same time.
+// The steps touch separate outputs, so they run at the same time.
 const STEPS: Step[] = [
   { name: "typecheck", cmd: ["bun", "run", "typecheck"], cwd: ROOT },
   { name: "test", cmd: ["bun", "run", "test"], cwd: ROOT },
-  { name: "extension", cmd: ["bun", "run", "build"], cwd: join(ROOT, "editors/vscode") },
 ];
 
 function formatSeconds(ms: number): string {

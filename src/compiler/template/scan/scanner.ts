@@ -1,4 +1,4 @@
-import { ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
+import { ELEMENT_MARKER, TEXT_MARKER } from "#runtime/markers.ts";
 import { componentCheck, elementCheck } from "../check/checks.ts";
 import { compileElement } from "./element.ts";
 import { readHtml, HTML_TAG } from "./html.ts";

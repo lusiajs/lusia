@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, test } from "bun:test";
 import { chromium, type Browser } from "playwright";
-import { scopeCss, type StyleMode } from "@compiler/style/modes.ts";
+import { scopeCss, type StyleMode } from "#compiler/style/modes.ts";
 import { ID } from "./fixtures.ts";
 
 const DOM = `<div data-l="g"><h1 class="t" id="top" data-l="p"></h1><div data-l="p" class="card"><h1 class="t" id="own"></h1><a id="link"></a><div data-l="c"><h1 class="t" id="child"></h1></div></div></div><h1 class="t" id="outside"></h1>`;

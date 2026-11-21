@@ -1,5 +1,5 @@
-import * as publicApi from "@runtime/index.ts";
-import * as internalApi from "@runtime/internal.ts";
+import * as publicApi from "#runtime/index.ts";
+import * as internalApi from "#runtime/internal.ts";
 import type { BunPlugin } from "bun";
 
 /** The bare name the page's import map points at the runtime module (see `RUNTIME_PATH`). */

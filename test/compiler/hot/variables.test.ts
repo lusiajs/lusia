@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { hotVariables } from "@compiler/hot/variables.ts";
+import { hotVariables } from "#compiler/hot/variables.ts";
 
 describe("hotVariables", () => {
   test("wraps a top-level variable declaration with its name", () => {

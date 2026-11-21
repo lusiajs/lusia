@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { scopeCss } from "@compiler/style/modes.ts";
+import { scopeCss } from "#compiler/style/modes.ts";
 import { ID, TREE } from "./fixtures.ts";
 
 describe("scope filter placement", () => {

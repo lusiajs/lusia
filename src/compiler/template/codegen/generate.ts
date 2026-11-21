@@ -1,5 +1,5 @@
-import { hotVariables } from "@compiler/hot/variables.ts";
-import { markLines } from "@compiler/sourcemap/marker.ts";
+import { hotVariables } from "#compiler/hot/variables.ts";
+import { markLines } from "#compiler/sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./context.ts";
 import type { Template } from "../types/template.ts";
 

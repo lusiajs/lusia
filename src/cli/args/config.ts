@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import {
   CONFIG_FILES,
   JSON_CONFIG_FILE,

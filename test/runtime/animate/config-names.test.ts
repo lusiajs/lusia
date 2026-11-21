@@ -2,12 +2,12 @@ import { describe, expect, test } from "bun:test";
 import {
   animateConfigFromNames,
   animateConfigToNames,
-} from "@runtime/animate/options/config-names.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
-import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { MIDWAY, TURN } from "@runtime/animate/modes/midway-modes.ts";
-import { SCROLL_AT } from "@runtime/animate/modes/scroll-modes.ts";
+} from "#runtime/animate/options/config-names.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
+import { SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
 
 function thrown(read: () => unknown): { code?: string; message: string } {
   try {

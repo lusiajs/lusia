@@ -1,5 +1,5 @@
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";

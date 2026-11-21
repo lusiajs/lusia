@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { batch, untrack, watch } from "@runtime/variable/graph.ts";
-import { variable } from "@runtime/variable/variable.ts";
+import { batch, untrack, watch } from "#runtime/variable/graph.ts";
+import { variable } from "#runtime/variable/variable.ts";
 
 describe("batch", () => {
   test("runs watchers once for several writes", () => {

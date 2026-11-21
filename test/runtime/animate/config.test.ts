@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { readItem } from "@runtime/animate/options/options.ts";
-import { readMore } from "@runtime/animate/options/trigger-options.ts";
-import { readScroll } from "@runtime/animate/options/scroll-options.ts";
-import { readAnimateConfig, setAnimateConfig } from "@runtime/animate/options/config.ts";
+import { readItem } from "#runtime/animate/options/options.ts";
+import { readMore } from "#runtime/animate/options/trigger-options.ts";
+import { readScroll } from "#runtime/animate/options/scroll-options.ts";
+import { readAnimateConfig, setAnimateConfig } from "#runtime/animate/options/config.ts";
 import {
   animateDefault,
   clearAnimateDefault,
   setAnimateDefault,
-} from "@runtime/animate/options/defaults.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { MIDWAY, TURN } from "@runtime/animate/modes/midway-modes.ts";
-import { SCROLL_AT } from "@runtime/animate/modes/scroll-modes.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
+} from "#runtime/animate/options/defaults.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
+import { SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
 
 const fade = { 0: { opacity: 0 }, 1: { opacity: 1 } };
 const base = { duration: 300 };

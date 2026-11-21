@@ -1,6 +1,6 @@
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
-import type { LintRuleSettings } from "@language/lint/lint.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { LintRuleSettings } from "#language/lint/lint.ts";
 
 export type Command =
   | { name: "help" }

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { readItem } from "@runtime/animate/options/options.ts";
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { readItem } from "#runtime/animate/options/options.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
 
 const style = { 0: { opacity: 0 }, 1: { opacity: 1 } };
 

@@ -1,6 +1,6 @@
 import { format, resolveConfig, type Options } from "prettier";
-import type { FormatParts } from "@language/format/format.ts";
-import { prettierParts } from "@language/format/prettier-parts.ts";
+import type { FormatParts } from "#language/format/format.ts";
+import { prettierParts } from "#language/format/prettier-parts.ts";
 
 export async function prettierConfigFor(file: string): Promise<Options> {
   return (await resolveConfig(file)) ?? {};

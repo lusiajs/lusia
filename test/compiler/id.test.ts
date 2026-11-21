@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { hash } from "@compiler/id.ts";
+import { hash } from "#compiler/id.ts";
 
 describe("hash", () => {
   test("is stable and differs by input", () => {

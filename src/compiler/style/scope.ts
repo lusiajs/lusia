@@ -1,4 +1,4 @@
-import { COMPONENT_ATTR } from "@runtime/markers.ts";
+import { COMPONENT_ATTR } from "#runtime/markers.ts";
 import type { StyleMode } from "./modes.ts";
 import { closingParen, scopeSelector, splitTopLevel, subjectStart } from "./selector.ts";
 

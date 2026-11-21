@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import type { LazySettings } from "@bun-plugin/children.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
 import type { LusiaConfig } from "./config-types.ts";
 
 export const DEFAULT_PORT = 3000;

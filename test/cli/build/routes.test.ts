@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseCommand, UsageError } from "@cli/args/args.ts";
-import { runBuild } from "@cli/build/build.ts";
-import { isPageRoute } from "@cli/dev/dev-server.ts";
+import { parseCommand, UsageError } from "#cli/args/args.ts";
+import { runBuild } from "#cli/build/build.ts";
+import { isPageRoute } from "#cli/dev/dev-server.ts";
 
 const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
 const DEV_SERVER = new URL("../../../src/cli/dev/dev-server.ts", import.meta.url).pathname;

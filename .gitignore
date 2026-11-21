@@ -6,9 +6,6 @@ dist/
 out/
 *.tsbuildinfo
 
-# Written by docs/scripts/playground-runtime.ts
-docs/public/playground/lusia.js
-
 # Test coverage
 coverage/
 

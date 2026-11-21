@@ -8,7 +8,7 @@ import {
   type AnimateItem,
   type Keyframes,
   type Style,
-} from "@runtime/index.ts";
+} from "#runtime/index.ts";
 
 const css: Style = { opacity: 1, backgroundColor: "red", translate: "0px 10px", "--gap": "4px" };
 

@@ -3,11 +3,11 @@ import { statSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
-import { UsageError } from "@cli/args/args.ts";
-import { collectFiles } from "@cli/files.ts";
-import { partsFor, prettierConfigFor } from "@cli/format/format-parts.ts";
-import { runFormat } from "@cli/format/format.ts";
-import { formatLusia } from "@language/format/format.ts";
+import { UsageError } from "#cli/args/args.ts";
+import { collectFiles } from "#cli/files.ts";
+import { partsFor, prettierConfigFor } from "#cli/format/format-parts.ts";
+import { runFormat } from "#cli/format/format.ts";
+import { formatLusia } from "#language/format/format.ts";
 
 const UNFORMATTED = [
   "<script>",

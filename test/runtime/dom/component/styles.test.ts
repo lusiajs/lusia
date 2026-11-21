@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { injectStyle } from "@runtime/dom/component/styles.ts";
+import { injectStyle } from "#runtime/dom/component/styles.ts";
 
 describe("injectStyle", () => {
   test("adds one <style> per id", () => {

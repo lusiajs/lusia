@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { leaveThen } from "@runtime/dom/component/leave.ts";
+import { leaveThen } from "#runtime/dom/component/leave.ts";
 
 describe("leaveThen", () => {
   test("without leaves the nodes are removed synchronously", () => {

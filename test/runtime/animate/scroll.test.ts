@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
-import { animate } from "@runtime/animate/bind.ts";
-import type { AnimateItem } from "@runtime/animate/animation.ts";
-import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
-import { EASE } from "@runtime/animate/modes/modes.ts";
-import { readMore as readWith } from "@runtime/animate/options/trigger-options.ts";
+import { animate } from "#runtime/animate/bind.ts";
+import type { AnimateItem } from "#runtime/animate/animation.ts";
+import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
+import { readMore as readWith } from "#runtime/animate/options/trigger-options.ts";
 
 const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
   readWith(when, more, readBase);
-import { WHEN } from "@runtime/animate/modes/trigger.ts";
-import { EDGE, SCROLL_AT } from "@runtime/animate/modes/scroll-modes.ts";
-import type { ScrollAt } from "@runtime/animate/scroll/scroll-touch.ts";
-import { variable } from "@runtime/variable/variable.ts";
-import type { Leave } from "@runtime/dom/component/leave.ts";
+import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { EDGE, SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
+import type { ScrollAt } from "#runtime/animate/scroll/scroll-touch.ts";
+import { variable } from "#runtime/variable/variable.ts";
+import type { Leave } from "#runtime/dom/component/leave.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();

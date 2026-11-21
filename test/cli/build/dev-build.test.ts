@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { buildDev } from "@cli/build/dev-build.ts";
-import { chooseUpdate, RELOAD } from "@cli/dev/update.ts";
+import { buildDev } from "#cli/build/dev-build.ts";
+import { chooseUpdate, RELOAD } from "#cli/dev/update.ts";
 
 const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
 const REPO = new URL("../../../", import.meta.url).pathname;

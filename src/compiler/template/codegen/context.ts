@@ -1,5 +1,5 @@
-import { formatWhere } from "@compiler/errors/where.ts";
-import { lineAt, columnAt, lineStarts } from "@compiler/utils/position.ts";
+import { formatWhere } from "#compiler/errors/where.ts";
+import { lineAt, columnAt, lineStarts } from "#compiler/utils/position.ts";
 import { bindersOf } from "./binders.ts";
 import { unknownKeysAt } from "../check/animate-keys.ts";
 import type { ScriptRange } from "../check/script-range.ts";

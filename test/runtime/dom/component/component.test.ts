@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { variable } from "@runtime/variable/variable.ts";
+import { variable } from "#runtime/variable/variable.ts";
 import Counter from "../fixtures/Counter.lusia";
 import OnAttach from "../fixtures/OnAttach.lusia";
 import Shelf from "../fixtures/Shelf.lusia";

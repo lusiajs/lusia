@@ -1,6 +1,6 @@
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
-import { LusiaError } from "@compiler/errors/error.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
 import { basename } from "node:path";
 import { readConfig } from "../args/config.ts";
 import { CONFIG_FILES } from "../args/config-types.ts";

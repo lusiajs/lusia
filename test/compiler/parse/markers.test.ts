@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parse } from "@compiler/parse/sections.ts";
+import { parse } from "#compiler/parse/sections.ts";
 
 function codeOf(source: string): string | undefined {
   try {

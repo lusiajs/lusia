@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { parseLusiaImports } from "@language/parse/imports.ts";
-import { parsePropDefs, type PropDef } from "@language/parse/props.ts";
-import { scriptSection } from "@language/parse/sections.ts";
+import { parseLusiaImports } from "#language/parse/imports.ts";
+import { parsePropDefs, type PropDef } from "#language/parse/props.ts";
+import { scriptSection } from "#language/parse/sections.ts";
 
 /** The props a component declares, or undefined when its file cannot be read. */
 export function declaredProps(

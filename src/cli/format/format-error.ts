@@ -1,4 +1,4 @@
-import type { LusiaError } from "@compiler/errors/error.ts";
+import type { LusiaError } from "#compiler/errors/error.ts";
 import { relative } from "node:path";
 import { ANSI, paint } from "../log/color.ts";
 

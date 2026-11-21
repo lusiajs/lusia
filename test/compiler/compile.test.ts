@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { relative } from "node:path";
-import { compile } from "@compiler/index.ts";
+import { compile } from "#compiler/index.ts";
 
 const FILE = `${process.cwd()}/test/compiler/Dim.lusia`;
 const WHERE = relative(process.cwd(), FILE);

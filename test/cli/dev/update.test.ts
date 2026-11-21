@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { ModuleUpdate } from "@bun-plugin/update.ts";
-import { chooseUpdate, describeUpdate, RELOAD } from "@cli/dev/update.ts";
+import type { ModuleUpdate } from "#bun-plugin/update.ts";
+import { chooseUpdate, describeUpdate, RELOAD } from "#cli/dev/update.ts";
 
 const STYLE: ModuleUpdate = { path: "/app/src/Card.lusia", kind: "style", id: "abc", css: ".a{}" };
 const CODE: ModuleUpdate = { path: "/app/src/Card.lusia", kind: "code" };

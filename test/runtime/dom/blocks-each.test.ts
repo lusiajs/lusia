@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { bindEach, type RowRender } from "@runtime/dom/blocks/each.ts";
-import { TEXT_MARKER } from "@runtime/markers.ts";
-import { variable, type Variable } from "@runtime/variable/variable.ts";
+import { bindEach, type RowRender } from "#runtime/dom/blocks/each.ts";
+import { TEXT_MARKER } from "#runtime/markers.ts";
+import { variable, type Variable } from "#runtime/variable/variable.ts";
 import Groups from "./fixtures/Groups.lusia";
 import Rows from "./fixtures/Rows.lusia";
 import { resetVariable, state, type Item } from "./fixtures/state.ts";

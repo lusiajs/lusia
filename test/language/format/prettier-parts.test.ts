@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { prettierParts, type PrettierLike } from "@language/format/prettier-parts.ts";
+import { prettierParts, type PrettierLike } from "#language/format/prettier-parts.ts";
 
 interface Call {
   code: string;

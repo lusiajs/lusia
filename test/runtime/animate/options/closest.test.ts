@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { closestName } from "@runtime/animate/options/closest.ts";
+import { closestName } from "#runtime/animate/options/closest.ts";
 
 describe("closestName", () => {
   test("finds a name with one letter wrong", () => {

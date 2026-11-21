@@ -1,5 +1,5 @@
-import { closestName } from "@runtime/animate/options/closest.ts";
-import { LusiaError } from "@compiler/errors/error.ts";
+import { closestName } from "#runtime/animate/options/closest.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
 import { CONFIG_FILES } from "./config-types.ts";
 
 export type JsonObject = Record<string, unknown>;

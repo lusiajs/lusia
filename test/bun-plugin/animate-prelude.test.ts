@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { animatePrelude } from "@bun-plugin/animate-prelude.ts";
-import { lusia } from "@bun-plugin/index.ts";
-import { animateConfigToNames } from "@runtime/animate/options/config-names.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import { animatePrelude } from "#bun-plugin/animate-prelude.ts";
+import { lusia } from "#bun-plugin/index.ts";
+import { animateConfigToNames } from "#runtime/animate/options/config-names.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 const PRELUDE_CALL = "setAnimateConfig(animateConfigFromNames(";

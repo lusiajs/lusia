@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { interpolate } from "@runtime/animate/value/interpolate.ts";
+import { interpolate } from "#runtime/animate/value/interpolate.ts";
 
 describe("interpolate numbers and units", () => {
   test("numbers blend linearly", () => {

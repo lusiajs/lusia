@@ -1,6 +1,6 @@
-import { compile, LusiaError, type CompileResult, type LazyOptions } from "@compiler/index.ts";
-import { formatError } from "@cli/format/format-error.ts";
-import { colorEnabled } from "@cli/log/color.ts";
+import { compile, LusiaError, type CompileResult, type LazyOptions } from "#compiler/index.ts";
+import { formatError } from "#cli/format/format-error.ts";
+import { colorEnabled } from "#cli/log/color.ts";
 
 /** Compiles one .lusia file. A compile error is thrown with its position and hint in the message. */
 export function compileFile(

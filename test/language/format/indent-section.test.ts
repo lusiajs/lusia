@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { indentSection } from "@language/format/indent-section.ts";
-import { formatLusia } from "@language/format/format.ts";
-import type { FormatParts } from "@language/format/format.ts";
+import { indentSection } from "#language/format/indent-section.ts";
+import { formatLusia } from "#language/format/format.ts";
+import type { FormatParts } from "#language/format/format.ts";
 
 const echo = async (code: string) => code.trim();
 const parts = (sectionIndent: string): FormatParts => ({

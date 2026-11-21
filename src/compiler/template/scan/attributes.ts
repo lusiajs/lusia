@@ -1,5 +1,5 @@
-import type { ErrorCodeName } from "@compiler/errors/codes.ts";
-import type { Values } from "@compiler/errors/create.ts";
+import type { ErrorCodeName } from "#compiler/errors/codes.ts";
+import type { Values } from "#compiler/errors/create.ts";
 import type { Cursor } from "./cursor.ts";
 import type { AttrBinding, AttrPart } from "../types/attribute.ts";
 import type { Expr } from "../types/expression.ts";

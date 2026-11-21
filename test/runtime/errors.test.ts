@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { withWhere, runtimeError } from "@runtime/errors.ts";
+import { withWhere, runtimeError } from "#runtime/errors.ts";
 
 describe("runtime errors", () => {
   test("carry no location outside a dev location", () => {

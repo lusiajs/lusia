@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { readConfig } from "@cli/args/config.ts";
-import { isConfigFile, readDevConfig } from "@cli/dev/config-reload.ts";
+import { readConfig } from "#cli/args/config.ts";
+import { isConfigFile, readDevConfig } from "#cli/dev/config-reload.ts";
 
 // Fixtures live in the worktree's .agent folder (gitignored), not in /tmp.
 const AGENT_DIR = resolve(import.meta.dir, "../../../.agent");

@@ -1,4 +1,4 @@
-import type { Values } from "@compiler/errors/create.ts";
+import type { Values } from "#compiler/errors/create.ts";
 import {
   hasItemKey,
   isKeyframesKey,
@@ -9,7 +9,7 @@ import {
   OLD_ITEM_KEYS,
   SPELLING_HINT,
   unknownKeyValues,
-} from "@runtime/animate/options/keys.ts";
+} from "#runtime/animate/options/keys.ts";
 import { objectEntries, listItems, skipSpace, type Entry } from "./literals.ts";
 import type { ScriptRange } from "./script-range.ts";
 

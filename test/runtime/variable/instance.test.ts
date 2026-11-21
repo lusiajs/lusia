@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { variable } from "@runtime/variable/variable.ts";
+import { variable } from "#runtime/variable/variable.ts";
 
 describe("count.onUpdate on one variable", () => {
   test("runs at start with before undefined", () => {

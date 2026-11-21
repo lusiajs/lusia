@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { EASE } from "@runtime/animate/modes/modes.ts";
+import { EASE } from "#runtime/animate/modes/modes.ts";
 
 const { QUART } = EASE.STYLE;
 const { IN, OUT, INOUT } = EASE;

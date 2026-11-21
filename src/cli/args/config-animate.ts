@@ -1,5 +1,5 @@
-import { readAnimateConfig, type AnimateConfig } from "@runtime/animate/options/config.ts";
-import { animateConfigFromNames } from "@runtime/animate/options/config-names.ts";
+import { readAnimateConfig, type AnimateConfig } from "#runtime/animate/options/config.ts";
+import { animateConfigFromNames } from "#runtime/animate/options/config-names.ts";
 import { asObject, checkKeys, type JsonObject } from "./config-values.ts";
 
 const ANIMATE_KEYS = ["duration", "delay", "ease", "keep", "in", "out"];

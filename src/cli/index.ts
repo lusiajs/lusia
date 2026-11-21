@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { LusiaError } from "@compiler/errors/error.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
 import { parseCommand, UsageError } from "./args/args.ts";
 import { USAGE } from "./args/usage.ts";
 import { runBuild } from "./build/build.ts";

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { parseAttrs } from "@compiler/parse/attrs.ts";
-import { parse } from "@compiler/parse/sections.ts";
+import { parseAttrs } from "#compiler/parse/attrs.ts";
+import { parse } from "#compiler/parse/sections.ts";
 
 const FILE = "Card.lusia";
 

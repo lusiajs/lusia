@@ -1,4 +1,4 @@
-import { markedCode } from "@compiler/sourcemap/marker.ts";
+import { markedCode } from "#compiler/sourcemap/marker.ts";
 import { trailingArg, type GenContext } from "./context.ts";
 import { readExpression } from "./element.ts";
 import type { EachBinding } from "../types/each.ts";

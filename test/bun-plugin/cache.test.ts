@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { storeModule, pruneModules, type CachedModule } from "@bun-plugin/cache.ts";
-import type { ModuleUpdate } from "@bun-plugin/update.ts";
-import { lusia } from "@bun-plugin/index.ts";
-import { compile, hash } from "@compiler/index.ts";
-import type { Steps } from "@cli/build/timings.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import { storeModule, pruneModules, type CachedModule } from "#bun-plugin/cache.ts";
+import type { ModuleUpdate } from "#bun-plugin/update.ts";
+import { lusia } from "#bun-plugin/index.ts";
+import { compile, hash } from "#compiler/index.ts";
+import type { Steps } from "#cli/build/timings.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 

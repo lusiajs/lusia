@@ -1,4 +1,4 @@
-import { depsCurrent, forgetStyles, type CompileResult, type StyleDep } from "@compiler/index.ts";
+import { depsCurrent, forgetStyles, type CompileResult, type StyleDep } from "#compiler/index.ts";
 import { existsSync } from "node:fs";
 
 export interface CachedModule {

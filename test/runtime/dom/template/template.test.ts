@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { createTemplate, instantiate } from "@runtime/dom/template/template.ts";
-import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
+import { createTemplate, instantiate } from "#runtime/dom/template/template.ts";
+import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "#runtime/markers.ts";
 
 describe("createTemplate and instantiate", () => {
   test("binds in document order and strips markers", () => {

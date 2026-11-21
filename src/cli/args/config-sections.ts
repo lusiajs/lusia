@@ -1,11 +1,11 @@
-import { LAZY_MODES, LAZY_PREFETCH } from "@compiler/lazy/options.ts";
+import { LAZY_MODES, LAZY_PREFETCH } from "#compiler/lazy/options.ts";
 import {
   LINT_LEVELS,
   LINT_RULE_CODES,
   type LintLevel,
   type LintRuleCode,
   type LintRuleSettings,
-} from "@language/lint/lint.ts";
+} from "#language/lint/lint.ts";
 import type { LusiaConfig } from "./config-types.ts";
 import {
   asObject,

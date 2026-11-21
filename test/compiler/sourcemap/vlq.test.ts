@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { encodeVlq } from "@compiler/sourcemap/vlq.ts";
+import { encodeVlq } from "#compiler/sourcemap/vlq.ts";
 
 describe("encodeVlq", () => {
   test("encodes zero, positive and negative values", () => {

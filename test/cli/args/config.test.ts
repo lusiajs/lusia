@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { readConfig } from "@cli/args/config.ts";
-import { parseCommand } from "@cli/args/args.ts";
-import { animateConfigFromNames } from "@runtime/animate/options/config-names.ts";
+import { readConfig } from "#cli/args/config.ts";
+import { parseCommand } from "#cli/args/args.ts";
+import { animateConfigFromNames } from "#runtime/animate/options/config-names.ts";
 
 const CONFIG_INDEX = new URL("../../../src/config/index.ts", import.meta.url).pathname;
 

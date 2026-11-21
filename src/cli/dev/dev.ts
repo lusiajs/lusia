@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
-import type { LazySettings } from "@bun-plugin/children.ts";
-import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import type { LazySettings } from "#bun-plugin/children.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import { colorEnabled } from "../log/color.ts";
 import { entryPath } from "../build/bundle.ts";
 import { createDevServer } from "./dev-server.ts";

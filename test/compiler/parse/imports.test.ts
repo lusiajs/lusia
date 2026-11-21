@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { splitImports } from "@compiler/parse/imports.ts";
-import { parse } from "@compiler/parse/sections.ts";
+import { splitImports } from "#compiler/parse/imports.ts";
+import { parse } from "#compiler/parse/sections.ts";
 import { catchError } from "../catch-error.ts";
 
 const FILE = "Card.lusia";

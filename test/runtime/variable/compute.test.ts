@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { variable } from "@runtime/variable/variable.ts";
+import { variable } from "#runtime/variable/variable.ts";
 
 describe("variable.compute", () => {
   test("get reads the computed value", () => {

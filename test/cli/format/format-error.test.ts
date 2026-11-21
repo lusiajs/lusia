@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { LusiaError } from "@compiler/errors/error.ts";
-import { formatError } from "@cli/format/format-error.ts";
+import { LusiaError } from "#compiler/errors/error.ts";
+import { formatError } from "#cli/format/format-error.ts";
 
 const SOURCE = ["<script>", "const a = 1;", "</script>", "<p>{a + }</p>", "<p>ok</p>"].join("\n");
 const FILE = `${process.cwd()}/src/Card.lusia`;

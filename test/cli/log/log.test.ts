@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { categoryCode, categoryHue, pastelForHue } from "@cli/log/color.ts";
-import { createLogger, defaultLogOptions, type LogOptions } from "@cli/log/log.ts";
+import { categoryCode, categoryHue, pastelForHue } from "#cli/log/color.ts";
+import { createLogger, defaultLogOptions, type LogOptions } from "#cli/log/log.ts";
 
 const ANSI = /\x1b\[[0-9;]*m/g;
 const NOW = new Date(2026, 0, 2, 3, 4, 5);

@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { bundleApp } from "@cli/build/bundle.ts";
-import { runBuild } from "@cli/build/build.ts";
-import { buildDev } from "@cli/build/dev-build.ts";
+import { bundleApp } from "#cli/build/bundle.ts";
+import { runBuild } from "#cli/build/build.ts";
+import { buildDev } from "#cli/build/dev-build.ts";
 
 const REPO = new URL("../../../", import.meta.url).pathname;
 const LAZY_MARKER = "lazy-chunk-marker-7f3";

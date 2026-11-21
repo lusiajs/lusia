@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { bindElement } from "@runtime/dom/bind/element.ts";
-import { bindInput } from "@runtime/dom/bind/input.ts";
-import { bindProp } from "@runtime/dom/bind/property.ts";
-import { watch } from "@runtime/variable/graph.ts";
-import { variable } from "@runtime/variable/variable.ts";
+import { bindElement } from "#runtime/dom/bind/element.ts";
+import { bindInput } from "#runtime/dom/bind/input.ts";
+import { bindProp } from "#runtime/dom/bind/property.ts";
+import { watch } from "#runtime/variable/graph.ts";
+import { variable } from "#runtime/variable/variable.ts";
 import Clicks from "./fixtures/Clicks.lusia";
 import Fields from "./fixtures/Fields.lusia";
 import Writes from "./fixtures/Writes.lusia";

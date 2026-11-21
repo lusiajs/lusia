@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { resolve } from "node:path";
-import { parseCommand, UsageError } from "@cli/args/args.ts";
+import { parseCommand, UsageError } from "#cli/args/args.ts";
 
 const NO_ENV = {};
 

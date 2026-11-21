@@ -1,4 +1,4 @@
-import { fnv1a } from "@compiler/id.ts";
+import { fnv1a } from "#compiler/id.ts";
 
 export type Rgb = [red: number, green: number, blue: number];
 

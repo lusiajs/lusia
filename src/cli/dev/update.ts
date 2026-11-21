@@ -1,4 +1,4 @@
-import type { ModuleUpdate } from "@bun-plugin/update.ts";
+import type { ModuleUpdate } from "#bun-plugin/update.ts";
 
 export interface StyleUpdate {
   id: string;

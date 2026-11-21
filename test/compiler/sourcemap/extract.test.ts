@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { extractSourceMap } from "@compiler/sourcemap/extract.ts";
+import { extractSourceMap } from "#compiler/sourcemap/extract.ts";
 
 const DIGITS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 

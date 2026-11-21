@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cp, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { runBuild } from "@cli/build/build.ts";
+import { runBuild } from "#cli/build/build.ts";
 
 const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
 const REPO = new URL("../../../", import.meta.url).pathname;

@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { lintLusia, type LintOptions } from "@language/lint/lint.ts";
-import { applyFixes } from "@language/lint/fixes.ts";
-import { parsePropDefs, type PropDef } from "@language/parse/props.ts";
+import { lintLusia, type LintOptions } from "#language/lint/lint.ts";
+import { applyFixes } from "#language/lint/fixes.ts";
+import { parsePropDefs, type PropDef } from "#language/parse/props.ts";
 
-const BADGE = join(import.meta.dir, "../../editors/fixtures/lint/badge.lusia");
+const BADGE = join(import.meta.dir, "fixtures/badge.lusia");
 const BADGE_PROPS = parsePropDefs(readFileSync(BADGE, "utf8"));
 const BADGE_IMPORT = '<script>\nimport Badge from "./badge.lusia";\n</script>\n';
 
