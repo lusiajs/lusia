@@ -5,7 +5,8 @@ import { applyFixes } from "#language/lint/fixes.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 import { relative } from "node:path";
 import { childPropsLookup, childSourceLookup } from "../build/component-file.ts";
-import { classTypeResolver, loadTypeScript, type TypeScriptModule } from "./class-types.ts";
+import { classTypeResolver } from "./class-types.ts";
+import { loadClassTypes, type ClassTypes } from "./type-program.ts";
 import { ANSI, colorEnabled, paint } from "../log/color.ts";
 import { collectFiles } from "../files.ts";
 import { formatError } from "../format/format-error.ts";
@@ -22,7 +23,9 @@ export interface LintOptions {
 
 export async function runLint(options: LintOptions): Promise<number> {
   const files = await collectFiles(options.paths);
-  const typeScript = await loadTypeScript();
+  const classTypes = await loadClassTypes(
+    files.map((file) => ({ path: file, text: readFileSync(file, "utf8") })),
+  );
   const color = colorEnabled();
   let errors = 0;
   let warnings = 0;
@@ -30,7 +33,7 @@ export async function runLint(options: LintOptions): Promise<number> {
   for (const file of files) {
     let source = readFileSync(file, "utf8");
     if (options.fix) {
-      const next = fixedSource(file, source, options.rules, typeScript);
+      const next = fixedSource(file, source, options.rules, classTypes);
       if (next !== source) {
         writeFileSync(file, next);
         source = next;
@@ -42,7 +45,7 @@ export async function runLint(options: LintOptions): Promise<number> {
       errors++;
       process.stderr.write(`${formatError(compileError, source, color)}\n`);
     }
-    for (const issue of issuesOf(file, source, options.rules, typeScript)) {
+    for (const issue of issuesOf(file, source, options.rules, classTypes)) {
       process.stdout.write(`${formatIssue(file, issue, color)}\n`);
       if (issue.severity === "error") errors++;
       else warnings++;
@@ -56,11 +59,11 @@ function fixedSource(
   file: string,
   source: string,
   rules: LintRuleSettings | undefined,
-  typeScript: TypeScriptModule | undefined,
+  classTypes: ClassTypes | undefined,
 ): string {
   let current = source;
   for (let round = 0; round < FIX_ROUNDS; round++) {
-    const next = applyFixes(current, issuesOf(file, current, rules, typeScript));
+    const next = applyFixes(current, issuesOf(file, current, rules, classTypes));
     if (next === current) break;
     current = next;
   }
@@ -71,9 +74,9 @@ function issuesOf(
   file: string,
   source: string,
   rules: LintRuleSettings | undefined,
-  typeScript: TypeScriptModule | undefined,
+  classTypes: ClassTypes | undefined,
 ): LintIssue[] {
-  const resolveClassType = classTypeResolver(typeScript, file, source);
+  const resolveClassType = classTypeResolver(classTypes, file, source);
   return lintLusia(
     source,
     childPropsLookup(file, source),
