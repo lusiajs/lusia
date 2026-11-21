@@ -1,0 +1,11 @@
+<script>
+  import Child from "./Child.lusia";
+</script>
+
+<section>
+  <Child />
+</section>
+
+<style>
+  section { padding: 0; }
+</style>

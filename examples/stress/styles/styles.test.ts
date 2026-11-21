@@ -8,9 +8,8 @@ const PARENT_FILE = new URL("./Parent.lusia", import.meta.url).pathname;
 describe("tree and scoped rules on the same class", () => {
   test("compiles a tree selector and a scoped selector that stops at child roots", async () => {
     const { css, id } = compile(await Bun.file(PARENT_FILE).text(), PARENT_FILE);
-    const root = `[data-l="${id}"]`;
-    expect(css).toContain(`.mark:where(${root}, ${root} *) {`);
-    expect(css).toContain(`.mark:where(${root}, ${root} *):not(:where(`);
+    expect(css).toContain(`.mark:where(.t-${id}) {`);
+    expect(css).toContain(`.mark:where(.l-${id}) {`);
   });
 
   test("the child keeps its own markup and detaches cleanly", () => {

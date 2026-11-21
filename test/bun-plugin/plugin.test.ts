@@ -39,12 +39,12 @@ function textOf(root: HTMLElement, selector: string): string {
 describe("lusia bun plugin with an Events component", () => {
   test("stamps only the top-level element and injects compiled scss", async () => {
     const { id } = await attachEvents();
-    expect(target!.querySelector("div")!.getAttribute("data-l")).toBe(id);
-    expect(target!.querySelector(".status")!.hasAttribute("data-l")).toBe(false);
+    expect(target!.querySelector("div")!.classList.contains(`t-${id}`)).toBe(true);
+    expect(target!.querySelector(".status")!.classList.contains(`t-${id}`)).toBe(true);
     expect(textOf(target!, ".status")).toBe("Clicked 0 of 5 times.");
 
     const css = document.querySelector(`style[data-lusia="${id}"]`)!.textContent!;
-    expect(css).toContain(`.status.done:where(.l-${id})`);
+    expect(css).toContain(`.status.done:where(.t-${id})`);
     expect(css).toContain("color: var(--accent)");
   });
 

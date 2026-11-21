@@ -1,0 +1,18 @@
+<script>
+  import { variable } from "lusiajs";
+  import Leaf from "./Leaf.lusia";
+  import Plain from "./Plain.lusia";
+
+  const tone = variable("warm");
+</script>
+
+<div class="child">
+  <CONTENT />
+  <Leaf />
+  <Plain />
+  <p class="tone {tone.value}">Tone</p>
+</div>
+
+<style>
+  .child { padding: 1px; }
+</style>

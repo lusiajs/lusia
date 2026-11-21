@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { LusiaError } from "#compiler/errors/error.ts";
 import { compileStyle, compileStyleResult, forgetStyles } from "#compiler/style/sass.ts";
-import { FILE, ID, SCOPED, ROOT, TREE } from "./fixtures.ts";
+import { FILE, ID, SCOPED, TREE } from "./fixtures.ts";
 
 describe("compileStyle", () => {
   test("compiles SCSS nesting and variables, then scopes", () => {
@@ -30,7 +30,8 @@ describe("compileStyle", () => {
     const style = { content: "body { margin: 0; }", attrs: { global: "" }, line: 1, from: 0 };
     const out = compileStyle(style, FILE, ID);
     expect(out).toContain("body {");
-    expect(out).not.toContain(ROOT);
+    expect(out).not.toContain(TREE);
+    expect(out).not.toContain(SCOPED);
   });
 
   test('lang="css" skips the Sass compiler', () => {

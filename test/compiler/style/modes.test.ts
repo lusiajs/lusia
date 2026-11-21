@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { scopeCss } from "#compiler/style/modes.ts";
-import { ID, ROOT, SCOPED, TREE } from "./fixtures.ts";
+import { ID, SCOPED, TREE } from "./fixtures.ts";
 
 describe("scopeCss tree mode", () => {
   test("adds the tree filter to the subject", () => {
@@ -19,7 +19,8 @@ describe("scopeCss tree mode", () => {
     const out = scopeCss(css, ID, "tree");
     expect(out).toContain("@keyframes spin {");
     expect(out).toContain("from { transform: rotate(0); }");
-    expect(out).not.toContain(ROOT);
+    expect(out).not.toContain(TREE);
+    expect(out).not.toContain(SCOPED);
   });
 });
 
