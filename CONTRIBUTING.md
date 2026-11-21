@@ -40,6 +40,22 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `examples/stress` | Scenarios that push the limits and report timings |
 | `reference/api.ts` | The API table. The extension and the docs site read it as `lusiajs/api` |
 | `scripts/check.ts` | The steps behind `bun run check` |
+| `scripts/generate-docs.ts` | Writes the generated package docs. See [Generated docs](#generated-docs) |
+
+## Generated docs
+
+The package ships generated docs in `docs/`, plus `llms.txt` and `llms-full.txt` for AI assistants.
+
+| Output | Built from |
+| ------ | ---------- |
+| `docs/api/*.md` and `docs/README.md` | `reference/api.ts` and `reference/api/` |
+| `docs/errors.md` | The error codes in `src/compiler/errors/codes/` |
+| `docs/config.md` | `config.schema.json` |
+| `llms.txt`, `llms-full.txt` | The same sources |
+
+- Run `bun run docs:generate` to write them. The output is ignored by git.
+- The publish workflow runs it before `bun publish`, and `prepack` runs it on every pack.
+- Change the sources, never the files in `docs/`.
 
 ## Other repos
 

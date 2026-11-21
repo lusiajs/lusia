@@ -36,5 +36,6 @@ To add Lusia to an existing project, run `bun add lusiajs`.
 | API names and options | [Reference](https://lusia.azpepoze.com/reference) |
 | Try code in the browser | [Playground](https://lusia.azpepoze.com/playground) |
 | Compiler and runtime error codes | [Errors](https://lusia.azpepoze.com/errors) |
+| Package docs | `node_modules/lusiajs/docs/README.md` after install |
 | Logo files | [Logo](logo/README.md) |
 | Work on Lusia itself | [Contributing](CONTRIBUTING.md) |
