@@ -20,7 +20,7 @@ const fadeOut = {
 <li class="tile" animate={[
   { style: colorAndMove, when: WHEN.ATTACH, duration: 300 },
   { style: fade, when: WHEN.ATTACH, duration: 300 },
-  { style: fadeOut, when: WHEN.DETACH, duration: 300 },
+  { style: fadeOut, when: WHEN.DETACH, duration: 300, more: { animateSpace: true } },
 ]}>
   <span>Tile</span>
 </li>

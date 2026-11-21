@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/lusiajs/lusia/main/logo/logo-128.png" width="96" alt="Lusia logo"></p>
+
 # Lusia
 
 A UI framework for [Bun](https://bun.sh). You write each component as one `.lusia` file with TypeScript, HTML and SCSS. The page updates when your variables change.
@@ -34,4 +36,5 @@ To add Lusia to an existing project, run `bun add lusia`.
 | API names and options | [Reference](https://lusia.azpepoze.com/reference) |
 | Try code in the browser | [Playground](https://lusia.azpepoze.com/playground) |
 | Compiler and runtime error codes | [Errors](https://lusia.azpepoze.com/errors) |
+| Logo files | [Logo](logo/README.md) |
 | Work on Lusia itself | [Contributing](CONTRIBUTING.md) |

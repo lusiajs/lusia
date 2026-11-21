@@ -1,73 +1,7 @@
-import { afterAll, describe, expect, test } from "bun:test";
-import { chromium, type Browser, type Page } from "playwright";
-import { fileURLToPath } from "node:url";
-
-// An attach that opens its space needs real layout, so this runs in Chromium.
-const launch = await chromium
-  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
-  .then((browser) => ({ browser, reason: "" }))
-  .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
-const browser: Browser | null = launch.browser;
-afterAll(() => browser?.close());
+import { describe, expect, test } from "bun:test";
+import { browser, openPage, ATTACH_LIST, attachSamples } from "./fixtures/browser-page.ts";
 
 const suite = browser ? describe : describe.skip;
-
-async function bundledRuntime(): Promise<string> {
-  const entry = fileURLToPath(new URL("./fixtures/detach-entry.ts", import.meta.url));
-  const build = await Bun.build({ entrypoints: [entry], format: "iife", target: "browser" });
-  if (!build.success) throw new Error(build.logs.map(String).join("\n"));
-  return await build.outputs[0]!.text();
-}
-
-async function openPage(markup: string): Promise<Page> {
-  const page = await browser!.newPage();
-  await page.setContent(`<!doctype html><html><body>${markup}</body></html>`);
-  await page.addScriptTag({ content: await bundledRuntime() });
-  return page;
-}
-
-const ATTACH_LIST = `
-  <style>body{margin:0}</style>
-  <div id="list" style="display:flex;flex-direction:column;width:200px;row-gap:16px">
-    <div id="before" style="height:40px"></div>
-    <div id="after" style="height:40px"></div>
-  </div>`;
-
-/** Inserts `#gone` before `#after` with an ATTACH animation, and samples `#after`'s top for 700ms. */
-async function attachSamples(page: Page, extraMore: string): Promise<number[]> {
-  return await page.evaluate(async (moreText) => {
-    const list = document.getElementById("list")!;
-    const after = document.getElementById("after")!;
-    const samples: number[] = [];
-    const sample = () => samples.push(after.getBoundingClientRect().top);
-
-    sample();
-    const gone = document.createElement("div");
-    gone.id = "gone";
-    gone.style.height = "60px";
-    gone.style.margin = "0";
-    list.insertBefore(gone, after);
-
-    const value = {
-      style: { 0: { opacity: 0 }, 1: { opacity: 1 } },
-      when: (window as any).lusiaWhen.ATTACH,
-      duration: 400,
-      more: JSON.parse(moreText),
-    };
-    (window as any).lusiaAnimate(gone, () => value, [], []);
-
-    let running = true;
-    const loop = () => {
-      sample();
-      if (running) requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    running = false;
-    sample();
-    return samples;
-  }, extraMore);
-}
 
 suite("ATTACH with animateSpace slides the siblings", () => {
   test("with animateSpace the sibling slides from its closed place to its open place", async () => {

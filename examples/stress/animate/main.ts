@@ -44,7 +44,7 @@ export async function run(): Promise<Result[]> {
   return [
     { name: `Attach ${TILES} tiles, 3 animations each`, value: formatMs(attachMs) },
     { name: `Enter finished (opacity 1), of ${TILES}`, value: String(atEnd) },
-    { name: `Leave ${TILES} tiles, default (siblings slide)`, value: formatMs(leaveMs) },
+    { name: `Leave ${TILES} tiles, animateSpace true (siblings slide)`, value: formatMs(leaveMs) },
     { name: "Nodes left after leave", value: String(left) },
     { name: `Leave ${TILES} tiles, animateSpace false (siblings jump)`, value: formatMs(fadeLeaveMs) },
   ];

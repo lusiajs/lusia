@@ -4,7 +4,7 @@ Lusia is a Bun-native UI framework: single-file `.lusia` components, variables a
 
 Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). Site Guide: https://lusia.azpepoze.com/guide. API table: [reference/api.ts](reference/api.ts).
 
-This repo is the framework. Sibling repos live in `../Project/lusiajs/`: `create` (npm `create-lusia`), `vsix` (VS Code extension), `docs` (site). They depend on the published `lusia` package, so a framework change reaches them only after a release.
+This repo is the framework. Sibling repos live next to it, in the same parent folder: `create` (npm `create-lusia`), `vsix` (VS Code extension), `docs` (site). They depend on the published `lusia` package, so a framework change reaches them only after a release.
 
 # 1. Keep docs in the same change
 Update `reference/api.ts` with every public API or markup change. Then update the Guide in the `docs` repo (a follow-up PR after the release). The README stays a front page.

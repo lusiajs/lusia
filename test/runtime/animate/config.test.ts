@@ -87,8 +87,8 @@ describe("config sets the defaults", () => {
     expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeUndefined();
   });
 
-  test("detach default animateSpace is true", () => {
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+  test("detach default animateSpace is false", () => {
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
   });
 
   test("attach animateSpace true turns attach space on", () => {
@@ -96,16 +96,18 @@ describe("config sets the defaults", () => {
     expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeDefined();
   });
 
-  test("detach animateSpace false turns detach space off", () => {
-    setAnimateConfig({ detach: { animateSpace: false } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+  test("detach animateSpace true turns detach space on", () => {
+    setAnimateConfig({ detach: { animateSpace: true } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
   });
 
   test("attach config does not change detach", () => {
     setAnimateConfig({ attach: { animateSpace: true } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+    setAnimateConfig({ attach: { animateSpace: false }, detach: { animateSpace: true } });
     expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
-    setAnimateConfig({ attach: { animateSpace: false } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+    setAnimateConfig({ attach: { animateSpace: true } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
   });
 
   test("item more animateSpace overrides the attach config", () => {

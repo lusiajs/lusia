@@ -3,16 +3,25 @@ export interface Box {
   left: number;
 }
 
-/** A moved element. `base` is its transform before, `inline` is the inline value to restore. */
+/** A moved element. `remaining` is how much of the shift is left: 1 at the old place, 0 at the new place. */
 export interface Mover {
   el: HTMLElement;
   dx: number;
   dy: number;
-  base: string;
+  remaining: number;
+}
+
+/** What an element had before any slide began, and the slides that are moving it now. */
+interface ElementShifts {
   inline: string;
+  base: string;
+  movers: Set<Mover>;
 }
 
 const MIN_SHIFT = 0.5;
+
+// Slides that overlap on one element must share the original transform, or the last one to end restores a stale value.
+const shiftsOf = new WeakMap<HTMLElement, ElementShifts>();
 
 /**
  * The elements whose place can change when `el` enters or leaves: each ancestor and each sibling of the element and of its ancestors.
@@ -63,9 +72,10 @@ export function compensate(elements: HTMLElement[], before: Array<Box | undefine
     const dx = from.left - to.left;
     const dy = from.top - to.top;
     if (Math.abs(dx) < MIN_SHIFT && Math.abs(dy) < MIN_SHIFT) return;
-    const mover: Mover = { el, dx, dy, base: computedTransformOf(el), inline: el.style.transform };
+    const mover: Mover = { el, dx, dy, remaining: 1 };
     movers.push(mover);
-    writeShift(mover, 1);
+    join(mover);
+    applyShifts(mover.el);
   });
   return movers;
 }
@@ -84,12 +94,48 @@ export function reopenMovers(
 
 /** `remaining` is 1 at the old place and 0 at the new place. */
 export function writeShift(mover: Mover, remaining: number): void {
-  const { dx, dy, base } = mover;
-  mover.el.style.transform = `translate(${dx * remaining}px, ${dy * remaining}px) ${base}`;
+  if (!shiftsOf.get(mover.el)?.movers.has(mover)) return;
+  mover.remaining = remaining;
+  applyShifts(mover.el);
 }
 
 export function restoreShift(mover: Mover): void {
-  mover.el.style.transform = mover.inline;
+  const shifts = shiftsOf.get(mover.el);
+  if (!shifts?.movers.delete(mover)) return;
+  if (shifts.movers.size > 0) {
+    applyShifts(mover.el);
+    return;
+  }
+  mover.el.style.transform = shifts.inline;
+  shiftsOf.delete(mover.el);
+}
+
+function join(mover: Mover): void {
+  const shifts = shiftsOf.get(mover.el) ?? startShifts(mover.el);
+  shifts.movers.add(mover);
+}
+
+function startShifts(el: HTMLElement): ElementShifts {
+  const shifts: ElementShifts = {
+    inline: el.style.transform,
+    base: computedTransformOf(el),
+    movers: new Set(),
+  };
+  shiftsOf.set(el, shifts);
+  return shifts;
+}
+
+/** The sum of every slide on the element, in front of the transform it had before. */
+function applyShifts(el: HTMLElement): void {
+  const shifts = shiftsOf.get(el);
+  if (!shifts) return;
+  let dx = 0;
+  let dy = 0;
+  for (const mover of shifts.movers) {
+    dx += mover.dx * mover.remaining;
+    dy += mover.dy * mover.remaining;
+  }
+  el.style.transform = `translate(${dx}px, ${dy}px) ${shifts.base}`;
 }
 
 function computedTransformOf(el: HTMLElement): string {

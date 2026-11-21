@@ -28,9 +28,15 @@ async function openPage(markup: string): Promise<Page> {
 }
 
 /** Removes `#gone` with its DETACH animation, and samples the `axis` position of `#after` each frame until the removal. */
-async function sampleLeave(page: Page, more: string, axis: "top" | "left"): Promise<number[]> {
+async function sampleLeave(
+  page: Page,
+  more: string,
+  axis: "top" | "left",
+  config = "",
+): Promise<number[]> {
   return await page.evaluate(
-    async ([moreText, edge]) => {
+    async ([moreText, edge, configText]) => {
+      if (configText !== "") (window as any).lusiaSetConfig(JSON.parse(configText));
       const gone = document.getElementById("gone")!;
       const after = document.getElementById("after")!;
       const more = moreText === "" ? undefined : JSON.parse(moreText);
@@ -51,7 +57,7 @@ async function sampleLeave(page: Page, more: string, axis: "top" | "left"): Prom
       tops.push(after.getBoundingClientRect()[edge]);
       return tops;
     },
-    [more, axis] as const,
+    [more, axis, config] as const,
   );
 }
 
@@ -67,6 +73,34 @@ suite("DETACH with animateSpace slides the siblings", () => {
     const page = await openPage(LIST);
     try {
       const tops = await sampleLeave(page, '{"animateSpace":true}', "top");
+      const first = tops[0]!;
+      const last = tops[tops.length - 1]!;
+      expect(first - last).toBeCloseTo(80, 0);
+      const middle = tops.filter((top) => top > last + 1 && top < first - 1);
+      expect(middle.length).toBeGreaterThan(3);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("with no option and no config the sibling jumps at once", async () => {
+    const page = await openPage(LIST);
+    try {
+      const tops = await sampleLeave(page, "", "top");
+      const first = tops[0]!;
+      const last = tops[tops.length - 1]!;
+      expect(first - last).toBeCloseTo(80, 0);
+      const middle = tops.filter((top) => top > last + 1 && top < first - 1);
+      expect(middle.length).toBe(0);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("config detach animateSpace true makes the sibling slide with no per-item option", async () => {
+    const page = await openPage(LIST);
+    try {
+      const tops = await sampleLeave(page, "", "top", '{"detach":{"animateSpace":true}}');
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);
@@ -117,7 +151,11 @@ const GAP_LIST = `
   </div>`;
 
 /** Starts the `#gone` leave and samples `#after`'s edge on every frame until the leave ends. */
-async function frameSamples(page: Page, edge: "top" | "left", extra = {}): Promise<number[]> {
+async function frameSamples(
+  page: Page,
+  edge: "top" | "left",
+  extra = { more: { animateSpace: true } },
+): Promise<number[]> {
   return await page.evaluate(
     async ([extraText, edgeName]) => {
       const gone = document.getElementById("gone")!;
@@ -199,6 +237,7 @@ suite("DETACH lifts the element out of flow", () => {
             style: { 0: { rotate: "0deg" }, 1: { rotate: "180deg" } },
             when: (window as any).lusiaWhen.DETACH,
             duration: 400,
+            more: { animateSpace: true },
           }),
           [],
           leaves,
@@ -264,6 +303,7 @@ suite("DETACH lifts the element out of flow", () => {
             style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
             when: (window as any).lusiaWhen.DETACH,
             duration: 400,
+            more: { animateSpace: true },
           }),
           cleanups,
           leaves,
@@ -311,6 +351,7 @@ suite("DETACH lifts the element out of flow", () => {
             style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
             when: (window as any).lusiaWhen.DETACH,
             duration: 400,
+            more: { animateSpace: true },
           }),
           [],
           leaves,
@@ -343,6 +384,7 @@ suite("DETACH lifts the element out of flow", () => {
             style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
             when: (window as any).lusiaWhen.DETACH,
             duration: 400,
+            more: { animateSpace: true },
           }),
           [],
           leaves,

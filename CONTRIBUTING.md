@@ -84,6 +84,8 @@ Release `lusia` first, then bump it in `docs` and `vsix`.
 2. Run `bun run check`.
 3. Push a tag that matches the version, such as `v0.1.0-beta.1`. The `publish.yml` workflow publishes to npm with `bun publish`.
 
+CI runs `bun run check` on every push and pull request to `dev` and `main`.
+
 A version with a dash (`0.1.0-beta.1`) is published under the `beta` tag. A plain version (`0.1.0`) is published as `latest`.
 
 ## Workflow

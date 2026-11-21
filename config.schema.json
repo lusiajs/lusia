@@ -229,7 +229,7 @@
           "properties": {
             "animateSpace": {
               "type": "boolean",
-              "description": "Slide the siblings into the freed space. false: they jump at once. Default: true"
+              "description": "Slide the siblings into the freed space. false: they jump at once. Default: false"
             }
           }
         },
