@@ -5,7 +5,7 @@ export const configEntries: ApiEntry[] = [
 		id: "set-config",
 		name: "setConfig()",
 		kind: "function",
-		group: "basics",
+		group: "motion",
 		signature: "setConfig(config: RuntimeConfig, reach?: ConfigScope): void",
 		summary: "Sets runtime settings for a component, or for the whole app.",
 		bullets: [
@@ -20,7 +20,7 @@ export const configEntries: ApiEntry[] = [
 		id: "scope",
 		name: "SCOPE",
 		kind: "value",
-		group: "basics",
+		group: "motion",
 		signature:
 			'const SCOPE: { readonly SCOPED: "scoped"; readonly TREE: "tree"; readonly GLOBAL: "global" }',
 		summary: "How far a setConfig call reaches.",
