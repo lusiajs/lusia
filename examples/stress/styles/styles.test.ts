@@ -12,6 +12,20 @@ describe("tree and scoped rules on the same class", () => {
     expect(css).toContain(`.mark:where(.l-${id}) {`);
   });
 
+  test("the parent's tree rule reaches the attached child, its scoped rule does not", () => {
+    const target = document.createElement("div");
+    document.body.append(target);
+    const instance = attach(Parent, target);
+    const childMark = target.querySelector(".child .mark")!;
+    const parentMark = target.querySelector(".parent .mark")!;
+    expect(getComputedStyle(childMark).outlineColor).toBe("rebeccapurple");
+    expect(getComputedStyle(childMark).backgroundColor).not.toBe("lightyellow");
+    expect(getComputedStyle(parentMark).backgroundColor).toBe("lightyellow");
+
+    instance.detach();
+    target.remove();
+  });
+
   test("the child keeps its own markup and detaches cleanly", () => {
     const target = document.createElement("div");
     document.body.append(target);

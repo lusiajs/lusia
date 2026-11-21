@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "lusiajs/compiler";
 import { mount, resetMounts } from "../fixtures/mount.ts";
+import Host from "./fixtures/Host.lusia";
 import Other from "./fixtures/Other.lusia";
 import Parent from "./fixtures/Parent.lusia";
 import Plain from "./fixtures/Plain.lusia";
@@ -96,5 +97,15 @@ describe("one child under two parents", () => {
     const first = mount(Parent).root;
     const second = mount(Parent).root;
     expect(classesOf(second, ".child")).toEqual(classesOf(first, ".child"));
+  });
+});
+
+describe("attach", () => {
+  test("a component attached into a styled element inherits its tree classes", async () => {
+    const HOST = await idOf("Host");
+    const root = mount(Host).root;
+    expect(classesOf(root, ".child")).toEqual(expect.arrayContaining([tree(HOST), tree(CHILD)]));
+    expect(classesOf(root, ".leaf")).toEqual(expect.arrayContaining([tree(HOST), tree(LEAF)]));
+    expect(classesOf(root, ".child")).not.toContain(scoped(HOST));
   });
 });

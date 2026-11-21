@@ -1,5 +1,6 @@
 import type { Cleanup } from "../template/bindings.ts";
 import type { Component, Host, Instance, Props, Render } from "../component/component.ts";
+import { treeClassesOf } from "../template/classes.ts";
 import { leaveThen, type Leave } from "../component/leave.ts";
 import {
   createInstance,
@@ -27,7 +28,8 @@ export function hotComponent(id: string, css: string, render: Render): HotCompon
 
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const instance = mountComponent(id, { props, bound: {}, inherited: "" }, leaves, target, null);
+    const inherited = treeClassesOf(target);
+    const instance = mountComponent(id, { props, bound: {}, inherited }, leaves, target, null);
     return { root: target, detach: () => leaveThen(leaves, () => unmountInstance(instance)) };
   };
 

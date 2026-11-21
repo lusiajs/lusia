@@ -1,5 +1,6 @@
 import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../template/bindings.ts";
+import { treeClassesOf } from "../template/classes.ts";
 import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
 import { collectAttachHooks, runAttach, type AttachHook } from "./lifecycle.ts";
@@ -90,7 +91,8 @@ export type Place = Component["place"];
 export function componentFrom(place: Place): Component {
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const remove = place(target, null, { props, bound: {}, inherited: "" }, leaves);
+    const inherited = treeClassesOf(target);
+    const remove = place(target, null, { props, bound: {}, inherited }, leaves);
     return { root: target, detach: () => leaveThen(leaves, remove) };
   };
   return Object.assign(component, { place });

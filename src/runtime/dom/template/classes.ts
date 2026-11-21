@@ -1,3 +1,5 @@
+import { TREE_PREFIX } from "../../markers.ts";
+
 /** Two space-separated class lists in one, skipping an empty list. */
 export function joinClasses(first: string, second: string): string {
   if (first === "") return second;
@@ -13,6 +15,14 @@ export function withInheritedClasses(value: unknown, inherited: string): unknown
 
 function toClassText(value: unknown): string {
   return value == null || value === false ? "" : String(value);
+}
+
+/** The tree classes an element carries. A component mounted into it inherits them. */
+export function treeClassesOf(target: Node): string {
+  if (target.nodeType !== Node.ELEMENT_NODE) return "";
+  return [...(target as Element).classList]
+    .filter((name) => name.startsWith(TREE_PREFIX))
+    .join(" ");
 }
 
 /** Adds each class to every element under `root`. */

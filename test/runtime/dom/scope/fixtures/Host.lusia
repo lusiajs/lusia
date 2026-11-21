@@ -1,0 +1,17 @@
+<script>
+  import { attach, onAttach } from "lusiajs";
+  import Child from "./Child.lusia";
+
+  onAttach((root: Element) => {
+    const child = attach(Child, root.querySelector(".slot")!);
+    return () => child.detach();
+  });
+</script>
+
+<div class="host">
+  <div class="slot"></div>
+</div>
+
+<style>
+  .host { margin: 0; }
+</style>
