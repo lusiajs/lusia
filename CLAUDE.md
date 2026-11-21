@@ -27,6 +27,9 @@ Worktrees go in `.worktrees/` (gitignored): `git worktree add .worktrees/<name> 
 # 7. Merge through dev
 The main agent reviews, runs `bun run check`, and merges into `dev`. Only the user moves `dev` to `main`.
 
+# 7a. Versions of the sibling packages
+`create-lusia` uses the same version as `lusia` (a beta is `0.1.0-beta.1` in both). The VS Code extension (`vsix`) has the same `major.minor` as the lusia it supports and its own patch: lusia `0.1.x` goes with extension `0.1.x`, and every extension-only release bumps only the patch (`0.1.0`, `0.1.1`). The Marketplace rejects a fourth number (`0.1.0.1`) and pre-release suffixes, so the extension never uses them. When `lusia` moves to a new `major.minor`, also release `vsix` with that `major.minor`. Full rule: `vsix/CLAUDE.md`.
+
 # 8. Issues only for unfinished work
 Open a GitHub issue only for work left open or a feature the user wants tracked. Add details as comments on an existing issue. Close it with a comment once merged into `dev` and `bun run check` passes. Reference it in the commit (`refs #N`).
 
