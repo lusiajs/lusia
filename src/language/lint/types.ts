@@ -40,6 +40,8 @@ export interface ChildSource {
   path: string;
   source: string;
   childSource: ChildSourceLookup;
+  /** Reads class types from the child's own imports. */
+  resolveClassType: ClassTypeResolver | undefined;
 }
 
 export type ChildSourceLookup = (name: string) => ChildSource | undefined;

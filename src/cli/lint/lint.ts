@@ -81,7 +81,7 @@ function issuesOf(
     source,
     childPropsLookup(file, source),
     { rules, file, resolveClassType },
-    childSourceLookup(file, source),
+    childSourceLookup(file, source, classTypes),
   );
 }
 

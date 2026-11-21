@@ -12,7 +12,12 @@ function componentsLookup(components: Record<string, string>): ChildSourceLookup
   return (name) => {
     const source = components[name];
     if (source === undefined) return undefined;
-    return { path: name, source, childSource: componentsLookup(components) };
+    return {
+      path: name,
+      source,
+      childSource: componentsLookup(components),
+      resolveClassType: undefined,
+    };
   };
 }
 

@@ -1,0 +1,5 @@
+<script>
+import { tone } from "./palette.ts";
+</script>
+
+<li class="cell {tone}"></li>

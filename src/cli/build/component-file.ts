@@ -3,6 +3,8 @@ import { dirname, resolve } from "node:path";
 import { findComponentImport } from "#language/parse/imports.ts";
 import { parsePropDefs, type PropDef } from "#language/parse/props.ts";
 import type { ChildSource, ChildSourceLookup } from "#language/lint/types.ts";
+import { classTypeResolver } from "../lint/class-types.ts";
+import type { ClassTypes } from "../lint/type-program.ts";
 
 /** The file a component imports as `name`, or undefined when it is not imported or missing. */
 export function childFile(documentPath: string, text: string, name: string): string | undefined {
@@ -22,20 +24,34 @@ export function declaredProps(
   return path ? parsePropDefs(readFileSync(path, "utf8")) : undefined;
 }
 
-/** The source of an imported component, with the same lookup for its own imports. */
-export function childSourceLookup(documentPath: string, text: string): ChildSourceLookup {
+/** The source of an imported component, with the lookups for its own imports and class types. */
+export function childSourceLookup(
+  documentPath: string,
+  text: string,
+  classTypes: ClassTypes | undefined,
+): ChildSourceLookup {
   const cache = new Map<string, ChildSource | undefined>();
   return (name) => {
-    if (!cache.has(name)) cache.set(name, loadChild(documentPath, text, name));
+    if (!cache.has(name)) cache.set(name, loadChild(documentPath, text, name, classTypes));
     return cache.get(name);
   };
 }
 
-function loadChild(documentPath: string, text: string, name: string): ChildSource | undefined {
+function loadChild(
+  documentPath: string,
+  text: string,
+  name: string,
+  classTypes: ClassTypes | undefined,
+): ChildSource | undefined {
   const path = childFile(documentPath, text, name);
   if (!path) return undefined;
   const source = readFileSync(path, "utf8");
-  return { path, source, childSource: childSourceLookup(path, source) };
+  return {
+    path,
+    source,
+    childSource: childSourceLookup(path, source, classTypes),
+    resolveClassType: classTypeResolver(classTypes, path, source),
+  };
 }
 
 export function childPropsLookup(

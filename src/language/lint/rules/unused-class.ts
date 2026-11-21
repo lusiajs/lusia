@@ -145,7 +145,7 @@ function collectChildUsage(
     const child = lookup(item.name);
     if (!child || visited.has(child.path)) continue;
     visited.add(child.path);
-    const childMarkup = markupClasses(child.source);
+    const childMarkup = markupClasses(child.source, child.resolveClassType);
     for (const name of childMarkup.used) usage.used.add(name);
     usage.unsafeDynamic ||= childMarkup.unsafeDynamic;
     collectChildUsage(childScript(child.source), child.childSource, visited, usage);

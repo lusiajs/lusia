@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
+import { childSourceLookup } from "#cli/build/component-file.ts";
 import { classTypeResolver } from "#cli/lint/class-types.ts";
 import { loadClassTypes } from "#cli/lint/type-program.ts";
 import { lintLusia } from "#language/lint/lint.ts";
@@ -36,6 +37,31 @@ describe("class types from TypeScript", () => {
     const source = `<script>\nimport { shade } from "./palette.ts";\n</script>\n${STYLE}<li class={shade}></li>`;
     const types = await loadClassTypes([{ path: PAGE, text: source }]);
     expect(classTypeResolver(types, PAGE, source)?.("shade", 0)).toEqual(["odd", "even"]);
+  });
+
+  test("a child's union import marks the root's tree class used", async () => {
+    const source = `<script>\nimport Child from "./child.lusia";\n</script>\n<style>\n.odd { color: red; }\n.other { color: red; }\n</style>\n<Child />`;
+    const types = await loadClassTypes([{ path: PAGE, text: source }]);
+    const issues = lintLusia(
+      source,
+      () => undefined,
+      { file: PAGE, resolveClassType: classTypeResolver(types, PAGE, source) },
+      childSourceLookup(PAGE, source, types),
+    );
+    expect(issues.map((issue) => issue.message)).toEqual([
+      '".other" is not used. No element in this component or its child components has this class.',
+    ]);
+  });
+
+  test("without TypeScript a child's classes stay unknown, so the root stays silent", () => {
+    const source = `<script>\nimport Child from "./child.lusia";\n</script>\n<style>\n.odd { color: red; }\n.other { color: red; }\n</style>\n<Child />`;
+    const issues = lintLusia(
+      source,
+      () => undefined,
+      { file: PAGE },
+      childSourceLookup(PAGE, source, undefined),
+    );
+    expect(issues).toEqual([]);
   });
 
   test("a missing TypeScript gives no resolver", () => {
