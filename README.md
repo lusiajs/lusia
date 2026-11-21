@@ -3,7 +3,7 @@
 A UI framework for [Bun](https://bun.sh). You write each component as one `.lusia` file with TypeScript, HTML and SCSS. The page updates when your variables change.
 
 > [!IMPORTANT]
-> Lusia has no release yet. APIs and markup may change without notice.
+> Lusia is in beta. APIs and markup may change without notice. Install the beta with `bun add lusia@beta`.
 
 ## Quick start
 
