@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "lusiajs/compiler";
-import { mount, resetMounts } from "../fixtures/mount.ts";
+import { host, mount, resetMounts } from "../fixtures/mount.ts";
+import Child from "./fixtures/Child.lusia";
 import Host from "./fixtures/Host.lusia";
 import Other from "./fixtures/Other.lusia";
 import Parent from "./fixtures/Parent.lusia";
@@ -21,8 +22,8 @@ const PARENT = await idOf("Parent");
 const CHILD = await idOf("Child");
 const LEAF = await idOf("Leaf");
 const OTHER = await idOf("Other");
-const scoped = (id: string) => `l-${id}`;
-const tree = (id: string) => `t-${id}`;
+const scoped = (id: string) => `_l${id}`;
+const tree = (id: string) => `_t${id}`;
 
 describe("own elements", () => {
   test("carry the scoped and tree classes of their component", () => {
@@ -107,5 +108,16 @@ describe("attach", () => {
     expect(classesOf(root, ".child")).toEqual(expect.arrayContaining([tree(HOST), tree(CHILD)]));
     expect(classesOf(root, ".leaf")).toEqual(expect.arrayContaining([tree(HOST), tree(LEAF)]));
     expect(classesOf(root, ".child")).not.toContain(scoped(HOST));
+  });
+
+  test("only real tree classes of the target are inherited, not user classes", async () => {
+    const PARENT_ID = await idOf("Parent");
+    const target = host();
+    target.className = `t-title _tOTHER _t${PARENT_ID}`;
+    const root = mount(Child, target).root;
+    const classes = classesOf(root, ".child");
+    expect(classes).toContain(tree(PARENT_ID));
+    expect(classes).not.toContain("t-title");
+    expect(classes).not.toContain("_tOTHER");
   });
 });

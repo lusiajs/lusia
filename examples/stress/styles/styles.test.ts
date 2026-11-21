@@ -8,8 +8,8 @@ const PARENT_FILE = new URL("./Parent.lusia", import.meta.url).pathname;
 describe("tree and scoped rules on the same class", () => {
   test("compiles a tree selector and a scoped selector that stops at child roots", async () => {
     const { css, id } = compile(await Bun.file(PARENT_FILE).text(), PARENT_FILE);
-    expect(css).toContain(`.mark:where(.t-${id}) {`);
-    expect(css).toContain(`.mark:where(.l-${id}) {`);
+    expect(css).toContain(`.mark:where(._t${id}) {`);
+    expect(css).toContain(`.mark:where(._l${id}) {`);
   });
 
   test("the parent's tree rule reaches the attached child, its scoped rule does not", () => {

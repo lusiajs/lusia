@@ -3,8 +3,8 @@ import { chromium, type Browser } from "playwright";
 import { scopeCss, type StyleMode } from "#compiler/style/modes.ts";
 import { ID } from "./fixtures.ts";
 
-// Classes as the runtime sets them: `l-p` on p's own elements, `t-p` on p's elements and everything inside them.
-const DOM = `<div class="t-g"><h1 class="t l-p t-p" id="top"></h1><div class="card l-p t-p"><h1 class="t l-p t-p" id="own"></h1><a id="link" class="l-p t-p"></a><div class="t-c"><h1 class="t t-p t-c" id="child"></h1></div></div></div><h1 class="t" id="outside"></h1>`;
+// Classes as the runtime sets them: `_lp` on p's own elements, `_tp` on p's elements and everything inside them.
+const DOM = `<div class="_tg"><h1 class="t _lp _tp" id="top"></h1><div class="card _lp _tp"><h1 class="t _lp _tp" id="own"></h1><a id="link" class="_lp _tp"></a><div class="_tc"><h1 class="t _tp _tc" id="child"></h1></div></div></div><h1 class="t" id="outside"></h1>`;
 const PAGE = `<!doctype html><html><body class="dark">${DOM}</body></html>`;
 
 // Launched once per file. Top-level await, because bun cannot skip a test after it is registered.

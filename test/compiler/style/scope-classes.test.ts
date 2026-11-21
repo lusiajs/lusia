@@ -4,14 +4,14 @@ import { scopeClassesOf } from "#compiler/style/scope-classes.ts";
 
 const FILE = `${process.cwd()}/test/compiler/Classes.lusia`;
 const ID = hash(FILE);
-const SCOPED = `l-${ID}`;
-const TREE = `t-${ID}`;
+const SCOPED = `_l${ID}`;
+const TREE = `_t${ID}`;
 const SCRIPT = `<script>\nconst on = variable(true);\nconst items = variable([1]);\n</script>\n`;
 
 describe("scopeClassesOf", () => {
   test("names only the classes the css uses", () => {
-    expect(scopeClassesOf(`.a:where(.t-${ID}) {}`, ID)).toEqual({ scoped: "", tree: TREE });
-    expect(scopeClassesOf(`.a:where(.l-${ID}) {}`, ID)).toEqual({ scoped: SCOPED, tree: "" });
+    expect(scopeClassesOf(`.a:where(.${TREE}) {}`, ID)).toEqual({ scoped: "", tree: TREE });
+    expect(scopeClassesOf(`.a:where(.${SCOPED}) {}`, ID)).toEqual({ scoped: SCOPED, tree: "" });
   });
 
   test("names nothing for css without scoped rules", () => {
@@ -23,8 +23,8 @@ describe("class scoping in the template", () => {
   test("a component without styles adds no classes", () => {
     const { code } = compile(`<p class="a">x</p>`, FILE);
     expect(code).toContain(`<p class=\\"a\\">x</p>`);
-    expect(code).not.toContain(`l-${ID}`);
-    expect(code).not.toContain(`t-${ID}`);
+    expect(code).not.toContain(SCOPED);
+    expect(code).not.toContain(TREE);
   });
 
   test("a tree rule adds the tree class to every element", () => {

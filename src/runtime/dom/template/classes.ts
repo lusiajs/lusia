@@ -1,4 +1,4 @@
-import { TREE_PREFIX } from "../../markers.ts";
+import { TREE_CLASS_PATTERN } from "../../markers.ts";
 
 /** Two space-separated class lists in one, skipping an empty list. */
 export function joinClasses(first: string, second: string): string {
@@ -21,7 +21,7 @@ function toClassText(value: unknown): string {
 export function treeClassesOf(target: Node): string {
   if (target.nodeType !== Node.ELEMENT_NODE) return "";
   return [...(target as Element).classList]
-    .filter((name) => name.startsWith(TREE_PREFIX))
+    .filter((name) => TREE_CLASS_PATTERN.test(name))
     .join(" ");
 }
 
