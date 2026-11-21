@@ -165,7 +165,7 @@ export const animateEnumEntries: ApiEntry[] = [
 		signature: "more?: { animateSpace?: boolean }",
 		summary: "Slides the siblings into the space an element takes or frees, instead of a jump.",
 		bullets: [
-			"Only ATTACH and DETACH read it. Other triggers ignore it.",
+			"Only ATTACH and DETACH accept it. On any other trigger it is an unknown key and throws error L2012.",
 			"ATTACH: the siblings slide apart to open the space. DETACH: they slide closed to fill the space the element frees. false: they jump at once.",
 			"Default false for both. The first one found wins: more.animateSpace on the item, then animate.attach.animateSpace or animate.detach.animateSpace in the config, then the library default false.",
 			"The slide uses the same duration, delay and ease as the element's own animation. Several slides at once add up.",
