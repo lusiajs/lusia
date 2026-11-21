@@ -60,6 +60,7 @@
     "format": "bun fmt",
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
+    "bench:style": "bun scripts/bench-style-scope.ts",
     "check": "bun scripts/check.ts"
   },
   "dependencies": {
