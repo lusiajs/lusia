@@ -36,12 +36,14 @@ jobs:
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Set latest while only betas exist
+      - name: Keep latest on the newest beta while no stable version exists
         run: |
           NAME=$(bun -p "require('./package.json').name")
           VERSION=$(bun -p "require('./package.json').version")
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           LATEST=$(npm view "$NAME" dist-tags.latest)
-          if [ -z "$LATEST" ]; then npm dist-tag add "$NAME@$VERSION" latest; fi
+          case "$LATEST" in
+            ""|0.0.0*|*-*) npm dist-tag add "$NAME@$VERSION" latest ;;
+          esac
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
