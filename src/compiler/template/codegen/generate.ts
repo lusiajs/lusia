@@ -37,13 +37,13 @@ const RUNTIME_IMPORT = `import {
   type Cleanup as __Cleanup,
   type Host as __Host,
   type Leave as __Leave,
-} from "lusia/internal";`;
+} from "lusiajs/internal";`;
 
 // Dev builds only: the hot registry that lets `lusia dev` swap a component in place.
 const HOT_IMPORT = `import {
   hotComponent as __hotComponent,
   hotVariable as __hotVariable,
-} from "lusia/internal";`;
+} from "lusiajs/internal";`;
 
 function renderFunction(body: string, bodyLine: number, fragment: string): string {
   return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): DocumentFragment {

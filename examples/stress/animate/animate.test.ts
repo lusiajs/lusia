@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lusia";
+import { attach, type Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import Tile from "./Tile.lusia";
 import { attachTiles, DURATION, wait } from "./main.ts";

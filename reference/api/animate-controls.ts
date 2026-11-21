@@ -16,7 +16,7 @@ export const animateControlEntries: ApiEntry[] = [
 			"SCROLL: the progress follows the element's place on screen. Time settings do not apply.",
 			"MOVE, RESIZE, MOVE_OR_RESIZE: the element glides from its old box to its new one when its layout box changes. style is optional.",
 		],
-		example: `import { WHEN } from "lusia";\n\n<section animate={{ style: fadeUp, when: WHEN.VIEW }}>...</section>`,
+		example: `import { WHEN } from "lusiajs";\n\n<section animate={{ style: fadeUp, when: WHEN.VIEW }}>...</section>`,
 		members: [
 			{
 				name: "ATTACH",
@@ -71,7 +71,7 @@ export const animateControlEntries: ApiEntry[] = [
 			"reverse at the top level is an error: it moved into more.",
 			"control: a controller() plays, reverses, stops or seeks the item.",
 		],
-		example: `import type { AnimateItem } from "lusia";\n\nconst slideIn: AnimateItem = { style: slideFrom, duration: 600 };`,
+		example: `import type { AnimateItem } from "lusiajs";\n\nconst slideIn: AnimateItem = { style: slideFrom, duration: 600 };`,
 	},
 	{
 		id: "set-animate-default",
@@ -87,7 +87,7 @@ export const animateControlEntries: ApiEntry[] = [
 			"It is read at each play, so a call at app start applies everywhere.",
 			"Only ease and duration are accepted. Other keys throw.",
 		],
-		example: `import { setAnimateDefault, EASE } from "lusia";\n\nsetAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });`,
+		example: `import { setAnimateDefault, EASE } from "lusiajs";\n\nsetAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });`,
 	},
 	{
 		id: "controller",
@@ -101,6 +101,6 @@ export const animateControlEntries: ApiEntry[] = [
 			"play() and reverse() return a Promise that resolves when the play ends.",
 			"stop() ends the play where it is. seek(progress) jumps to a progress from 0 to 1.",
 		],
-		example: `import { controller, PRESET, WHEN } from "lusia";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: PRESET.POP_IN, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
+		example: `import { controller, PRESET, WHEN } from "lusiajs";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: PRESET.POP_IN, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
 	},
 ];

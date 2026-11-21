@@ -9,7 +9,7 @@ const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
 const REPO = new URL("../../../", import.meta.url).pathname;
 const BROKEN_GREETING = [
   "<script>",
-  'import { ACTIVE } from "lusia";',
+  'import { ACTIVE } from "lusiajs";',
   "console.log(ACTIVE);",
   "</script>",
   "<p>x</p>",
@@ -24,7 +24,7 @@ beforeAll(async () => {
   broken = join(workRoot, "broken");
   await cp(FIXTURE, broken, { recursive: true });
   await mkdir(join(broken, "node_modules"));
-  await symlink(REPO, join(broken, "node_modules", "lusia"), "dir");
+  await symlink(REPO, join(broken, "node_modules", "lusiajs"), "dir");
   await writeFile(join(broken, "src/Greeting.lusia"), BROKEN_GREETING);
 });
 
@@ -40,7 +40,7 @@ describe("buildDev", () => {
     expect(result.messages).toHaveLength(1);
     const text = result.messages[0]!;
     expect(text).toContain(
-      'Greeting.lusia:2:10 - error L3001: "ACTIVE" is not exported by "lusia"',
+      'Greeting.lusia:2:10 - error L3001: "ACTIVE" is not exported by "lusiajs"',
     );
     expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
     expect(text).toContain("Build failed: 1 error");
@@ -56,7 +56,7 @@ describe("buildDev changes", () => {
     app = await mkdtemp(join(tmpdir(), "lusia-dev-changes-"));
     await cp(FIXTURE, app, { recursive: true });
     await mkdir(join(app, "node_modules"));
-    await symlink(REPO, join(app, "node_modules", "lusia"), "dir");
+    await symlink(REPO, join(app, "node_modules", "lusiajs"), "dir");
   });
 
   afterAll(async () => {

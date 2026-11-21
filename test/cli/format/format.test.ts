@@ -11,7 +11,7 @@ import { formatLusia } from "#language/format/format.ts";
 
 const UNFORMATTED = [
   "<script>",
-  'import {variable} from "lusia";',
+  'import {variable} from "lusiajs";',
   'const name=variable("Ada");',
   "</script>",
   "<style scoped>",

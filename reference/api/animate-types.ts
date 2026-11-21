@@ -14,7 +14,7 @@ export const animateTypeEntries: ApiEntry[] = [
 			"An array plays each item on its own trigger.",
 			"Same-property conflicts: the later item wins.",
 		],
-		example: `import type { Animate } from "lusia";\n\nconst value: Animate = [fadeIn, { style: glow, when: WHEN.HOVER }];`,
+		example: `import type { Animate } from "lusiajs";\n\nconst value: Animate = [fadeIn, { style: glow, when: WHEN.HOVER }];`,
 	},
 	{
 		id: "keyframes-type",
@@ -31,7 +31,7 @@ export const animateTypeEntries: ApiEntry[] = [
 			"Precedence per part: the key, then the keyframes default, then the engine default (QUART + INOUT).",
 			"Style is a record of CSS properties in camelCase, such as backgroundColor. Custom properties start with --.",
 		],
-		example: `import { EASE, type Keyframes } from "lusia";\n\nconst fade: Keyframes = {\n  default: [EASE.STYLE.QUART, EASE.OUT],\n  0: { opacity: 0 },\n  0.5: [EASE.IN, { opacity: 0.8 }],\n  1: { opacity: 1 },\n};`,
+		example: `import { EASE, type Keyframes } from "lusiajs";\n\nconst fade: Keyframes = {\n  default: [EASE.STYLE.QUART, EASE.OUT],\n  0: { opacity: 0 },\n  0.5: [EASE.IN, { opacity: 0.8 }],\n  1: { opacity: 1 },\n};`,
 	},
 	{
 		id: "preset",
@@ -48,7 +48,7 @@ export const animateTypeEntries: ApiEntry[] = [
 			"Spread one to change it: { ...PRESET.FADE_IN, 1: { opacity: 0.5 } }.",
 			"IN presets ease OUT, OUT presets ease IN (both CUBIC). A key in a spread can still set its own.",
 		],
-		example: `import { WHEN, PRESET } from "lusia";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
+		example: `import { WHEN, PRESET } from "lusiajs";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
 		members: [
 			{ name: "FADE_IN", summary: "Fades in from transparent." },
 			{ name: "FADE_OUT", summary: "Fades out to transparent." },
@@ -105,6 +105,6 @@ export const animateTypeEntries: ApiEntry[] = [
 			"Returns a function: call it with t from 0 to 1.",
 			"Values that cannot blend switch at the middle.",
 		],
-		example: `import { interpolate } from "lusia";\n\nconst mix = interpolate("0px", "100px");\nmix(0.5); // "50px"`,
+		example: `import { interpolate } from "lusiajs";\n\nconst mix = interpolate("0px", "100px");\nmix(0.5); // "50px"`,
 	},
 ];

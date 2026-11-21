@@ -1,5 +1,5 @@
 <script>
-import { onAttach } from "lusia";
+import { onAttach } from "lusiajs";
 import { roots } from "./log.ts";
 
 onAttach((root: ParentNode) => {

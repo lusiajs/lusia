@@ -31,7 +31,7 @@ describe("compile dev option", () => {
     );
     expect(code).toContain('__hotVariable("count", variable(0))');
     expect(code).toContain(`export default __hotComponent("`);
-    expect(code).toContain('} from "lusia/internal";');
+    expect(code).toContain('} from "lusiajs/internal";');
   });
 
   test("prod output has no hot code", () => {

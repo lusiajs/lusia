@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import type { Instance } from "lusia";
+import type { Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import { resetVariable, rowValue } from "../variable.ts";
 import { attachTables, detachTables, ROWS_PER_TABLE } from "./tables.ts";

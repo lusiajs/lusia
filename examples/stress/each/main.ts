@@ -1,4 +1,4 @@
-import { attach } from "lusia";
+import { attach } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
 import List from "./List.lusia";

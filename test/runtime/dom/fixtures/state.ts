@@ -1,4 +1,4 @@
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 
 export interface Item {
   id: number;

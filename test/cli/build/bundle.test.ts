@@ -15,7 +15,7 @@ let app: string;
 beforeAll(async () => {
   app = await mkdtemp(join(tmpdir(), "lusia-bundle-"));
   await mkdir(join(app, "node_modules"));
-  await symlink(REPO, join(app, "node_modules", "lusia"), "dir");
+  await symlink(REPO, join(app, "node_modules", "lusiajs"), "dir");
   await writeFile(
     join(app, "index.html"),
     '<!doctype html><html><body><script type="module" src="./main.ts"></script></body></html>\n',
@@ -34,7 +34,7 @@ describe("lazy chunks", () => {
   test("each lazy module is its own chunk, and a shared module is in one chunk only", async () => {
     const shared = await mkdtemp(join(tmpdir(), "lusia-shared-"));
     await mkdir(join(shared, "node_modules"));
-    await symlink(REPO, join(shared, "node_modules", "lusia"), "dir");
+    await symlink(REPO, join(shared, "node_modules", "lusiajs"), "dir");
     await writeFile(
       join(shared, "index.html"),
       '<!doctype html><html><body><script type="module" src="./main.ts"></script></body></html>\n',

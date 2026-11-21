@@ -18,7 +18,7 @@ export interface CompletionItemData {
   entryId?: string;
 }
 
-/** A script item; `importName` says which `lusia` import it needs. */
+/** A script item; `importName` says which `lusiajs` import it needs. */
 export interface ScriptItem extends CompletionItemData {
   importName?: string;
 }

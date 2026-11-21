@@ -1,5 +1,5 @@
 <script>
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 import Field from "./Field.lusia";
 import ReadOnly from "./ReadOnly.lusia";
 

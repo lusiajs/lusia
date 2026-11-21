@@ -7,7 +7,7 @@ import { lusia } from "#bun-plugin/index.ts";
 
 const REPO = new URL("../../../", import.meta.url).pathname;
 const ACTIVE_IMPORT = `<script>
-import { variable, ACTIVE } from "lusia";
+import { variable, ACTIVE } from "lusiajs";
 const count = variable(1);
 console.log(ACTIVE, count);
 </script>
@@ -19,7 +19,7 @@ let workRoot: string;
 beforeAll(async () => {
   workRoot = await mkdtemp(join(tmpdir(), "lusia-build-errors-"));
   await mkdir(join(workRoot, "node_modules"));
-  await symlink(REPO, join(workRoot, "node_modules", "lusia"), "dir");
+  await symlink(REPO, join(workRoot, "node_modules", "lusiajs"), "dir");
 });
 
 afterAll(async () => {
@@ -57,9 +57,9 @@ describe("formatBuildFailure", () => {
     );
     const text = formatBuildFailure(logs, false);
     expect(text).toContain(
-      `${displayPath(logs[0]!.position!.file)}:2:20 - error L3001: "ACTIVE" is not exported by "lusia"`,
+      `${displayPath(logs[0]!.position!.file)}:2:20 - error L3001: "ACTIVE" is not exported by "lusiajs"`,
     );
-    expect(text).toContain('2 | import { variable, ACTIVE } from "lusia";');
+    expect(text).toContain('2 | import { variable, ACTIVE } from "lusiajs";');
     expect(text).toContain("  | " + " ".repeat(19) + "^~~~~~");
     expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
     expect(text).toContain("Build failed: 1 error");
@@ -68,11 +68,11 @@ describe("formatBuildFailure", () => {
   test("an import of the old store name points to variable", async () => {
     const logs = await failingLogs(
       "store",
-      { "src/index.ts": 'import { store } from "lusia";\nconsole.log(store);\n' },
+      { "src/index.ts": 'import { store } from "lusiajs";\nconsole.log(store);\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
-    expect(text).toContain('error L3001: "store" is not exported by "lusia"');
+    expect(text).toContain('error L3001: "store" is not exported by "lusiajs"');
     expect(text).toContain("hint: store was renamed to variable.");
   });
 
@@ -91,11 +91,11 @@ describe("formatBuildFailure", () => {
   test("a misspelled export suggests the closest real export", async () => {
     const logs = await failingLogs(
       "typo",
-      { "src/index.ts": 'import { variabl } from "lusia";\nconsole.log(variabl);\n' },
+      { "src/index.ts": 'import { variabl } from "lusiajs";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
-    expect(text).toContain('error L3001: "variabl" is not exported by "lusia"');
+    expect(text).toContain('error L3001: "variabl" is not exported by "lusiajs"');
     expect(text).toContain('hint: Did you mean "variable"?');
   });
 
@@ -113,7 +113,7 @@ describe("formatBuildFailure", () => {
   test("no ANSI colors when color is off", async () => {
     const logs = await failingLogs(
       "plain",
-      { "src/index.ts": 'import { variabl } from "lusia";\nconsole.log(variabl);\n' },
+      { "src/index.ts": 'import { variabl } from "lusiajs";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     expect(formatBuildFailure(logs, false)).not.toContain("\x1b[");

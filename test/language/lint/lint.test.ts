@@ -39,7 +39,7 @@ describe("lint rules", () => {
   test("a component used as a value is not flagged", () => {
     const source = `<script>
 import Badge from "./badge.lusia";
-import { attach } from "lusia";
+import { attach } from "lusiajs";
 attach(Badge, document.body);
 </script>`;
     expect(codes(source)).toEqual([]);
@@ -47,7 +47,7 @@ attach(Badge, document.body);
 
   test("props-twice flags the second props() call", () => {
     const source =
-      '<script>\nimport { props } from "lusia";\nprops({ a: 1 });\nprops({ b: 2 });\n</script>';
+      '<script>\nimport { props } from "lusiajs";\nprops({ a: 1 });\nprops({ b: 2 });\n</script>';
     const issues = lintLusia(source, childProps);
     expect(issues.map((issue) => [issue.code, issue.line])).toEqual([["props-twice", 4]]);
   });

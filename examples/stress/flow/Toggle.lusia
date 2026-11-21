@@ -1,5 +1,5 @@
 <script>
-import { WHEN, PRESET } from "lusia";
+import { WHEN, PRESET } from "lusiajs";
 import { on } from "./on.ts";
 
 // Each badge leaves with this OUT animation, so removal waits for it.

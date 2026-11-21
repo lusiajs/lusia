@@ -1,4 +1,4 @@
-import { attach } from "lusia";
+import { attach } from "lusiajs";
 import type { Result } from "../report.ts";
 import Parent from "./Parent.lusia";
 

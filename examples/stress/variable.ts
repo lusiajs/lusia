@@ -1,4 +1,4 @@
-import { variable, type Variable } from "lusia";
+import { variable, type Variable } from "lusiajs";
 
 // Counts how often things run, so tests can check the update count.
 export const probe = { reads: 0, tones: 0, diamond: 0 };

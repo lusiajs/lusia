@@ -1,5 +1,5 @@
 {
-  "name": "lusia",
+  "name": "lusiajs",
   "version": "0.1.0-beta.1",
   "description": "Write UI in one file. Update it with variables. Built for Bun.",
   "license": "MIT",

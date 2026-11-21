@@ -1,4 +1,4 @@
-import { attach, type Instance } from "lusia";
+import { attach, type Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
 import Mover from "./Mover.lusia";

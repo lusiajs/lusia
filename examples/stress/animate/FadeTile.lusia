@@ -1,5 +1,5 @@
 <script>
-import { WHEN, EASE } from "lusia";
+import { WHEN, EASE } from "lusiajs";
 
 const colorAndMove = {
   0: { color: "#e11d48", translate: "-12px 0px" },

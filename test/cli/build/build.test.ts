@@ -51,7 +51,7 @@ describe("runBuild", () => {
     const broken = join(workRoot, "broken");
     await cp(FIXTURE, broken, { recursive: true });
     await mkdir(join(broken, "node_modules"));
-    await symlink(REPO, join(broken, "node_modules", "lusia"), "dir");
+    await symlink(REPO, join(broken, "node_modules", "lusiajs"), "dir");
     await writeFile(
       join(broken, "src/Greeting.lusia"),
       "<script>export const value = 1;</script>\n<p>x</p>\n",

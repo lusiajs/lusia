@@ -1,5 +1,5 @@
 <script>
-import { attach, onAttach, type Instance } from "lusia";
+import { attach, onAttach, type Instance } from "lusiajs";
 import Child from "./Child.lusia";
 
 onAttach((root: Element) => {

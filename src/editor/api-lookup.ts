@@ -22,7 +22,7 @@ export function findEnum(name: string): ApiEntry | undefined {
   );
 }
 
-/** Script names that come from `lusia` and can be auto-imported. */
+/** Script names that come from `lusiajs` and can be auto-imported. */
 export function importableApi(): ApiEntry[] {
   return api.filter((entry) => isScriptEntry(entry));
 }

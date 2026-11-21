@@ -9,13 +9,13 @@ export const componentTagEntries: ApiEntry[] = [
     signature: "onAttach(hook: (root: ParentNode) => unknown): void",
     summary: "Runs code after the component is placed on the page.",
     bullets: [
-      'Import it from "lusia" and call it at the top level of <script>.',
+      'Import it from "lusiajs" and call it at the top level of <script>.',
       "The hook receives root, the node the component was placed in.",
       "root can be a fragment, so use root.querySelector().",
       "Return a function from the hook to run it when the component is detached.",
       "Call it more than once to add more hooks. They run in call order.",
     ],
-    example: `import { onAttach } from "lusia";\n\nonAttach((root) => {\n  const button = root.querySelector("button")!;\n  const add = () => console.log("clicked");\n  button.addEventListener("click", add);\n  return () => button.removeEventListener("click", add);\n});`,
+    example: `import { onAttach } from "lusiajs";\n\nonAttach((root) => {\n  const button = root.querySelector("button")!;\n  const add = () => console.log("clicked");\n  button.addEventListener("click", add);\n  return () => button.removeEventListener("click", add);\n});`,
   },
   {
     id: "on-detach",
@@ -25,11 +25,11 @@ export const componentTagEntries: ApiEntry[] = [
     signature: "onDetach(hook: (root: ParentNode) => unknown): void",
     summary: "Runs code when the component is detached from the page.",
     bullets: [
-      'Import it from "lusia" and call it at the top level of <script>.',
+      'Import it from "lusiajs" and call it at the top level of <script>.',
       "The hook receives root, the node the component was placed in.",
       "Use it to clean up when the component leaves the page.",
     ],
-    example: `import { onDetach } from "lusia";\n\nonDetach(() => console.log("gone"));`,
+    example: `import { onDetach } from "lusiajs";\n\nonDetach(() => console.log("gone"));`,
   },
   {
     id: "component-tag",
@@ -61,7 +61,7 @@ export const componentTagEntries: ApiEntry[] = [
       "There is no depth limit. Add one with a prop and an IF, as the comments demo does.",
       "Each instance has its own state, so each folder keeps its own open flag.",
     ],
-    example: `<script>\nimport { props, variable } from "lusia";\nimport Folder from "./Folder.lusia";\n\nconst { item } = props({ item: { name: "" } });\nconst open = variable(true);\nconst children = variable.compute(() => item.value.children ?? []);\n\nfunction toggle() {\n  open.value = !open.value;\n}\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </ELSE>\n</li>`,
+    example: `<script>\nimport { props, variable } from "lusiajs";\nimport Folder from "./Folder.lusia";\n\nconst { item } = props({ item: { name: "" } });\nconst open = variable(true);\nconst children = variable.compute(() => item.value.children ?? []);\n\nfunction toggle() {\n  open.value = !open.value;\n}\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </ELSE>\n</li>`,
   },
   {
     id: "content",

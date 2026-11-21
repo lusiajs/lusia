@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "lusia",
+      "name": "lusiajs",
       "dependencies": {
         "prettier": "3.10.1",
         "sass": "^1.80.0",

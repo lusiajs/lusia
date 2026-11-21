@@ -43,7 +43,7 @@ export const variableEntries: ApiEntry[] = [
 			"Returns a stop function.",
 			"Inside a component's <script>, it stops when the component is removed.",
 		],
-		example: `import { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.autoRun(logCount);\ncount.value++; // logs again\nstop();`,
+		example: `import { variable } from "lusiajs";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.autoRun(logCount);\ncount.value++; // logs again\nstop();`,
 	},
 	{
 		id: "variable-watch",
@@ -59,7 +59,7 @@ export const variableEntries: ApiEntry[] = [
 			"Returns a stop function.",
 			"Inside a component's <script>, it stops when the component is removed.",
 		],
-		example: `import { variable } from "lusia";\n\nconst first = variable("Ada");\nconst last = variable("Lovelace");\n\nconst stop = variable.watch([first, last], () => {\n  console.log("name is", first.value, last.value);\n});\nfirst.value = "Grace"; // logs again\nstop();`,
+		example: `import { variable } from "lusiajs";\n\nconst first = variable("Ada");\nconst last = variable("Lovelace");\n\nconst stop = variable.watch([first, last], () => {\n  console.log("name is", first.value, last.value);\n});\nfirst.value = "Grace"; // logs again\nstop();`,
 	},
 	{
 		id: "variable-instance-on-update",

@@ -1,5 +1,5 @@
 <script>
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 import Card from "./Card.lusia";
 import Panel from "./Panel.lusia";
 

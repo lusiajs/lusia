@@ -12,18 +12,18 @@ function split(script: string) {
 describe("splitImports", () => {
   test("hoists import statements and keeps the rest in the body", () => {
     const { imports, body } = split(
-      '\nimport { variable } from "lusia";\nconst count = variable(0);\nimport a from "./a.ts";\n',
+      '\nimport { variable } from "lusiajs";\nconst count = variable(0);\nimport a from "./a.ts";\n',
     );
-    expect(imports).toBe('import { variable } from "lusia";\nimport a from "./a.ts";');
+    expect(imports).toBe('import { variable } from "lusiajs";\nimport a from "./a.ts";');
     expect(body).toContain("const count = variable(0);");
     expect(body).not.toContain("import");
   });
 
   test("a multi-line import is hoisted whole", () => {
     const { imports, body } = split(
-      '\nimport {\n  variable,\n  attach,\n} from "lusia";\nconst a = 1;\n',
+      '\nimport {\n  variable,\n  attach,\n} from "lusiajs";\nconst a = 1;\n',
     );
-    expect(imports).toBe('import {\n  variable,\n  attach,\n} from "lusia";');
+    expect(imports).toBe('import {\n  variable,\n  attach,\n} from "lusiajs";');
     expect(body).toContain("const a = 1;");
   });
 

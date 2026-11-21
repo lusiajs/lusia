@@ -1,5 +1,5 @@
 <script>
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 
 const limit = 5;
 const count = variable(0);

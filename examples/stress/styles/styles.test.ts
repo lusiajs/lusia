@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { attach } from "lusia";
-import { compile } from "lusia/compiler";
+import { attach } from "lusiajs";
+import { compile } from "lusiajs/compiler";
 import Parent from "./Parent.lusia";
 
 const PARENT_FILE = new URL("./Parent.lusia", import.meta.url).pathname;

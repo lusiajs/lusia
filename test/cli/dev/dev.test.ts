@@ -75,7 +75,7 @@ describe("startDev", () => {
     dir = await mkdtemp(join(tmpdir(), "lusia-dev-"));
     await cp(FIXTURE, dir, { recursive: true });
     await mkdir(join(dir, "node_modules"));
-    await symlink(REPO, join(dir, "node_modules", "lusia"), "dir");
+    await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
     const base = await startServer(dir);
 
     const html = await fetchText(base);
@@ -98,7 +98,7 @@ describe("hot updates", () => {
     dir = await mkdtemp(join(tmpdir(), "lusia-hot-"));
     await cp(FIXTURE, dir, { recursive: true });
     await mkdir(join(dir, "node_modules"));
-    await symlink(REPO, join(dir, "node_modules", "lusia"), "dir");
+    await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
     const base = await startServer(dir);
 
     const messages: { type: string; url?: string }[] = [];

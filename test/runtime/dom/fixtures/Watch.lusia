@@ -1,5 +1,5 @@
 <script>
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 import { events } from "./log.ts";
 import { state } from "./state.ts";
 

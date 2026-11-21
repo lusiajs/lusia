@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lusia";
+import { attach, type Instance } from "lusiajs";
 import { resetVariable } from "../variable.ts";
 import Edge from "./Edge.lusia";
 

@@ -4,12 +4,12 @@ export interface TextEdit {
   text: string;
 }
 
-const NAMED_LUSIA_IMPORT = /import\s*\{([^}]*)\}\s*from\s*["']lusia["'];?/;
+const NAMED_LUSIA_IMPORT = /import\s*\{([^}]*)\}\s*from\s*["']lusiajs["'];?/;
 
 /** Offsets are relative to the script text. Undefined when `name` is already imported. */
 export function planLusiaImport(script: string, name: string): TextEdit | undefined {
   const match = NAMED_LUSIA_IMPORT.exec(script);
-  if (!match) return { start: 0, end: 0, text: `import { ${name} } from "lusia";\n` };
+  if (!match) return { start: 0, end: 0, text: `import { ${name} } from "lusiajs";\n` };
   const names = (match[1] ?? "")
     .split(",")
     .map((item) => item.trim())

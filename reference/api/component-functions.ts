@@ -47,6 +47,6 @@ export const componentFunctionEntries: ApiEntry[] = [
 			"Await it when the DOM must be gone before the next step.",
 			"An instance cannot be mounted again. Create a new one with attach().",
 		],
-		example: `<script>\nimport { attach } from "lusia";\nimport Card from "./Card.lusia";\n\nconst panel = attach(Card, document.getElementById("slot")!);\n\nasync function close() {\n  await panel.detach();\n}\n</script>\n\n<div id="slot"></div>\n<button onclick={close}>Close</button>`,
+		example: `<script>\nimport { attach } from "lusiajs";\nimport Card from "./Card.lusia";\n\nconst panel = attach(Card, document.getElementById("slot")!);\n\nasync function close() {\n  await panel.detach();\n}\n</script>\n\n<div id="slot"></div>\n<button onclick={close}>Close</button>`,
 	},
 ];

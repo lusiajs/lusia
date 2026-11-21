@@ -1,5 +1,5 @@
 <script>
-import { props } from "lusia";
+import { props } from "lusiajs";
 
 const { open } = props({ open: true });
 </script>

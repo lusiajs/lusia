@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { onAttach, onDetach } from "lusia";
+import { onAttach, onDetach } from "lusiajs";
 import AttachRoot from "../fixtures/AttachRoot.lusia";
 import CallOnAttach from "../fixtures/CallOnAttach.lusia";
 import DetachRoot from "../fixtures/DetachRoot.lusia";

@@ -10,7 +10,7 @@ import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 const DEFINE_CONFIG = new URL("../../src/config/index.ts", import.meta.url).pathname;
 const CONFIG_FILE = "lusia.config.ts";
 const APP_FILE = "App.lusia";
-const IMPORT_LINE = 'import { animateConfigFromNames, setAnimateConfig } from "lusia/internal";';
+const IMPORT_LINE = 'import { animateConfigFromNames, setAnimateConfig } from "lusiajs/internal";';
 
 const APP_SOURCE = `<script>
 const label = "app";

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { compile } from "lusia/compiler";
+import { compile } from "lusiajs/compiler";
 
 const EVENTS_PATH = "./fixtures/Events.lusia";
 const EVENTS_FILE = new URL(EVENTS_PATH, import.meta.url).pathname;

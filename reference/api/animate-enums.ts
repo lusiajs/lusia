@@ -16,7 +16,7 @@ export const animateEnumEntries: ApiEntry[] = [
 			"RESTART starts the new play from its own beginning. SKIP jumps the running play to its end first.",
 			"IGNORE drops requests while a play runs.",
 		],
-		example: `import { WHEN, MIDWAY } from "lusia";\n\n<div animate={{ style: grow, when: WHEN.HOVER, midway: MIDWAY.FINISH }}>...</div>`,
+		example: `import { WHEN, MIDWAY } from "lusiajs";\n\n<div animate={{ style: grow, when: WHEN.HOVER, midway: MIDWAY.FINISH }}>...</div>`,
 		members: [
 			{
 				name: "TURN",
@@ -79,7 +79,7 @@ export const animateEnumEntries: ApiEntry[] = [
 			"Or write { element, window } with EDGE values: element is the point on the element, window the point on the window.",
 			"{ element: EDGE.TOP, window: EDGE.BOTTOM } is the same as ENTER.",
 		],
-		example: `import { WHEN, SCROLL_AT } from "lusia";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
+		example: `import { WHEN, SCROLL_AT } from "lusiajs";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
 		members: [
 			{
 				name: "ENTER",
@@ -128,7 +128,7 @@ export const animateEnumEntries: ApiEntry[] = [
 			"FINAL reads the element's resting box. The pointer must be over that box to hover.",
 			"ELEMENT reads the box as it is drawn now, so a transform moves the hover area with it.",
 		],
-		example: `import { WHEN, HOVER_AREA, PRESET } from "lusia";\n\n<div animate={{ style: PRESET.ZOOM_IN, when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } }}>...</div>`,
+		example: `import { WHEN, HOVER_AREA, PRESET } from "lusiajs";\n\n<div animate={{ style: PRESET.ZOOM_IN, when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } }}>...</div>`,
 		members: [
 			{
 				name: "FINAL",

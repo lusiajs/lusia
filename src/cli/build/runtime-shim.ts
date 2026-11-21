@@ -11,18 +11,21 @@ export function isShimInput(input: string): boolean {
   return input.startsWith(`${SHIM_NAMESPACE}:`);
 }
 
-// Dev builds keep `lusia` external; the shim still lists its names so Bun reports missing ones.
+// Dev builds keep `lusiajs` external; the shim still lists its names so Bun reports missing ones.
 export function runtimeShim(): BunPlugin {
   return {
     name: "lusia-runtime-shim",
     setup(build) {
-      build.onResolve({ filter: /^lusia$/ }, () => ({ path: "lusia", namespace: SHIM_NAMESPACE }));
-      build.onResolve({ filter: /^lusia\/internal$/ }, () => ({
-        path: "lusia/internal",
+      build.onResolve({ filter: /^lusiajs$/ }, () => ({
+        path: "lusiajs",
+        namespace: SHIM_NAMESPACE,
+      }));
+      build.onResolve({ filter: /^lusiajs\/internal$/ }, () => ({
+        path: "lusiajs/internal",
         namespace: SHIM_NAMESPACE,
       }));
       build.onLoad({ filter: /.*/, namespace: SHIM_NAMESPACE }, ({ path }) => ({
-        contents: reexport(path === "lusia" ? publicApi : internalApi),
+        contents: reexport(path === "lusiajs" ? publicApi : internalApi),
         loader: "js",
       }));
     },

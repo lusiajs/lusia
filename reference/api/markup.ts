@@ -29,7 +29,7 @@ export const markupEntries: ApiEntry[] = [
 			"Never pass untrusted input. The value runs as HTML, so a script or an onerror attribute can run code (XSS).",
 			"Lusia markup inside the value is not compiled. Only plain HTML is shown.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst note = variable("<b>Bold</b> text");\n</script>\n\n<HTML>{note}</HTML>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst note = variable("<b>Bold</b> text");\n</script>\n\n<HTML>{note}</HTML>`,
 	},
 	{
 		id: "script",
@@ -44,6 +44,6 @@ export const markupEntries: ApiEntry[] = [
 			"Declarations run once per instance.",
 			"export is a compile error.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\nconst count = variable(0);\n</script>`,
+		example: `<script>\nimport { variable } from "lusiajs";\nconst count = variable(0);\n</script>`,
 	},
 ];

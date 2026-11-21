@@ -1,5 +1,5 @@
 <script>
-import { onDetach } from "lusia";
+import { onDetach } from "lusiajs";
 import { roots } from "./log.ts";
 
 onDetach((root: ParentNode) => {

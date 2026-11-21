@@ -16,7 +16,7 @@ let dir: string;
 beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), "lusia-prelude-"));
   await mkdir(join(dir, "node_modules"));
-  await symlink(REPO, join(dir, "node_modules", "lusia"), "dir");
+  await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
   await writeFile(join(dir, "entry.ts"), 'import "./Card.lusia";\n');
   await writeFile(
     join(dir, "Card.lusia"),

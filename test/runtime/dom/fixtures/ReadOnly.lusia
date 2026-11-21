@@ -1,5 +1,5 @@
 <script>
-import { props, variable } from "lusia";
+import { props, variable } from "lusiajs";
 
 const { label } = props({ label: "none" });
 const failure = variable("");

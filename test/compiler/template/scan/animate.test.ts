@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { ELEMENT_MARKER } from "lusia/markers";
+import { ELEMENT_MARKER } from "lusiajs/markers";
 import { compileTemplate } from "#compiler/template/scan/scanner.ts";
 
 const FILE = "Card.lusia";

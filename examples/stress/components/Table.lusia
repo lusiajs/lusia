@@ -1,5 +1,5 @@
 <script>
-import { props } from "lusia";
+import { props } from "lusiajs";
 import row from "./row.lusia";
 import { rowValue } from "../variable.ts";
 

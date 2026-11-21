@@ -29,7 +29,7 @@ export const animateOptionEntries: ApiEntry[] = [
 			"WHEN.MOVE glides on a place change, WHEN.RESIZE on a size change, WHEN.MOVE_OR_RESIZE on either.",
 			"Any cause works: a class change, a list reorder, or content that opens.",
 		],
-		example: `import { WHEN } from "lusia";\n\n<div animate={{ when: WHEN.MOVE, duration: 600 }}>Box</div>`,
+		example: `import { WHEN } from "lusiajs";\n\n<div animate={{ when: WHEN.MOVE, duration: 600 }}>Box</div>`,
 	},
 	{
 		id: "ease",
@@ -45,7 +45,7 @@ export const animateOptionEntries: ApiEntry[] = [
 			"Each STYLE member is a function (t) => number that goes from 0 to 1. Your own functions work too.",
 			"A keyframes default sets the style and ease for keys that do not set their own. Without one, the engine default applies: QUART and INOUT.",
 		],
-		example: `import { EASE } from "lusia";\n\nconst land = { default: [EASE.STYLE.QUART, EASE.OUT], 0: { translate: "0px 40px" }, 1: { translate: "0px 0px" } };`,
+		example: `import { EASE } from "lusiajs";\n\nconst land = { default: [EASE.STYLE.QUART, EASE.OUT], 0: { translate: "0px 40px" }, 1: { translate: "0px 0px" } };`,
 		members: [
 			{
 				name: "STYLE",
@@ -122,6 +122,6 @@ export const animateOptionEntries: ApiEntry[] = [
 			"in and out name a preset. An item with no style uses in, or out when it detaches. An item's own style always wins.",
 			"Per-element settings stay in code: keyframes, when, control, once and loop.",
 		],
-		example: `// lusia.config.ts\nimport { defineConfig } from "lusia/config";\nimport { EASE } from "lusia";\n\nexport default defineConfig({\n  animate: { duration: 400, ease: [EASE.STYLE.CUBIC, EASE.OUT] },\n});`,
+		example: `// lusia.config.ts\nimport { defineConfig } from "lusiajs/config";\nimport { EASE } from "lusiajs";\n\nexport default defineConfig({\n  animate: { duration: 400, ease: [EASE.STYLE.CUBIC, EASE.OUT] },\n});`,
 	},
 ];

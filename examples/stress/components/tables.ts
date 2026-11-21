@@ -1,4 +1,4 @@
-import { attach, type Instance } from "lusia";
+import { attach, type Instance } from "lusiajs";
 import Table from "./Table.lusia";
 
 export const PARENTS = 500;

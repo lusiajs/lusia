@@ -1,4 +1,4 @@
-import { attach, type Instance } from "lusia";
+import { attach, type Instance } from "lusiajs";
 import Cell from "./attach/Cell.lusia";
 
 export function createTarget(tag: string): HTMLElement {

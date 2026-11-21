@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { lazy, type Component } from "lusia";
+import { lazy, type Component } from "lusiajs";
 import { lazyComponent } from "#runtime/dom/lazy/lazy.ts";
 
 import Counter from "../fixtures/Counter.lusia";

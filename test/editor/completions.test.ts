@@ -15,7 +15,7 @@ describe("script completions", () => {
     expect(variable?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { variable } from "lusia";\n',
+      text: 'import { variable } from "lusiajs";\n',
     });
   });
 
@@ -25,7 +25,7 @@ describe("script completions", () => {
     expect(from?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { variable } from "lusia";\n',
+      text: 'import { variable } from "lusiajs";\n',
     });
   });
 
@@ -40,7 +40,7 @@ describe("script completions", () => {
     expect(onAttach?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { onAttach } from "lusia";\n',
+      text: 'import { onAttach } from "lusiajs";\n',
     });
   });
 });
@@ -97,7 +97,7 @@ describe("motion completions", () => {
     const ease = items.find((item) => item.label === "EASE");
     expect(ease).toMatchObject({
       kind: "variable",
-      importEdit: { text: 'import { EASE } from "lusia";\n' },
+      importEdit: { text: 'import { EASE } from "lusiajs";\n' },
     });
     expect(items.find((item) => item.label === "WHEN")?.kind).toBe("variable");
     expect(items.find((item) => item.label === "CURVE")).toBeUndefined();
@@ -119,7 +119,7 @@ describe("motion completions", () => {
       "ELASTIC",
       "BOUNCE",
     ]);
-    expect(items[0]?.importEdit?.text).toBe('import { EASE } from "lusia";\n');
+    expect(items[0]?.importEdit?.text).toBe('import { EASE } from "lusiajs";\n');
   });
 
   test("completes the members after WHEN. in markup", () => {

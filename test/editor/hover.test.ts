@@ -78,12 +78,12 @@ describe("hover", () => {
   });
 
   test("shows the enum entry for a name in the script", () => {
-    const text = '<script>\nimport { EASE } from "lusia";\n</script>';
+    const text = '<script>\nimport { EASE } from "lusiajs";\n</script>';
     expect(apiId(hoverAt(text, text.indexOf("EASE") + 2, noProps))).toBe("ease");
   });
 
   test("shows the enum entry for a member of a nested group in the script", () => {
-    const text = '<script>\nimport { EASE } from "lusia";\nconst s = EASE.STYLE.QUART;\n</script>';
+    const text = '<script>\nimport { EASE } from "lusiajs";\nconst s = EASE.STYLE.QUART;\n</script>';
     expect(apiId(hoverAt(text, text.indexOf("QUART") + 2, noProps))).toBe("ease");
   });
 });
@@ -126,7 +126,7 @@ describe("hover for markup features", () => {
 
   test("shows the PRESET entry in the script", () => {
     const text =
-      '<script>\nimport { PRESET } from "lusia";\n</script>\n<div animate={PRESET.FADE_IN}>x</div>';
+      '<script>\nimport { PRESET } from "lusiajs";\n</script>\n<div animate={PRESET.FADE_IN}>x</div>';
     expect(apiId(hoverAt(text, text.indexOf("PRESET") + 2, noProps))).toBe("preset");
   });
 

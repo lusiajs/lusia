@@ -1,5 +1,5 @@
 <script>
-import { onAttach, variable } from "lusia";
+import { onAttach, variable } from "lusiajs";
 
 const count = variable(0);
 

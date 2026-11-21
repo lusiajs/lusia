@@ -14,7 +14,7 @@ export const flowEntries: ApiEntry[] = [
 			"A new branch appears at once. The old one plays its DETACH animations first.",
 			"Uses JavaScript truthiness: 0, empty text and null are false.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst loggedIn = variable(false);\n\nfunction logIn() {\n  loggedIn.value = true;\n}\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <button onclick={logIn}>Log in</button>\n</ELSE>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst loggedIn = variable(false);\n\nfunction logIn() {\n  loggedIn.value = true;\n}\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <button onclick={logIn}>Log in</button>\n</ELSE>`,
 	},
 	{
 		id: "elseif",
@@ -28,7 +28,7 @@ export const flowEntries: ApiEntry[] = [
 			"Needs its own {condition}.",
 			"Checked in order. The first true branch wins.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst score = variable(72);\n</script>\n\n<IF {score.value >= 90}>\n  <p>A</p>\n</IF>\n<ELSEIF {score.value >= 70}>\n  <p>C</p>\n</ELSEIF>\n<ELSE>\n  <p>Try again</p>\n</ELSE>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst score = variable(72);\n</script>\n\n<IF {score.value >= 90}>\n  <p>A</p>\n</IF>\n<ELSEIF {score.value >= 70}>\n  <p>C</p>\n</ELSEIF>\n<ELSE>\n  <p>Try again</p>\n</ELSE>`,
 	},
 	{
 		id: "else",
@@ -42,7 +42,7 @@ export const flowEntries: ApiEntry[] = [
 			"Must come right after </IF> or </ELSEIF>.",
 			"Ends the chain. Nothing can follow it.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst loggedIn = variable(false);\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <p>Please log in.</p>\n</ELSE>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst loggedIn = variable(false);\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <p>Please log in.</p>\n</ELSE>`,
 	},
 	{
 		id: "each",
@@ -59,7 +59,7 @@ export const flowEntries: ApiEntry[] = [
 			"Without key, the item itself is the key. The list can be an array or a variable that holds one.",
 			"A removed row plays its DETACH animations before it leaves the page.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst todos = variable([\n  { id: 1, title: "Write docs" },\n  { id: 2, title: "Ship" },\n]);\n\nfunction remove(id: number) {\n  todos.value = todos.value.filter((todo) => todo.id !== id);\n}\n</script>\n\n<ul>\n  <EACH {todos} as={todo} index={i} key={todo.id}>\n    <li>{i.value + 1}. {todo.title} <button onclick={() => remove(todo.id)}>Remove</button></li>\n  </EACH>\n</ul>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst todos = variable([\n  { id: 1, title: "Write docs" },\n  { id: 2, title: "Ship" },\n]);\n\nfunction remove(id: number) {\n  todos.value = todos.value.filter((todo) => todo.id !== id);\n}\n</script>\n\n<ul>\n  <EACH {todos} as={todo} index={i} key={todo.id}>\n    <li>{i.value + 1}. {todo.title} <button onclick={() => remove(todo.id)}>Remove</button></li>\n  </EACH>\n</ul>`,
 	},
 	{
 		id: "for",
@@ -74,6 +74,6 @@ export const flowEntries: ApiEntry[] = [
 			"step is the gap, default 1. A negative step counts down: from={3} to={0} step={-1}.",
 			"A step of 0 throws. The bounds are read reactively, so the rows update when they change.",
 		],
-		example: `<script>\nimport { variable } from "lusia";\n\nconst rows = variable(3);\n</script>\n\n<FOR {i} from={0} to={rows.value}>\n  <p>Row {i + 1}</p>\n</FOR>`,
+		example: `<script>\nimport { variable } from "lusiajs";\n\nconst rows = variable(3);\n</script>\n\n<FOR {i} from={0} to={rows.value}>\n  <p>Row {i + 1}</p>\n</FOR>`,
 	},
 ];

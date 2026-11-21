@@ -1,5 +1,5 @@
 <script>
-import { props } from "lusia";
+import { props } from "lusiajs";
 
 const { label, tone, flag } = props({ label: "New", tone: "info", flag: false });
 </script>

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { ELEMENT_MARKER, TEXT_MARKER } from "lusia/markers";
+import { ELEMENT_MARKER, TEXT_MARKER } from "lusiajs/markers";
 import { compileTemplate } from "#compiler/template/scan/scanner.ts";
 import type { Binding } from "#compiler/template/types/template.ts";
 import { catchError } from "../../catch-error.ts";

@@ -33,7 +33,7 @@ describe("readConfig", () => {
     const config = await readConfig(
       appWith(
         JSON.stringify({
-          $schema: "./node_modules/lusia/config.schema.json",
+          $schema: "./node_modules/lusiajs/config.schema.json",
           outdir: "out",
           minify: false,
           routes: ["/guide"],

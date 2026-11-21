@@ -1,7 +1,7 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { compile } from "#compiler/index.ts";
-import type { HotComponent } from "lusia/internal";
+import type { HotComponent } from "lusiajs/internal";
 
 export const VERSIONS = join(import.meta.dir, ".versions");
 

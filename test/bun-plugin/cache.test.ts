@@ -33,7 +33,7 @@ function cardSource(label = "card", styleRule = "color: tokens.$accent;"): strin
 beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), "lusia-cache-"));
   await mkdir(join(dir, "node_modules"));
-  await symlink(REPO, join(dir, "node_modules", "lusia"), "dir");
+  await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
   await writeFile(join(dir, "entry.ts"), 'import "./Card.lusia";\n');
   await writeFile(join(dir, "_tokens.scss"), "$accent: red;\n");
   card = join(dir, "Card.lusia");

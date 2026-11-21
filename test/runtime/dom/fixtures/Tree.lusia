@@ -1,5 +1,5 @@
 <script>
-import { props, variable } from "lusia";
+import { props, variable } from "lusiajs";
 import Tree from "./Tree.lusia";
 
 const { node } = props({ node: { name: "", children: [] } });

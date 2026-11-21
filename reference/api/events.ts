@@ -15,7 +15,7 @@ export const eventEntries: ApiEntry[] = [
       "The listener is removed when the component is detached.",
       "On a child component, onclick is a normal prop. The child reads it with props().",
     ],
-    example: `<script>\nimport { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
+    example: `<script>\nimport { variable } from "lusiajs";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
   },
   {
     id: "bind-value",
@@ -31,7 +31,7 @@ export const eventEntries: ApiEntry[] = [
       "The variable must be writable, from variable(). A variable.compute() value is refused.",
       "On input, textarea and select only. On a component tag, bind-value is the value prop.",
     ],
-    example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("");\n</script>\n\n<input bind-value={name} />\n<p>Hello {name}</p>`,
+    example: `<script>\nimport { variable } from "lusiajs";\n\nconst name = variable("");\n</script>\n\n<input bind-value={name} />\n<p>Hello {name}</p>`,
   },
   {
     id: "bind-prop",
@@ -46,7 +46,7 @@ export const eventEntries: ApiEntry[] = [
       "The variable must be writable, from variable().",
       "Use it when bind-value does not cover the property you need.",
     ],
-    example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("Ada");\n</script>\n\n<input type="text" bind-value={name} />`,
+    example: `<script>\nimport { variable } from "lusiajs";\n\nconst name = variable("Ada");\n</script>\n\n<input type="text" bind-value={name} />`,
   },
   {
     id: "bind-element",
@@ -60,6 +60,6 @@ export const eventEntries: ApiEntry[] = [
       "Sets the variable to null when the component is detached.",
       "The variable must be writable, from variable(). Start it with null.",
     ],
-    example: `<script>\nimport { variable } from "lusia";\n\nconst field = variable<HTMLInputElement | null>(null);\n\nfunction focusField() {\n  field.value?.focus();\n}\n</script>\n\n<input bind-element={field} />\n<button onclick={focusField}>Focus</button>`,
+    example: `<script>\nimport { variable } from "lusiajs";\n\nconst field = variable<HTMLInputElement | null>(null);\n\nfunction focusField() {\n  field.value?.focus();\n}\n</script>\n\n<input bind-element={field} />\n<button onclick={focusField}>Focus</button>`,
   },
 ];

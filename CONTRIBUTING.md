@@ -30,7 +30,7 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 
 | Path | What it holds |
 | ---- | ------------- |
-| `src/runtime` | The `lusia` package: variables, DOM helpers, animate |
+| `src/runtime` | The `lusiajs` package: variables, DOM helpers, animate |
 | `src/compiler` | Turns `.lusia` files into TypeScript modules |
 | `src/language` | Parse, format and lint for `.lusia` files |
 | `src/editor` | Completion, hover and error logic shared by editors. Tests in `test/editor` |
@@ -38,24 +38,24 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `src/cli` | The `lusia` command |
 | `test/` | Tests. One folder per area, mirroring `src/`. `test/setup.ts` sets up the fake DOM |
 | `examples/stress` | Scenarios that push the limits and report timings |
-| `reference/api.ts` | The API table. The extension and the docs site read it as `lusia/api` |
+| `reference/api.ts` | The API table. The extension and the docs site read it as `lusiajs/api` |
 | `scripts/check.ts` | The steps behind `bun run check` |
 
 ## Other repos
 
-| Repo | Depends on `lusia` through |
-| ---- | -------------------------- |
-| [lusiajs/create](https://github.com/lusiajs/create) | The starter app uses the `lusia` package |
-| [lusiajs/vsix](https://github.com/lusiajs/vsix) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/compiler` |
-| [lusiajs/docs](https://github.com/lusiajs/docs) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/errors/*`, `lusia/compiler/*` |
+| Repo | Depends on `lusiajs` through |
+| ---- | ---------------------------------- |
+| [lusiajs/create](https://github.com/lusiajs/create) | The starter app uses the `lusiajs` package |
+| [lusiajs/vsix](https://github.com/lusiajs/vsix) | `lusiajs/api`, `lusiajs/language/*`, `lusiajs/editor/*`, `lusiajs/compiler` |
+| [lusiajs/docs](https://github.com/lusiajs/docs) | `lusiajs/api`, `lusiajs/language/*`, `lusiajs/editor/*`, `lusiajs/errors/*`, `lusiajs/compiler/*` |
 
-To try a local change in another repo, run `bun link` here, then `bun link lusia` there.
+To try a local change in another repo, run `bun link` here, then `bun link lusiajs` there.
 
 ## Code rules
 
 - Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/` and `dom/`.
 - `utils/` holds only helpers that two or more domains use. One job per file, around 150 lines.
-- Imports across areas use the `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/` and `#language/` aliases. They are defined in `imports` in `package.json`, so Bun and TypeScript both resolve them, also for apps that install `lusia`. Imports inside one area stay relative. `src/runtime` ships to apps, so it uses relative imports only.
+- Imports across areas use the `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/` and `#language/` aliases. They are defined in `imports` in `package.json`, so Bun and TypeScript both resolve them, also for apps that install `lusiajs`. Imports inside one area stay relative. `src/runtime` ships to apps, so it uses relative imports only.
 
 ## Error codes
 
@@ -76,7 +76,7 @@ A change to the API or to `.lusia` markup must update `reference/api.ts` and `ex
 | `lusiajs/docs` | The Guide, the demos and the Prism `lusia` language |
 | `lusiajs/vsix` | The grammar, completion, hover, lint and formatter |
 
-Release `lusia` first, then bump it in `docs` and `vsix`.
+Release `lusiajs` first, then bump it in `docs` and `vsix`.
 
 ## Releases
 

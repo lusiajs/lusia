@@ -1,5 +1,5 @@
 <script>
-import { variable } from "lusia";
+import { variable } from "lusiajs";
 
 const note = variable("<b>Bold</b> text");
 const next = variable<string | null>("<i>Italic</i>");

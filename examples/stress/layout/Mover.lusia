@@ -1,5 +1,5 @@
 <script>
-import { WHEN } from "lusia";
+import { WHEN } from "lusiajs";
 
 // Each item glides when the wrapping changes, so the whole list moves at once.
 const glide = { when: WHEN.MOVE, duration: 400 };

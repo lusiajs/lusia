@@ -4,7 +4,7 @@ import { planLusiaImport } from "../../../src/editor/auto-import.ts";
 
 describe("lusia imports", () => {
   test("reads default imports of .lusia files only", () => {
-    const script = `import Badge from "./badge.lusia";\nimport { variable } from "lusia";\nimport Card, { x } from './card.lusia';`;
+    const script = `import Badge from "./badge.lusia";\nimport { variable } from "lusiajs";\nimport Card, { x } from './card.lusia';`;
     expect(parseLusiaImports(script)).toEqual([
       { name: "Badge", specifier: "./badge.lusia", index: 0 },
       { name: "Card", specifier: "./card.lusia", index: script.indexOf("import Card") },
@@ -24,16 +24,16 @@ describe("auto import", () => {
   test("creates an import when the script has none", () => {
     const script = "\nconst x = 1;\n";
     const edit = planLusiaImport(script, "variable");
-    expect(edit && apply(script, edit)).toBe('import { variable } from "lusia";\n\nconst x = 1;\n');
+    expect(edit && apply(script, edit)).toBe('import { variable } from "lusiajs";\n\nconst x = 1;\n');
   });
 
   test("adds the name to an existing lusia import", () => {
-    const other = 'import { props } from "lusia";\n';
+    const other = 'import { props } from "lusiajs";\n';
     const added = planLusiaImport(other, "variable");
-    expect(added && apply(other, added)).toBe('import { props, variable } from "lusia";\n');
+    expect(added && apply(other, added)).toBe('import { props, variable } from "lusiajs";\n');
   });
 
   test("adds nothing when the name is already imported", () => {
-    expect(planLusiaImport('import { variable } from "lusia";', "variable")).toBeUndefined();
+    expect(planLusiaImport('import { variable } from "lusiajs";', "variable")).toBeUndefined();
   });
 });

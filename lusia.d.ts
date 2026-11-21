@@ -1,5 +1,5 @@
 declare module "*.lusia" {
-  import type { Component } from "lusia";
+  import type { Component } from "lusiajs";
   const component: Component;
   export default component;
 }
