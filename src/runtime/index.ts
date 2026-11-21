@@ -25,8 +25,6 @@ export type { Keyframe, KeyframeValue, Keyframes, Style } from "./animate/option
 export { PRESET } from "./animate/options/presets.ts";
 export type { Animate, AnimateItem } from "./animate/animation.ts";
 export { interpolate } from "./animate/value/interpolate.ts";
-export { setAnimateDefault } from "./animate/options/defaults.ts";
-export type { AnimateDefaultUpdate } from "./animate/options/defaults.ts";
 export type { AnimateConfig } from "./animate/options/config.ts";
 export { setConfig, SCOPE } from "./config/set-config.ts";
 export type { ConfigScope } from "./config/set-config.ts";

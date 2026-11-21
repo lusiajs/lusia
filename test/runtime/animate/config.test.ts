@@ -3,11 +3,7 @@ import { readItem } from "#runtime/animate/options/options.ts";
 import { readMore } from "#runtime/animate/options/trigger-options.ts";
 import { readScroll } from "#runtime/animate/options/scroll-options.ts";
 import { readAnimateConfig, setAnimateConfig } from "#runtime/animate/options/config.ts";
-import {
-  animateDefault,
-  clearAnimateDefault,
-  setAnimateDefault,
-} from "#runtime/animate/options/defaults.ts";
+import { animateDefault } from "#runtime/animate/options/defaults.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
 import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
 import { SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
@@ -18,7 +14,6 @@ const base = { duration: 300 };
 
 afterEach(() => {
   setAnimateConfig({});
-  clearAnimateDefault();
 });
 
 function thrown(read: () => unknown): { code?: string; message: string; hint?: string } {
@@ -137,12 +132,11 @@ describe("precedence", () => {
     expect(readItem({ style: fade, midway: MIDWAY.SKIP }).timing.midway.play).toBe(MIDWAY.SKIP);
   });
 
-  test("setAnimateDefault beats the config for the same field", () => {
-    setAnimateConfig({ duration: 500, ease: [EASE.STYLE.CUBIC, EASE.OUT] });
-    setAnimateDefault({ duration: 400, ease: [EASE.STYLE.QUAD] });
-    expect(animateDefault().duration).toBe(400);
-    expect(animateDefault().easeStyle).toBe(EASE.STYLE.QUAD);
-    expect(animateDefault().ease).toBe(EASE.OUT);
+  test("animateDefault reads the config over the library default", () => {
+    setAnimateConfig({ duration: 500, ease: [EASE.STYLE.CUBIC] });
+    expect(animateDefault().duration).toBe(500);
+    expect(animateDefault().easeStyle).toBe(EASE.STYLE.CUBIC);
+    expect(animateDefault().ease).toBe(EASE.INOUT);
   });
 
   test("setAnimateConfig again with the same value changes nothing", () => {
