@@ -9,6 +9,14 @@ import { WHEN } from "./modes/trigger.ts";
 import { bindTrigger } from "./play/triggers.ts";
 import { groupSlots, type Slot } from "./play/slots.ts";
 import { runtimeError, withWhere, type KeyWheres } from "../errors.ts";
+import { currentScope } from "../config/scope.ts";
+import { resolveConfig } from "../config/resolve.ts";
+import type { AnimateConfig } from "./options/config.ts";
+import {
+  rememberAnimateConfig,
+  withAnimateConfig,
+  withElementConfig,
+} from "./options/config-store.ts";
 
 /** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from variables. */
 export function animate(
@@ -19,9 +27,28 @@ export function animate(
   where?: string,
   keys?: KeyWheres,
 ): void {
+  const config = scopeAnimateConfig();
+  rememberAnimateConfig(el, config);
+  withAnimateConfig(config, () => bindAnimate(el, readValue, cleanups, leaves, where, keys));
+}
+
+// The scope is read once, at bind, so later setConfig calls never move an element already bound.
+function scopeAnimateConfig(): AnimateConfig {
+  return resolveConfig(currentScope()).animate ?? {};
+}
+
+function bindAnimate(
+  el: HTMLElement,
+  readValue: () => Animate,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+  where?: string,
+  keys?: KeyWheres,
+): void {
   const first = withWhere(where, () => itemsOf(readValue()).map(readItem), keys);
   const players = first.map(() => new Player(el.style));
-  const reload = (): void => withWhere(where, () => loadTimelines(el, readValue, players), keys);
+  const load = (): void => loadTimelines(el, readValue, players);
+  const reload = (): void => withElementConfig(el, () => withWhere(where, load, keys));
   reload();
   const slots = groupSlots(first, players, reload);
   for (const slot of startOrder(slots)) slot.group.show(0);

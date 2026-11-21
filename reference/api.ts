@@ -6,6 +6,7 @@ import { animateTypeEntries } from "./api/animate-types.ts";
 import { componentFunctionEntries } from "./api/component-functions.ts";
 import { componentTagEntries } from "./api/component-tags.ts";
 import { componentTypeEntries } from "./api/component-types.ts";
+import { configEntries } from "./api/config.ts";
 import { eventEntries } from "./api/events.ts";
 import { flowEntries } from "./api/flow.ts";
 import { markupEntries } from "./api/markup.ts";
@@ -29,4 +30,5 @@ export const api: ApiEntry[] = [
 	...animateControlEntries,
 	...animateEnumEntries,
 	...animateTypeEntries,
+	...configEntries,
 ];

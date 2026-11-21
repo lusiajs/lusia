@@ -1,0 +1,5 @@
+<script>
+  import { attachItem } from "./attach-item.ts";
+</script>
+
+<div class="probe" animate={attachItem}></div>

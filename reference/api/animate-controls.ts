@@ -74,22 +74,6 @@ export const animateControlEntries: ApiEntry[] = [
 		example: `import type { AnimateItem } from "lusiajs";\n\nconst slideIn: AnimateItem = { style: slideFrom, duration: 600 };`,
 	},
 	{
-		id: "set-animate-default",
-		name: "setAnimateDefault()",
-		kind: "function",
-		group: "motion",
-		signature:
-			"setAnimateDefault(update: { ease?: DefaultEasing; duration?: number }): void",
-		summary: "Updates the engine default for every animation in the app.",
-		bullets: [
-			"ease takes the same forms as a keyframes default: [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y]. Each part merges with the current default.",
-			"duration replaces the default length in ms (300 at start).",
-			"It is read at each play, so a call at app start applies everywhere.",
-			"Only ease and duration are accepted. Other keys throw.",
-		],
-		example: `import { setAnimateDefault, EASE } from "lusiajs";\n\nsetAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });`,
-	},
-	{
 		id: "controller",
 		name: "controller()",
 		kind: "function",

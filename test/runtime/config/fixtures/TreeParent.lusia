@@ -1,0 +1,10 @@
+<script>
+  import { setConfig } from "lusiajs";
+  import { attachItem } from "./attach-item.ts";
+  import Probe from "./Probe.lusia";
+
+  setConfig({ animate: { attach: { animateSpace: true } } });
+</script>
+
+<div class="own" animate={attachItem}></div>
+<Probe />

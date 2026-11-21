@@ -3,6 +3,7 @@ import type { Cleanup } from "../template/bindings.ts";
 import type { Leave } from "../component/leave.ts";
 import { Outlet } from "./outlet.ts";
 import { mountBefore, type Mount } from "./mount.ts";
+import { keepScope } from "../../config/scope.ts";
 
 export type BranchRender = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 
@@ -37,16 +38,21 @@ export function bindIf(
   leaves: Leave[],
 ): void {
   const outlet = new Outlet(leaves);
+  const scoped = branches.map(withKeptScope);
   let active: Mount | undefined;
   let activeIndex = -1;
   cleanups.push(
     watch(() => {
-      const index = pickBranch(branches);
+      const index = pickBranch(scoped);
       if (index === activeIndex) return;
       activeIndex = index;
       if (active) outlet.retire(active);
-      active = index === -1 ? undefined : mountBranch(outlet, marker, branches[index]!);
+      active = index === -1 ? undefined : mountBranch(outlet, marker, scoped[index]!);
     }),
     () => outlet.disposeAll(),
   );
+}
+
+function withKeptScope(branch: IfBranch): IfBranch {
+  return { test: branch.test, render: keepScope(branch.render) };
 }

@@ -4,7 +4,7 @@ import {
   EASE,
   EDGE,
   SCROLL_AT,
-  setAnimateDefault,
+  setConfig,
   type AnimateItem,
   type Keyframes,
   type Style,
@@ -86,10 +86,10 @@ const topReverse: AnimateItem = { style: keyframes, when: WHEN.VIEW, reverse: tr
 // @ts-expect-error: ease moved into the keyframes default
 const itemEase: AnimateItem = { style: keyframes, ease: EASE.IN };
 
-// setAnimateDefault takes ease and duration only.
-setAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });
-// @ts-expect-error: speed is not a default
-setAnimateDefault({ speed: 2 });
+// setConfig takes animate and lazy sections only.
+setConfig({ animate: { ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 } });
+// @ts-expect-error: speed is not a config key
+setConfig({ speed: 2 });
 
 export { css, defaultEase, hover, keyframes, missingOne, plain, scroll, view, withDefault };
 export {

@@ -3,6 +3,7 @@ import { componentFrom, type Component, type Host, type Place } from "../compone
 import type { Leave } from "../component/leave.ts";
 import { runtimeError } from "../../errors.ts";
 import { memoizeLoad, whenIdle, whenNear, type LazyLoad } from "./lazy-load.ts";
+import { placementPrefetch } from "./placement-prefetch.ts";
 
 export type { LazyLoad } from "./lazy-load.ts";
 export type LazyPrefetch = "idle" | "view" | "none";
@@ -56,7 +57,7 @@ function placeLoading(
   const marker = document.createComment("");
   parent.insertBefore(marker, anchor);
   let removeFallback: Cleanup = loader.fallback
-    ? loader.fallback.place(parent, marker, { props: {}, bound: {} }, [])
+    ? loader.fallback.place(parent, marker, { props: {}, bound: {}, scope: host.scope }, [])
     : noop;
   let removeLoaded: Cleanup = noop;
   let detached = false;
@@ -81,11 +82,17 @@ function placeLoading(
     );
   };
 
-  if (loader.prefetch === "view" && loader.fallback) {
+  const prefetch = placementPrefetch(host.scope, loader.prefetch);
+  if (prefetch === "view" && loader.fallback) {
     // The import waits until the sentinel is near the screen.
     sentinel = document.createElement("span");
     parent.insertBefore(sentinel, marker);
     stopWatch = whenNear(sentinel, show);
+  } else if (prefetch === "idle" && loader.prefetch !== "idle") {
+    // A compiled "idle" is already fetching from module load, so only a scope's "idle" waits here.
+    whenIdle(() => {
+      if (!detached) show();
+    });
   } else {
     show();
   }

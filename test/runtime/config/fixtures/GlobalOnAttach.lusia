@@ -1,0 +1,10 @@
+<script>
+  import { onAttach, setConfig, SCOPE } from "lusiajs";
+  import { attachItem } from "./attach-item.ts";
+
+  onAttach(() => {
+    setConfig({ animate: { attach: { animateSpace: true } } }, SCOPE.GLOBAL);
+  });
+</script>
+
+<div class="own" animate={attachItem}></div>

@@ -1,0 +1,8 @@
+<script>
+  import { setConfig } from "lusiajs";
+  import { attachItem } from "./attach-item.ts";
+
+  setConfig({ animate: { attach: { animateSpace: false } } });
+</script>
+
+<div class="probe" animate={attachItem}></div>

@@ -1,0 +1,9 @@
+<script>
+  import { onAttach, setConfig } from "lusiajs";
+
+  onAttach(() => {
+    setConfig({ animate: { attach: { animateSpace: true } } });
+  });
+</script>
+
+<div class="own"></div>

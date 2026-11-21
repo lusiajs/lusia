@@ -1,10 +1,6 @@
 import type { ErrorCode } from "../../codes.ts";
 
 export const RUNTIME_ANIMATE_KEYFRAMES_CODES = {
-  L2031: {
-    message: "setAnimateDefault duration must be a time in ms, got $value",
-    hint: "Use a number of milliseconds, such as 300.",
-  },
   L2032: {
     message: "animate default must be [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y]",
     hint: "Use one of the three listed forms.",

@@ -1,0 +1,8 @@
+<script>
+  import { setConfig } from "lusiajs";
+  import OverrideChild from "./OverrideChild.lusia";
+
+  setConfig({ animate: { attach: { animateSpace: true } } });
+</script>
+
+<OverrideChild />

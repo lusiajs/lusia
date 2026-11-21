@@ -122,10 +122,6 @@ export const RUNTIME_ANIMATE_CODES = {
     message: "animate midway.turnEase must be an EASE member such as EASE.INOUT, got $value",
     hint: "Use a member of EASE, such as EASE.INOUT.",
   },
-  L2030: {
-    message: 'setAnimateDefault has an unknown key "$key", use ease or duration',
-    hint: "Check the spelling of the key.",
-  },
   L2060: {
     message: "animate more area must be HOVER_AREA.FINAL or HOVER_AREA.ELEMENT",
     hint: "Use HOVER_AREA.FINAL, or leave area out.",

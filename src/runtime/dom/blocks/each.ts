@@ -1,4 +1,5 @@
 import { untrack, watch } from "../../variable/graph.ts";
+import { keepScope } from "../../config/scope.ts";
 import { variable, type Variable } from "../../variable/variable.ts";
 import { runtimeError, withWhere } from "../../errors.ts";
 import type { Cleanup } from "../template/bindings.ts";
@@ -125,7 +126,7 @@ export function bindEach(
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
-  const block = new EachBlock(marker, spec, leaves);
+  const block = new EachBlock(marker, { ...spec, render: keepScope(spec.render) }, leaves);
   cleanups.push(
     watch(() => block.update(listOf(spec.read()))),
     () => block.dispose(),

@@ -1,3 +1,4 @@
+import { withElementConfig } from "../../options/config-store.ts";
 import { startPlaying, type Playable } from "../../play/loop.ts";
 import { easingOf, type SpaceSpec } from "./space-closer.ts";
 import { liftOut, restoreLift } from "./space-lift.ts";
@@ -25,7 +26,7 @@ export class Opener implements Playable {
     private readonly el: HTMLElement,
     private readonly spec: SpaceSpec,
   ) {
-    [this.easeStyle, this.ease] = easingOf(spec.keyframes);
+    [this.easeStyle, this.ease] = withElementConfig(el, () => easingOf(spec.keyframes));
     const targets = movingElements(el);
     const lift = liftOut(el);
     const before = boxesOf(targets);

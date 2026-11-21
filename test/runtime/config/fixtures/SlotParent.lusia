@@ -1,0 +1,11 @@
+<script>
+  import { setConfig, SCOPE } from "lusiajs";
+  import { attachItem } from "./attach-item.ts";
+  import SlotWrapper from "./SlotWrapper.lusia";
+
+  setConfig({ animate: { attach: { animateSpace: true } } }, SCOPE.SCOPED);
+</script>
+
+<SlotWrapper>
+  <p class="slotted" animate={attachItem}>slot</p>
+</SlotWrapper>
