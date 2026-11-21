@@ -13,7 +13,7 @@ export const stylingEntries: ApiEntry[] = [
       "Tree mode also styles child components inside this one.",
       "A component can have several style blocks.",
       "Styles match by class, not by ancestor.",
-      "Styles do not reach DOM made outside the template (innerHTML, third-party libraries, attach()).",
+      "Styles do not reach DOM made outside the template (innerHTML, third-party libraries), but attach() takes the tree styles of its target element.",
     ],
     example: `<style>\nh1 { color: tomato; }\n</style>`,
   },
@@ -26,6 +26,7 @@ export const stylingEntries: ApiEntry[] = [
     summary: "Styles only this component's own markup.",
     bullets: [
       "Stops at child components.",
+      "Also styles markup this component passes into a child's slot.",
       "Adds no specificity to the selectors.",
       "@keyframes and @font-face stay unscoped.",
     ],
