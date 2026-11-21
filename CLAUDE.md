@@ -4,16 +4,16 @@ Lusia is a Bun-native UI framework: single-file `.lusia` components, variables a
 
 Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). Site Guide: https://lusia.azpepoze.com/guide. API table: [reference/api.ts](reference/api.ts).
 
-This repo is the framework. Sibling repos live in `../Project/lusiajs/`: `create` (npm `create-lusia`), `vscode` (extension), `docs` (site). They depend on the published `lusia` package, so a framework change reaches them only after a release.
+This repo is the framework. Sibling repos live in `../Project/lusiajs/`: `create` (npm `create-lusia`), `vsix` (VS Code extension), `docs` (site). They depend on the published `lusia` package, so a framework change reaches them only after a release.
 
 # 1. Keep docs in the same change
 Update `reference/api.ts` with every public API or markup change. Then update the Guide in the `docs` repo (a follow-up PR after the release). The README stays a front page.
 
 # 2. Update all highlighters
-A `.lusia` syntax change (tag, attribute, keyword, export) updates `src/language` here, then the `vscode` repo (grammar, completion, hover, lint, formatter) and the `docs` repo (Prism `lusia` language). Not done while any shows it as plain text.
+A `.lusia` syntax change (tag, attribute, keyword, export) updates `src/language` here, then the `vsix` repo (grammar, completion, hover, lint, formatter) and the `docs` repo (Prism `lusia` language). Not done while any shows it as plain text.
 
 # 3. Keep the API table in sync
-`reference/api.ts` is exported as `lusia/api` and feeds the `vscode` and `docs` repos. Change it with every public API or markup change.
+`reference/api.ts` is exported as `lusia/api` and feeds the `vsix` and `docs` repos. Change it with every public API or markup change.
 
 # 4. Main agent orchestrates
 Plan, write exact specs, review and test. Haiku subagents do the coding, tests and docs edits.

@@ -46,7 +46,7 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | Repo | Depends on `lusia` through |
 | ---- | -------------------------- |
 | [lusiajs/create](https://github.com/lusiajs/create) | The starter app uses the `lusia` package |
-| [lusiajs/vscode](https://github.com/lusiajs/vscode) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/compiler` |
+| [lusiajs/vsix](https://github.com/lusiajs/vsix) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/compiler` |
 | [lusiajs/docs](https://github.com/lusiajs/docs) | `lusia/api`, `lusia/language/*`, `lusia/editor/*`, `lusia/errors/*`, `lusia/compiler/*` |
 
 To try a local change in another repo, run `bun link` here, then `bun link lusia` there.
@@ -74,9 +74,9 @@ A change to the API or to `.lusia` markup must update `reference/api.ts` and `ex
 | Repo | Update |
 | ---- | ------ |
 | `lusiajs/docs` | The Guide, the demos and the Prism `lusia` language |
-| `lusiajs/vscode` | The grammar, completion, hover, lint and formatter |
+| `lusiajs/vsix` | The grammar, completion, hover, lint and formatter |
 
-Release `lusia` first, then bump it in `docs` and `vscode`.
+Release `lusia` first, then bump it in `docs` and `vsix`.
 
 ## Releases
 

@@ -23,7 +23,7 @@ To add Lusia to an existing project, run `bun add lusia`.
 | ---- | ------------- |
 | [lusiajs/lusia](https://github.com/lusiajs/lusia) | The framework (this repo) |
 | [lusiajs/create](https://github.com/lusiajs/create) | `bun create lusia`, the app starter |
-| [lusiajs/vscode](https://github.com/lusiajs/vscode) | The VS Code extension |
+| [lusiajs/vsix](https://github.com/lusiajs/vsix) | The VS Code extension (`.vsix`) |
 | [lusiajs/docs](https://github.com/lusiajs/docs) | The docs site: Guide, reference, playground |
 
 ## More
