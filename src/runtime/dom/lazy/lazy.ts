@@ -56,7 +56,7 @@ function placeLoading(
   const marker = document.createComment("");
   parent.insertBefore(marker, anchor);
   let removeFallback: Cleanup = loader.fallback
-    ? loader.fallback.place(parent, marker, { props: {}, bound: {} }, [])
+    ? loader.fallback.place(parent, marker, { props: {}, bound: {}, scope: host.scope }, [])
     : noop;
   let removeLoaded: Cleanup = noop;
   let detached = false;

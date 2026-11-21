@@ -4,6 +4,7 @@ import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
 import { collectAttachHooks, runAttach, type AttachHook } from "./lifecycle.ts";
 import { runtimeError } from "../../errors.ts";
+import { childScope, currentScope, inScope, keepScope, type Scope } from "../../config/scope.ts";
 
 export type Props = Record<string, () => unknown>;
 
@@ -13,6 +14,7 @@ export type Slot = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 export type Bound = Record<string, Variable<unknown>>;
 
 export interface Host {
+  scope?: Scope;
   props: Props;
   bound: Bound;
   content?: Slot;
@@ -73,7 +75,7 @@ function renderScript(
   currentHost = host;
   currentCleanups = cleanups;
   try {
-    return render(cleanups, leaves, host);
+    return inScope(childScope(host.scope), () => render(cleanups, leaves, host));
   } finally {
     currentHost = previousHost;
     currentCleanups = previousCleanups;
@@ -117,6 +119,7 @@ export function bindComponent(
   leaves: Leave[],
   content?: Slot,
 ): void {
-  cleanups.push(component.place(marker.parentNode!, marker, { props, bound, content }, leaves));
+  const host: Host = { props, bound, content: content && keepScope(content), scope: currentScope() };
+  cleanups.push(component.place(marker.parentNode!, marker, host, leaves));
   (marker as ChildNode).remove();
 }
