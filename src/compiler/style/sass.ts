@@ -43,13 +43,12 @@ export function compileStyleResult(
   file: string,
   id: string,
   index = 0,
-  marked = false,
 ): StyleResult {
   const isPlainCss = style.attrs.lang === "css";
   const sassOutput = isPlainCss
     ? { css: style.content, deps: [], sassMs: 0 }
     : compileScss(style, file, index);
-  const css = scopeCss(sassOutput.css, id, styleMode(style), marked).trim();
+  const css = scopeCss(sassOutput.css, id, styleMode(style)).trim();
   return { css, deps: sassOutput.deps, sassMs: sassOutput.sassMs };
 }
 

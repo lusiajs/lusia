@@ -5,6 +5,7 @@ import { unknownKeysAt } from "../check/animate-keys.ts";
 import type { ScriptRange } from "../check/script-range.ts";
 import type { Expr } from "../types/expression.ts";
 import type { Template } from "../types/template.ts";
+import type { ScopeClasses } from "../../style/classes.ts";
 
 export interface GenOptions {
   /** The path shown in runtime errors. */
@@ -23,7 +24,7 @@ export class GenContext {
   private lines: number[] | undefined;
 
   constructor(
-    readonly id: string,
+    readonly scopes: ScopeClasses,
     private readonly options: GenOptions,
   ) {}
 
@@ -55,15 +56,14 @@ export class GenContext {
   /** Declares a lazily parsed template for `html` and returns its name. */
   template(html: string): string {
     const name = `__tpl${this.count++}`;
-    const args = `${JSON.stringify(html)}, ${JSON.stringify(this.id)}`;
-    this.declarations.push(`const ${name} = __lazyTemplate(${args});`);
+    this.declarations.push(`const ${name} = __lazyTemplate(${JSON.stringify(html)});`);
     return name;
   }
 
-  /** Expression that clones one template and runs its binders. Needs `__cleanups` and `__leaves` in scope. */
+  /** Expression that clones one template and runs its binders. Needs `__host`, `__cleanups` and `__leaves` in scope. */
   fragment(template: Template): string {
     const name = this.template(template.html);
-    return `__instantiate(${name}(), [\n${bindersOf(template.bindings, this)}\n], __cleanups, __leaves)`;
+    return `__instantiate(${name}(), __host.inherited, [\n${bindersOf(template.bindings, this)}\n], __cleanups, __leaves)`;
   }
 
   /** A render function for a block body. `params` is the parameter list, ending with the cleanups and leaves. */

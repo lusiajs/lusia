@@ -4,8 +4,8 @@ import type { Template } from "../types/template.ts";
 export interface ScanScope {
   components: ReadonlySet<string>;
   contentUsed: boolean;
-  /** The scope class every element gets, when its styles match by class. */
-  marker?: string;
+  /** The classes every element gets, space-separated. Empty when the component has no styles. */
+  classes: string;
 }
 
 export function isBlank(template: Template): boolean {

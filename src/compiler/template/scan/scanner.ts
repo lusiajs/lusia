@@ -106,8 +106,8 @@ class TemplateScanner {
   }
 
   private addElement(name: string, attrs: AttrBinding[], selfClosing: boolean): void {
-    const marked = this.scope.marker ? withScopeClass(attrs, this.scope.marker) : attrs;
-    const { statics, binding } = compileElement(marked);
+    const scoped = this.scope.classes ? withScopeClass(attrs, this.scope.classes) : attrs;
+    const { statics, binding } = compileElement(scoped);
     if (binding) this.bindings.push(binding);
     const marker = binding ? ` ${ELEMENT_MARKER}` : "";
     this.html += `<${name}${statics}${marker}${selfClosing ? " />" : ">"}`;
@@ -141,10 +141,10 @@ export function compileTemplate(
   file: string,
   startLine = 1,
   components: ReadonlySet<string> = new Set(),
-  marker?: string,
+  classes = "",
 ): Template {
   const cursor = new Cursor(markup, file, startLine);
-  const scope: ScanScope = { components, contentUsed: false, marker };
+  const scope: ScanScope = { components, contentUsed: false, classes };
   const template = new TemplateScanner(cursor, scope).scanBody();
   if (cursor.pos < markup.length) failBoundary(cursor);
   return template;

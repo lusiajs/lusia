@@ -2,6 +2,7 @@ import { hotVariables } from "#compiler/hot/variables.ts";
 import { markLines } from "#compiler/sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./context.ts";
 import type { Template } from "../types/template.ts";
+import type { ScopeClasses } from "../../style/classes.ts";
 
 export interface ComponentParts extends GenOptions {
   imports: string;
@@ -11,6 +12,7 @@ export interface ComponentParts extends GenOptions {
   template: Template;
   css: string;
   id: string;
+  scopes: ScopeClasses;
 }
 
 const RUNTIME_IMPORT = `import {
@@ -18,6 +20,8 @@ const RUNTIME_IMPORT = `import {
   attr as __attr,
   bindComponent as __bindComponent,
   bindContent as __bindContent,
+  joinClasses as __joinClasses,
+  withInheritedClasses as __withInheritedClasses,
   bindEach as __bindEach,
   bindElement as __bindElement,
   bindFor as __bindFor,
@@ -60,12 +64,13 @@ export function generate({
   template,
   css,
   id,
+  scopes,
   file,
   dev,
   source,
   script,
 }: ComponentParts): string {
-  const ctx = new GenContext(id, { file, dev, source, script });
+  const ctx = new GenContext(scopes, { file, dev, source, script });
   const fragment = ctx.fragment(template);
   return [
     imports,

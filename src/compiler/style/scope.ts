@@ -1,21 +1,16 @@
-import { COMPONENT_ATTR, scopeClass } from "#runtime/markers.ts";
+import { scopeClass, treeClass } from "#runtime/markers.ts";
 import type { StyleMode } from "./modes.ts";
 import { closingParen, scopeSelector, splitTopLevel, subjectStart } from "./selector.ts";
 
 const GLOBAL = ":global(";
 
-/** `marked`: every element of the component carries its scope class, so one class test is enough for any mode. */
-export function scopeFilter(
-  id: string,
-  mode: Exclude<StyleMode, "global">,
-  marked = false,
-): string {
-  if (marked) return `:where(.${scopeClass(id)})`;
-  const root = `[${COMPONENT_ATTR}="${id}"]`;
-  const inTree = `:where(${root}, ${root} *)`;
-  if (mode === "tree") return inTree;
-  const childRoot = `${root} [${COMPONENT_ATTR}]:not(${root})`;
-  return `${inTree}:not(:where(${childRoot}, ${childRoot} *))`;
+/** The class test a rule adds to its subject. `:where` keeps the specificity unchanged. */
+export function classFilter(className: string): string {
+  return `:where(.${className})`;
+}
+
+export function scopeFilter(id: string, mode: Exclude<StyleMode, "global">): string {
+  return classFilter(mode === "tree" ? treeClass(id) : scopeClass(id));
 }
 
 function unwrapGlobals(selector: string): string {

@@ -18,8 +18,16 @@ export function attrValue(parts: AttrPart[]): string {
   return pieces.join(" + ");
 }
 
+const CLASS = "class";
+
+/** A dynamic class is set whole, so it keeps the inherited tree classes the template gave the element. */
+function classValue(parts: AttrPart[]): string {
+  return `__withInheritedClasses(${attrValue(parts)}, __host.inherited)`;
+}
+
 function attrCall({ name, parts }: AttrBinding): string {
-  return `__attr(__node as Element, ${JSON.stringify(name)}, () => ${attrValue(parts)}, __cleanups);`;
+  const value = name === CLASS ? classValue(parts) : attrValue(parts);
+  return `__attr(__node as Element, ${JSON.stringify(name)}, () => ${value}, __cleanups);`;
 }
 
 function eventCall({ type, expr }: EventBinding): string {
