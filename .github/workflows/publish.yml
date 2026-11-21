@@ -7,6 +7,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +28,9 @@ jobs:
         run: |
           VERSION=$(bun -p "require('./package.json').version")
           test "v$VERSION" = "$GITHUB_REF_NAME"
+
+      - name: Generate the docs
+        run: bun run docs:generate
 
       - name: Publish
         run: |
@@ -47,3 +52,13 @@ jobs:
           esac
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create the GitHub release
+        run: |
+          VERSION=$(bun -p "require('./package.json').version")
+          case "$VERSION" in
+            *-*) gh release create "$GITHUB_REF_NAME" --generate-notes --prerelease ;;
+            *) gh release create "$GITHUB_REF_NAME" --generate-notes ;;
+          esac
+        env:
+          GH_TOKEN: ${{ github.token }}
