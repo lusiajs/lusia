@@ -1,10 +1,10 @@
 import type { PropDef } from "../parse/props.ts";
 import { blankSections, scriptSection } from "../parse/sections.ts";
-import type { ChildSource, ChildSourceLookup, LintContext } from "./types.ts";
+import type { ChildSource, ChildSourceLookup, LintContext, LintOptions } from "./types.ts";
 
 export function buildContext(
   source: string,
-  file: string | undefined,
+  options: LintOptions,
   childLookup: (name: string) => PropDef[] | undefined,
   childSourceLookup: ChildSourceLookup,
 ): LintContext {
@@ -14,7 +14,8 @@ export function buildContext(
     script: script ? source.slice(script.contentStart, script.contentEnd) : "",
     scriptOffset: script?.contentStart ?? 0,
     markup: blankSections(source),
-    file,
+    file: options.file,
+    resolveClassType: options.resolveClassType,
     childProps: cached<PropDef[] | undefined>(childLookup),
     childSource: cached<ChildSource | undefined>(childSourceLookup),
   };

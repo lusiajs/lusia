@@ -32,7 +32,12 @@ describe("unused-class", () => {
   test("warns on a class that no markup uses, with its line", () => {
     const source =
       '<style>\n.used { color: red; }\n.unused { color: red; }\n</style>\n<p class="used"></p>';
-    expect(unusedClasses(source)).toEqual([['".unused" is never used in markup', 3]]);
+    expect(unusedClasses(source)).toEqual([
+      [
+        '".unused" is not used. No element in this component or its child components has this class.',
+        3,
+      ],
+    ]);
   });
 
   test("warns with the warning severity", () => {
@@ -81,7 +86,10 @@ describe("unused-class", () => {
   test("a scoped-mode class used only in a child is flagged", () => {
     const source = `${LEAF_IMPORT}<style scoped>.card { color: red; }</style>\n<Leaf />`;
     expect(unusedClasses(source, { Leaf: '<p class="card">x</p>' })).toEqual([
-      ['".card" is never used in markup', 4],
+      [
+        '".card" is not used. No element in this component or its child components has this class.',
+        4,
+      ],
     ]);
   });
 
@@ -118,7 +126,9 @@ describe("unused-class", () => {
   test("a CSS disable-next-line comment hides only the next line", () => {
     const source =
       "<style>\n/* lusia-lint-disable-next-line unused-class */\n.a { color: red; }\n.b { color: red; }\n</style>\n<p></p>";
-    expect(unusedClasses(source)).toEqual([['".b" is never used in markup', 4]]);
+    expect(unusedClasses(source)).toEqual([
+      ['".b" is not used. No element in this component or its child components has this class.', 4],
+    ]);
   });
 
   test("a changed Sass import is compiled again", () => {
@@ -131,6 +141,8 @@ describe("unused-class", () => {
     writeFileSync(partial, "@mixin box { .other { color: red; } }");
     const second = lintLusia(source, NO_PROPS, { file }).map((issue) => issue.message);
     expect(first).toEqual([]);
-    expect(second).toEqual(['".other" is never used in markup']);
+    expect(second).toEqual([
+      '".other" is not used. No element in this component or its child components has this class.',
+    ]);
   });
 });

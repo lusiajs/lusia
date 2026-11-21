@@ -1,3 +1,4 @@
+import type { ClassTypeResolver } from "#compiler/style/markup.ts";
 import type { PropDef } from "../parse/props.ts";
 
 export const LINT_RULE_CODES = [
@@ -12,6 +13,7 @@ export const LINT_RULE_CODES = [
   "flow-chain",
   "bind-target",
   "unused-class",
+  "untyped-class",
 ] as const;
 
 export type LintRuleCode = (typeof LINT_RULE_CODES)[number];
@@ -29,6 +31,8 @@ export interface LintOptions {
   disableComments?: boolean;
   /** The file the source is from. Sass loads relative imports from its folder. */
   file?: string;
+  /** Reads the value type of a name the script does not declare. */
+  resolveClassType?: ClassTypeResolver;
 }
 
 /** An imported component: its file, its source, and the lookup for its own imports. */
@@ -74,6 +78,7 @@ export interface LintContext {
   /** The source with script and style content blanked, so offsets still match. */
   markup: string;
   file: string | undefined;
+  resolveClassType: ClassTypeResolver | undefined;
   childProps(name: string): PropDef[] | undefined;
   childSource: ChildSourceLookup;
 }

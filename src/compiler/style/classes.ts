@@ -1,44 +1,18 @@
-import { blankSections, scriptSection } from "#language/parse/sections.ts";
 import { mapRules } from "./css-blocks.ts";
 import { MODE_BLOCK, type StyleMode, UNSCOPED_AT_RULES } from "./modes.ts";
 import { closingParen, splitTopLevel } from "./selector.ts";
+
+export { markupClasses } from "./markup.ts";
+export type { ClassType, ClassTypeResolver, MarkupClasses, WideClass } from "./markup.ts";
 
 export interface StyleClass {
   name: string;
   mode: StyleMode;
 }
 
-export interface MarkupClasses {
-  used: Set<string>;
-  unsafeDynamic: boolean;
-}
-
 const GLOBAL = ":global(";
 const CLASS_TOKEN = /\.((?:[A-Za-z_-]|\\.)(?:[\w-]|\\.)*)/g;
 const ATTRIBUTE_SELECTOR = /\[[^\]]*\]/g;
-const CLASS_WORD = /^[A-Za-z_-][\w:-]*$/;
-const STATIC_CLASS = /\sclass=(?:"([^"]*)"|'([^']*)')/g;
-const CLASS_EXPRESSION = /\sclass=\{/g;
-const TEMPLATE_HOLE = /\$\{[^}]*\}/g;
-const CONCAT = /\+\s*["'`]|["'`]\s*\+|\$\{/;
-const CALL = /[A-Za-z_$][\w$]*\s*\(/;
-const DECLARATION = /\b(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/g;
-const DESTRUCTURING = /\b(?:const|let|var)\s*\{([^}]*)\}/g;
-const LOOP_ITEM =
-  /\b(?:as|index)=(?:\{\s*([A-Za-z_][\w$]*)\s*\}|"([A-Za-z_][\w$]*)")|<FOR\s+\{\s*([A-Za-z_][\w$]*)\s*\}/g;
-const QUOTED_STRING = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
-const REFERENCED_NAME = /(?<![\w$.])[A-Za-z_][\w$]*/g;
-const KEYWORDS = new Set([
-  "true",
-  "false",
-  "null",
-  "undefined",
-  "this",
-  "new",
-  "typeof",
-  "in",
-  "of",
-]);
 
 export function styleClasses(css: string, mode: StyleMode): StyleClass[] {
   const found = new Map<string, StyleClass>();
@@ -94,128 +68,4 @@ function unescapeIdent(ident: string): string {
 function addClass(name: string, mode: StyleMode, found: Map<string, StyleClass>): void {
   const key = `${mode} ${name}`;
   if (!found.has(key)) found.set(key, { name, mode });
-}
-
-export function markupClasses(source: string): MarkupClasses {
-  const markup = blankSections(source);
-  const script = scriptText(source);
-  const used = new Set<string>();
-  for (const match of markup.matchAll(STATIC_CLASS)) addTokens(match[1] ?? match[2] ?? "", used);
-  addWords(script, used);
-  for (const expression of braceExpressions(markup)) addWords(expression, used);
-
-  const names = localNames(script, markup);
-  const unsafeDynamic = findClassExpressions(markup).some(
-    (expression) => usesConcat(expression, script) || readsUndeclared(expression, names),
-  );
-  return { used, unsafeDynamic };
-}
-
-// Names declared in the script or made by a loop in the markup. Anything else comes from an import or a prop.
-function localNames(script: string, markup: string): Set<string> {
-  const names = new Set<string>();
-  for (const match of script.matchAll(DECLARATION)) names.add(match[1]!);
-  for (const match of script.matchAll(DESTRUCTURING)) {
-    for (const name of destructuredNames(match[1]!)) names.add(name);
-  }
-  for (const match of markup.matchAll(LOOP_ITEM)) names.add(match[1] ?? match[2] ?? match[3]!);
-  return names;
-}
-
-function destructuredNames(pattern: string): string[] {
-  return pattern
-    .split(",")
-    .map((part) => part.split(":").pop()!.split("=")[0]!.replace("...", "").trim())
-    .filter(Boolean);
-}
-
-function readsUndeclared(expression: string, names: Set<string>): boolean {
-  return referencedNames(expression).some((name) => !names.has(name));
-}
-
-function referencedNames(expression: string): string[] {
-  const code = expression.replace(QUOTED_STRING, " ").replace(/`/g, " ");
-  return [...code.matchAll(REFERENCED_NAME)]
-    .map((match) => match[0])
-    .filter((name) => !KEYWORDS.has(name));
-}
-
-function scriptText(source: string): string {
-  const section = scriptSection(source);
-  return section ? source.slice(section.contentStart, section.contentEnd) : "";
-}
-
-function addTokens(text: string, used: Set<string>): void {
-  for (const token of text.split(/\s+/)) if (token) used.add(token);
-}
-
-// Class names inside string literals, e.g. `'is-active'` or `"row done"`.
-function addWords(code: string, used: Set<string>): void {
-  for (const literal of stringLiterals(code)) {
-    for (const word of literal.split(/\s+/)) if (CLASS_WORD.test(word)) used.add(word);
-  }
-}
-
-function usesConcat(expression: string, script: string): boolean {
-  if (CONCAT.test(expression)) return true;
-  return CALL.test(expression) && CONCAT.test(script);
-}
-
-function findClassExpressions(markup: string): string[] {
-  const bound = [...markup.matchAll(CLASS_EXPRESSION)].map((match) =>
-    expressionAt(markup, match.index + match[0].length - 1),
-  );
-  const interpolated = [...markup.matchAll(STATIC_CLASS)].flatMap((match) =>
-    braceExpressions(match[1] ?? match[2] ?? ""),
-  );
-  return [...bound, ...interpolated];
-}
-
-function braceExpressions(text: string): string[] {
-  const expressions: string[] = [];
-  let open = text.indexOf("{");
-  while (open !== -1) {
-    const end = expressionEnd(text, open);
-    expressions.push(text.slice(open + 1, end));
-    open = text.indexOf("{", end + 1);
-  }
-  return expressions;
-}
-
-function expressionAt(text: string, open: number): string {
-  return text.slice(open + 1, expressionEnd(text, open));
-}
-
-function expressionEnd(text: string, open: number): number {
-  let depth = 0;
-  for (let i = open; i < text.length; i++) {
-    const ch = text[i];
-    if (ch === '"' || ch === "'" || ch === "`") i = closingQuote(text, i);
-    else if (ch === "{") depth++;
-    else if (ch === "}" && --depth === 0) return i;
-  }
-  return text.length;
-}
-
-function closingQuote(text: string, start: number): number {
-  const quote = text[start];
-  for (let i = start + 1; i < text.length; i++) {
-    if (text[i] === "\\") i++;
-    else if (text[i] === quote) return i;
-  }
-  return text.length;
-}
-
-// Template literals keep only their text, without the `${...}` parts.
-function stringLiterals(code: string): string[] {
-  const literals: string[] = [];
-  for (let i = 0; i < code.length; i++) {
-    const ch = code[i];
-    if (ch !== '"' && ch !== "'" && ch !== "`") continue;
-    const end = closingQuote(code, i);
-    const body = code.slice(i + 1, end);
-    literals.push(ch === "`" ? body.replace(TEMPLATE_HOLE, " ") : body);
-    i = end;
-  }
-  return literals;
 }

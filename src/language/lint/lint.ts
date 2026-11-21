@@ -13,6 +13,7 @@ import { styleAttribute } from "./rules/style-attribute.ts";
 import { unknownProp } from "./rules/unknown-prop.ts";
 import { unusedClass } from "./rules/unused-class.ts";
 import { unusedImport } from "./rules/unused-import.ts";
+import { untypedClass } from "./rules/untyped-class.ts";
 import type { ChildSourceLookup, LintFinding, LintIssue, LintOptions, LintRule } from "./types.ts";
 
 export { LINT_LEVELS, LINT_RULE_CODES } from "./types.ts";
@@ -40,6 +41,7 @@ const RULES: LintRule[] = [
   flowChain,
   bindTargets,
   unusedClass,
+  untypedClass,
 ];
 
 /** `childProps` gives the props of an imported component, `childSource` its source. */
@@ -49,7 +51,7 @@ export function lintLusia(
   options: LintOptions = {},
   childSource: ChildSourceLookup = () => undefined,
 ): LintIssue[] {
-  const context = buildContext(source, options.file, childProps, childSource);
+  const context = buildContext(source, options, childProps, childSource);
   const directives = options.disableComments === false ? [] : parseLintDirectives(source);
   return RULES.flatMap((rule) => rule(context))
     .sort((a, b) => a.offset - b.offset)

@@ -160,4 +160,22 @@ const rows = [];
     expect(result.used.size).toBe(0);
     expect(result.unsafeDynamic).toBe(false);
   });
+
+  test("a resolved literal union adds its classes and stays safe", () => {
+    const source = `<script>\nimport { tone } from "./variable.ts";\n</script>\n<li class="cell {tone}"></li>`;
+    const result = markupClasses(source, () => ["odd", "even"]);
+    expect(result.used.has("odd")).toBe(true);
+    expect(result.used.has("even")).toBe(true);
+    expect(result.unsafeDynamic).toBe(false);
+    expect(result.wide).toEqual([]);
+  });
+
+  test("a wide type is reported at its expression and makes the markup unsafe", () => {
+    const source = `<script>\nimport { label } from "./variable.ts";\n</script>\n<li class={label}></li>`;
+    const result = markupClasses(source, () => ({ wide: "string" }));
+    expect(result.wide).toEqual([
+      { name: "label", offset: source.indexOf("label}"), type: "string" },
+    ]);
+    expect(result.unsafeDynamic).toBe(true);
+  });
 });

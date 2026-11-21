@@ -16,7 +16,7 @@ interface Usage {
 }
 
 export const unusedClass: LintRule = (context) => {
-  const root = markupClasses(context.source);
+  const root = markupClasses(context.source, context.resolveClassType);
   if (root.unsafeDynamic) return [];
   const treeUsage = childTreeUsage(context.script, context.childSource);
   if (treeUsage.unsafeDynamic) return [];
@@ -52,7 +52,7 @@ function unusedInSection(
     .map((item) => ({
       offset: classOffset(section, item.name),
       code: "unused-class",
-      message: `".${item.name}" is never used in markup`,
+      message: `".${item.name}" is not used. No element in this component or its child components has this class.`,
       severity: "warning",
     }));
 }
