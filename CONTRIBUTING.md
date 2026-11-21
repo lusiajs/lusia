@@ -1,30 +1,6 @@
 # Contributing to Lusia
 
-Welcome, and thank you for helping improve Lusia. Start with the [quick start](README.md#quick-start), then use this page for commands and code rules. The [Guide](https://lusia.azpepoze.com/guide) explains the framework itself.
-
-## Commands
-
-| Task | Command |
-| ---- | ------- |
-| Install packages | `bun install` |
-| Run the stress example (port 3000) | `bun run dev:stress` |
-| Run the tests | `bun run test` |
-| Run one test file | `bun test test/compiler/style/modes.test.ts` |
-| Run tests by name | `bun test -t "diamond"` |
-| Typecheck | `bun run typecheck` |
-| Format all files | `bun run format` |
-| Check formatting without writing | `bun run format:check` |
-| Check before a commit | `bun run check` |
-| Pack what npm would ship | `bun pm pack --dry-run` |
-
-> [!TIP]
-> Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
-
-`bun run check` runs the typecheck and the tests in parallel.
-
-Tests use small data. The large stress sizes live in `examples/stress` and run only on the stress page.
-
-Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `bun src/cli/index.ts --help` for the commands and flags.
+Thanks for helping. Read the rules, set up, then open a pull request.
 
 ## Repo layout
 
@@ -33,78 +9,60 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `src/runtime` | The `lusiajs` package: variables, DOM helpers, animate |
 | `src/compiler` | Turns `.lusia` files into TypeScript modules |
 | `src/language` | Parse, format and lint for `.lusia` files |
-| `src/editor` | Completion, hover and error logic shared by editors. Tests in `test/editor` |
-| `src/bun-plugin` | The Bun loader for `.lusia` files and `?raw` imports |
+| `src/editor` | Completion, hover and error logic for editors |
+| `src/bun-plugin` | The Bun loader for `.lusia` files |
 | `src/cli` | The `lusia` command |
-| `test/` | Tests. One folder per area, mirroring `src/`. `test/setup.ts` sets up the fake DOM |
-| `examples/stress` | Scenarios that push the limits and report timings |
-| `reference/api.ts` | The API table. The extension and the docs site read it as `lusiajs/api` |
-| `scripts/check.ts` | The steps behind `bun run check` |
-| `scripts/generate-docs.ts` | Writes the generated package docs. See [Generated docs](#generated-docs) |
-
-## Generated docs
-
-The package ships generated docs in `docs/`, plus `llms.txt` and `llms-full.txt` for AI assistants.
-
-| Output | Built from |
-| ------ | ---------- |
-| `docs/api/*.md` and `docs/README.md` | `reference/api.ts` and `reference/api/` |
-| `docs/errors.md` | The error codes in `src/compiler/errors/codes/` |
-| `docs/config.md` | `config.schema.json` |
-| `llms.txt`, `llms-full.txt` | The same sources |
-
-- Run `bun run docs:generate` to write them. The output is ignored by git.
-- The publish workflow runs it before `bun publish`, and `prepack` runs it on every pack.
-- Change the sources, never the files in `docs/`.
+| `test/` | Tests. One folder per area, mirroring `src/` |
+| `examples/stress` | Scenarios that push the limits |
+| `reference/api.ts` | The API table, read by the extension and the docs site |
+| `scripts/` | `check.ts` for `bun run check`, `generate-docs.ts` for the package docs |
 
 ## Other repos
 
-| Repo | Depends on `lusiajs` through |
-| ---- | ---------------------------------- |
-| [lusiajs/create](https://github.com/lusiajs/create) | The starter app uses the `lusiajs` package |
-| [lusiajs/vsix](https://github.com/lusiajs/vsix) | `lusiajs/api`, `lusiajs/language/*`, `lusiajs/editor/*`, `lusiajs/compiler` |
-| [lusiajs/docs](https://github.com/lusiajs/docs) | `lusiajs/api`, `lusiajs/language/*`, `lusiajs/editor/*`, `lusiajs/errors/*`, `lusiajs/compiler/*` |
+| Repo | Uses `lusiajs` for |
+| ---- | ------------------ |
+| [lusiajs/create](https://github.com/lusiajs/create) | The starter app |
+| [lusiajs/vsix](https://github.com/lusiajs/vsix) | The VS Code extension |
+| [lusiajs/docs](https://github.com/lusiajs/docs) | The docs site |
 
-To try a local change in another repo, run `bun link` here, then `bun link lusiajs` there.
+## Rules
 
-## Code rules
+- Framework logic goes in domain folders: `parse/`, `style/`, `template/`, `variable/`, `dom/`.
+- Keep one job per file, around 150 lines.
+- Put a helper in `utils/` only when two or more domains use it.
+- Imports across areas use the `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/` and `#language/` aliases. `src/runtime` ships to apps, so it uses relative imports only.
+- A change to the API or to `.lusia` markup updates `reference/api.ts` and `examples/stress` in the same change.
+- Then update `lusiajs/docs` (Guide, demos, Prism language) and `lusiajs/vsix` (grammar, completion, hover, lint, formatter).
+- New error codes go in `src/compiler/errors/codes/`.
+- Never edit the generated files in `docs/`. Change the sources.
 
-- Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/` and `dom/`.
-- `utils/` holds only helpers that two or more domains use. One job per file, around 150 lines.
-- Imports across areas use the `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/` and `#language/` aliases. They are defined in `imports` in `package.json`, so Bun and TypeScript both resolve them, also for apps that install `lusiajs`. Imports inside one area stay relative. `src/runtime` ships to apps, so it uses relative imports only.
+## Set up
 
-## Error codes
+1. Install packages:
 
-| Range | Meaning |
-| ----- | ------- |
-| `L1xxx` | Compile errors in `.lusia` files |
-| `L2xxx` | Runtime errors |
-| `L3xxx` | Bundler errors from `Bun.build` |
+   ```sh
+   bun install
+   ```
 
-To add a code, add one entry to `CODES` in `src/compiler/errors/codes.ts`.
+2. Check your change:
 
-## Syntax and API changes
+   | Command | What it does |
+   | ------- | ------------ |
+   | `bun run check` | Typecheck and tests |
+   | `bun run format` | Format all files |
+   | `bun run dev:stress` | Run the stress example on port 3000 |
 
-A change to the API or to `.lusia` markup must update `reference/api.ts` and `examples/stress` (when it is affected) in the same change. Then follow it up in the other repos:
+> [!TIP]
+> Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
 
-| Repo | Update |
-| ---- | ------ |
-| `lusiajs/docs` | The Guide, the demos and the Prism `lusia` language |
-| `lusiajs/vsix` | The grammar, completion, hover, lint and formatter |
+## Open a pull request
 
-Release `lusiajs` first, then bump it in `docs` and `vsix`.
+1. Branch from `dev`.
+2. Keep one logical change per pull request.
+3. Use [Conventional Commits](https://www.conventionalcommits.org) for commit messages, such as `fix(variable): ...`.
+4. Run `bun run check`. CI runs it too.
+5. Open the pull request into `dev`. Say what changed and how you checked it.
 
-## Releases
+## Release notes
 
-1. Update `version` in `package.json`.
-2. Run `bun run check`.
-3. Push a tag that matches the version, such as `v0.1.0-beta.1`. The `publish.yml` workflow publishes to npm with `bun publish`.
-
-CI runs `bun run check` on every push and pull request to `dev` and `main`.
-
-A version with a dash (`0.1.0-beta.1`) is published under the `beta` tag. A plain version (`0.1.0`) is published as `latest`.
-
-## Workflow
-
-- Commit messages use [Conventional Commits](https://www.conventionalcommits.org): `type(scope): short imperative summary`. Keep the summary lowercase, with no trailing period, under about 72 characters.
-- Run `bun run check` before you report a change as done.
+See the [GitHub releases](https://github.com/lusiajs/lusia/releases).
