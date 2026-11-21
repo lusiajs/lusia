@@ -1,4 +1,7 @@
 import { describe, expect, test } from "bun:test";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { lintLusia, type LintOptions } from "#language/lint/lint.ts";
 import type { ChildSourceLookup } from "#language/lint/types.ts";
 
@@ -116,5 +119,18 @@ describe("unused-class", () => {
     const source =
       "<style>\n/* lusia-lint-disable-next-line unused-class */\n.a { color: red; }\n.b { color: red; }\n</style>\n<p></p>";
     expect(unusedClasses(source)).toEqual([['".b" is never used in markup', 4]]);
+  });
+
+  test("a changed Sass import is compiled again", () => {
+    const dir = mkdtempSync(join(tmpdir(), "lusia-unused-class-"));
+    const file = join(dir, "page.lusia");
+    const partial = join(dir, "_box.scss");
+    const source = '<style>@use "box";\n@include box.box;</style>\n<p class="box"></p>';
+    writeFileSync(partial, "@mixin box { .box { color: red; } }");
+    const first = lintLusia(source, NO_PROPS, { file }).map((issue) => issue.code);
+    writeFileSync(partial, "@mixin box { .other { color: red; } }");
+    const second = lintLusia(source, NO_PROPS, { file }).map((issue) => issue.message);
+    expect(first).toEqual([]);
+    expect(second).toEqual(['".other" is never used in markup']);
   });
 });
