@@ -5,6 +5,9 @@ node_modules/
 dist/
 out/
 *.tsbuildinfo
+/docs/
+llms.txt
+llms-full.txt
 
 # Test coverage
 coverage/

@@ -31,7 +31,10 @@
     "lusia.d.ts",
     "config.schema.json",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "docs",
+    "llms.txt",
+    "llms-full.txt"
   ],
   "exports": {
     ".": "./src/runtime/index.ts",
@@ -61,7 +64,9 @@
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
     "bench:style": "bun scripts/bench-style-scope.ts",
-    "check": "bun scripts/check.ts"
+    "check": "bun scripts/check.ts",
+    "docs:generate": "bun scripts/generate-docs.ts",
+    "prepack": "bun scripts/generate-docs.ts"
   },
   "dependencies": {
     "prettier": "3.10.1",
