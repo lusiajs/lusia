@@ -17,7 +17,7 @@
   "homepage": "https://azpepoze.github.io/lusia",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AzPepoze/lusia.git"
+    "url": "git+https://github.com/lusiajs/lusia.git"
   },
   "engines": {
     "bun": ">=1.4"
