@@ -11,8 +11,7 @@ export interface SpaceRead {
   animateSpace: boolean;
 }
 
-const ATTACH_LIBRARY_ANIMATE_SPACE = false;
-const DETACH_LIBRARY_ANIMATE_SPACE = true;
+const LIBRARY_ANIMATE_SPACE = false;
 
 /** Only ATTACH and DETACH use the space, so the other triggers get a fixed value. */
 export function readSpace({ animateSpace }: SpaceMore, when: When | Source): SpaceRead {
@@ -28,10 +27,10 @@ export function readSpace({ animateSpace }: SpaceMore, when: When | Source): Spa
 /** The config section of the trigger, then the library default of that trigger. */
 function spaceDefault(when: When | Source): boolean {
   if (when === WHEN.ATTACH) {
-    return animateConfig().attach?.animateSpace ?? ATTACH_LIBRARY_ANIMATE_SPACE;
+    return animateConfig().attach?.animateSpace ?? LIBRARY_ANIMATE_SPACE;
   }
   if (when === WHEN.DETACH) {
-    return animateConfig().detach?.animateSpace ?? DETACH_LIBRARY_ANIMATE_SPACE;
+    return animateConfig().detach?.animateSpace ?? LIBRARY_ANIMATE_SPACE;
   }
   return false;
 }
