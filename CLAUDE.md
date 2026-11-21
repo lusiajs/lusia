@@ -2,7 +2,7 @@
 
 Lusia is a Bun-native UI framework: single-file `.lusia` components, variables and scoped SCSS.
 
-Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). Site Guide: https://azpepoze.github.io/lusia/guide. API table: [reference/api.ts](reference/api.ts).
+Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). Site Guide: https://lusia.azpepoze.com/guide. API table: [reference/api.ts](reference/api.ts).
 
 This repo is the framework. Sibling repos live in `../Project/lusiajs/`: `create` (npm `create-lusia`), `vscode` (extension), `docs` (site). They depend on the published `lusia` package, so a framework change reaches them only after a release.
 

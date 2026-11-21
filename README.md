@@ -30,8 +30,8 @@ To add Lusia to an existing project, run `bun add lusia`.
 
 | Topic | Link |
 | ----- | ---- |
-| Learn Lusia | [Guide](https://azpepoze.github.io/lusia/guide) |
-| API names and options | [Reference](https://azpepoze.github.io/lusia/reference) |
-| Try code in the browser | [Playground](https://azpepoze.github.io/lusia/playground) |
-| Compiler and runtime error codes | [Errors](https://azpepoze.github.io/lusia/errors) |
+| Learn Lusia | [Guide](https://lusia.azpepoze.com/guide) |
+| API names and options | [Reference](https://lusia.azpepoze.com/reference) |
+| Try code in the browser | [Playground](https://lusia.azpepoze.com/playground) |
+| Compiler and runtime error codes | [Errors](https://lusia.azpepoze.com/errors) |
 | Work on Lusia itself | [Contributing](CONTRIBUTING.md) |

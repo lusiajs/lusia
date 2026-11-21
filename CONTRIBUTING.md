@@ -1,6 +1,6 @@
 # Contributing to Lusia
 
-Welcome, and thank you for helping improve Lusia. Start with the [quick start](README.md#quick-start), then use this page for commands and code rules. The [Guide](https://azpepoze.github.io/lusia/guide) explains the framework itself.
+Welcome, and thank you for helping improve Lusia. Start with the [quick start](README.md#quick-start), then use this page for commands and code rules. The [Guide](https://lusia.azpepoze.com/guide) explains the framework itself.
 
 ## Commands
 
