@@ -166,7 +166,7 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
       insertText: "start: $1",
       snippet: true,
       detail:
-        "Where the progress is 0: SCROLL_AT member, or { element, window } with EDGE (default SCROLL_AT.ENTER)",
+        "Where the progress is 0: [element edge, screen edge] with EDGE (default [EDGE.TOP, EDGE.BOTTOM])",
     },
     {
       label: "end",
@@ -174,7 +174,7 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
       insertText: "end: $1",
       snippet: true,
       detail:
-        "Where the progress is 1: SCROLL_AT member, or { element, window } with EDGE (default SCROLL_AT.LEAVE). Not with follow",
+        "Where the progress is 1: [element edge, screen edge] with EDGE (default [EDGE.BOTTOM, EDGE.TOP]). Not with follow",
     },
     {
       label: "follow",

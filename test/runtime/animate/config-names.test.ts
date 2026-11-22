@@ -7,7 +7,6 @@ import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
 import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
-import { SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
 
 function thrown(read: () => unknown): { code?: string; message: string } {
   try {
@@ -29,7 +28,7 @@ const NAMED = {
     turnStyle: "QUAD",
     turnEase: "OUT",
   },
-  scroll: { start: "CENTER", end: { element: 0, window: 1 }, part: [0.1, 0.9] },
+  scroll: { start: [0.5, 0.5], end: [0, 1], part: [0.1, 0.9] },
   in: "FADE_IN",
   out: "FADE_OUT",
 };
@@ -46,8 +45,8 @@ const VALUES: AnimateConfig = {
     turnEase: EASE.OUT,
   },
   scroll: {
-    start: SCROLL_AT.CENTER,
-    end: { element: 0, window: 1 },
+    start: [0.5, 0.5],
+    end: [0, 1],
     part: [0.1, 0.9],
   },
   in: "FADE_IN",
@@ -62,8 +61,8 @@ describe("names to values", () => {
     expect(config.midway?.turn).toBe(TURN.SMOOTH);
     expect(config.midway?.turnStyle).toBe(EASE.STYLE.QUAD);
     expect(config.midway?.turnEase).toBe(EASE.OUT);
-    expect(config.scroll?.start).toBe(SCROLL_AT.CENTER);
-    expect(config.scroll?.end).toEqual({ element: 0, window: 1 });
+    expect(config.scroll?.start).toEqual([0.5, 0.5]);
+    expect(config.scroll?.end).toEqual([0, 1]);
   });
 
   test("an unknown name names the field and the value", () => {

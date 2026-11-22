@@ -68,12 +68,12 @@ export const RUNTIME_ANIMATE_CODES = {
     hint: "Use a variable that bind-element writes to.",
   },
   L2017: {
-    message: "animate more $name must be SCROLL_AT or { element, window }, got $value",
-    hint: "Use a SCROLL_AT member, such as SCROLL_AT.ENTER, or { element: EDGE.TOP, window: EDGE.BOTTOM }.",
+    message: "$name must be a pair [element edge, screen edge]",
+    hint: "Write $name: [EDGE.TOP, EDGE.BOTTOM].",
   },
   L2018: {
     message: "animate more start and end must be different moments",
-    hint: "Use two different SCROLL_AT members, or two different points.",
+    hint: "Use two different pairs, such as [EDGE.TOP, EDGE.BOTTOM] and [EDGE.BOTTOM, EDGE.TOP].",
   },
   L2019: {
     message: "animate more part must be [from, to] with 0 <= from < to <= 1, got $value",

@@ -1,9 +1,12 @@
-import { EDGE, SCROLL_AT, type ScrollAtMode, type ScrollEdge } from "../modes/scroll-modes.ts";
+import { EDGE, type ScrollEdge } from "../modes/edge.ts";
 import { runtimeError } from "../../errors.ts";
+
+/** A point on the element and the point on the screen that meet: `[element edge, screen edge]`. */
+export type ScrollPoint = [ScrollEdge, ScrollEdge];
 
 export interface ScrollTouch {
   element: ScrollEdge;
-  window: ScrollEdge;
+  screen: ScrollEdge;
 }
 
 /** `start` and `end` of WHEN.SCROLL: the progress is 0 at `start` and 1 at `end`. */
@@ -12,42 +15,28 @@ export interface ScrollRange {
   end: ScrollTouch;
 }
 
-export type ScrollAt = ScrollAtMode | ScrollTouch;
+export const DEFAULT_START: ScrollPoint = [EDGE.TOP, EDGE.BOTTOM];
+export const DEFAULT_END: ScrollPoint = [EDGE.BOTTOM, EDGE.TOP];
 
-const ENTER_TOUCH: ScrollTouch = Object.freeze({ element: EDGE.TOP, window: EDGE.BOTTOM });
-const CENTER_TOUCH: ScrollTouch = Object.freeze({ element: EDGE.CENTER, window: EDGE.CENTER });
-const LEAVE_TOUCH: ScrollTouch = Object.freeze({ element: EDGE.BOTTOM, window: EDGE.TOP });
+export const DEFAULT_RANGE: ScrollRange = {
+  start: toTouch(DEFAULT_START),
+  end: toTouch(DEFAULT_END),
+};
 
-const MODE_TOUCH: ReadonlyMap<unknown, ScrollTouch> = new Map<unknown, ScrollTouch>([
-  [SCROLL_AT.ENTER, ENTER_TOUCH],
-  [SCROLL_AT.CENTER, CENTER_TOUCH],
-  [SCROLL_AT.LEAVE, LEAVE_TOUCH],
-]);
-
-export const DEFAULT_RANGE: ScrollRange = { start: ENTER_TOUCH, end: LEAVE_TOUCH };
-
-const TOUCH_KEYS = ["element", "window"];
-
-export function readScrollAt(value: unknown, name: "start" | "end"): ScrollTouch {
-  const mode = MODE_TOUCH.get(value);
-  if (mode !== undefined) return mode;
-  if (typeof value === "number") throw runtimeError("L2047", { name });
-  if (typeof value !== "object" || value === null) {
-    throw runtimeError("L2017", { name, value: String(value) });
-  }
-  return readTouch(value, name);
+export function readScrollPoint(value: unknown, name: "start" | "end"): ScrollTouch {
+  if (!isPair(value)) throw runtimeError("L2017", { name });
+  return toTouch([
+    readEdge(value[0], `${name}[0]`),
+    readEdge(value[1], `${name}[1]`),
+  ]);
 }
 
-function readTouch(value: object, name: string): ScrollTouch {
-  for (const key of Object.keys(value)) {
-    if (!TOUCH_KEYS.includes(key)) throw runtimeError("L2049", { name, key });
-  }
-  const { element, window } = value as Partial<ScrollTouch>;
-  if (element === undefined || window === undefined) throw runtimeError("L2050", { name });
-  return {
-    element: readEdge(element, `${name}.element`),
-    window: readEdge(window, `${name}.window`),
-  };
+function isPair(value: unknown): value is ScrollPoint {
+  return Array.isArray(value) && value.length === 2;
+}
+
+function toTouch([element, screen]: ScrollPoint): ScrollTouch {
+  return { element, screen };
 }
 
 function readEdge(value: unknown, name: string): ScrollEdge {
@@ -56,5 +45,5 @@ function readEdge(value: unknown, name: string): ScrollEdge {
 }
 
 export function sameTouch(a: ScrollTouch, b: ScrollTouch): boolean {
-  return a.element === b.element && a.window === b.window;
+  return a.element === b.element && a.screen === b.screen;
 }

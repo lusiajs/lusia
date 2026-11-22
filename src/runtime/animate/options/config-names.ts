@@ -1,7 +1,6 @@
 import type { DefaultEasing } from "./keyform.ts";
 import { EASE } from "../modes/modes.ts";
 import { MIDWAY, TURN } from "../modes/midway-modes.ts";
-import { SCROLL_AT } from "../modes/scroll-modes.ts";
 import { runtimeError } from "../../errors.ts";
 import { readAnimateConfig, type AnimateConfig } from "./config.ts";
 
@@ -17,7 +16,6 @@ const DIRECTION_NAMES: Table = new Map<string, unknown>([
 const EASE_PART_NAMES: Table = new Map([...STYLE_NAMES, ...DIRECTION_NAMES]);
 const MIDWAY_NAMES: Table = new Map(Object.entries(MIDWAY));
 const TURN_NAMES: Table = new Map(Object.entries(TURN));
-const SCROLL_AT_NAMES: Table = new Map(Object.entries(SCROLL_AT));
 
 function nameOf(table: Table, label: string): Convert {
   return (value) => {
@@ -31,18 +29,6 @@ function valueOf(table: Table, label: string): Convert {
     if (typeof name === "string" && table.has(name)) return table.get(name);
     throw runtimeError("L2067", { name: label, value: String(name) });
   };
-}
-
-const SCROLL_AT_TO_NAME = nameOf(SCROLL_AT_NAMES, "scroll");
-const SCROLL_AT_FROM_NAME = valueOf(SCROLL_AT_NAMES, "scroll");
-
-/** A scroll position is a SCROLL_AT member or a touch object, which is already JSON-safe. */
-function scrollAtToName(value: unknown): unknown {
-  return typeof value === "object" ? value : SCROLL_AT_TO_NAME(value);
-}
-
-function scrollAtFromName(name: unknown): unknown {
-  return typeof name === "object" ? name : SCROLL_AT_FROM_NAME(name);
 }
 
 function easingToNames(easing: unknown): unknown {
@@ -106,22 +92,11 @@ const MIDWAY_FROM_NAMES = new Map<string, Convert>([
   ["turnEase", valueOf(DIRECTION_NAMES, "midway.turnEase")],
 ]);
 
-const SCROLL_TO_NAMES = new Map<string, Convert>([
-  ["start", scrollAtToName],
-  ["end", scrollAtToName],
-]);
-
-const SCROLL_FROM_NAMES = new Map<string, Convert>([
-  ["start", scrollAtFromName],
-  ["end", scrollAtFromName],
-]);
-
 const TOP_TO_NAMES = new Map<string, Convert>([
   ["ease", easingToNames],
   ["in", presetToNames],
   ["out", presetToNames],
   ["midway", (midway) => mapFields(midway, MIDWAY_TO_NAMES)],
-  ["scroll", (scroll) => mapFields(scroll, SCROLL_TO_NAMES)],
 ]);
 
 const TOP_FROM_NAMES = new Map<string, Convert>([
@@ -129,7 +104,6 @@ const TOP_FROM_NAMES = new Map<string, Convert>([
   ["in", presetFromNames],
   ["out", presetFromNames],
   ["midway", (midway) => mapFields(midway, MIDWAY_FROM_NAMES)],
-  ["scroll", (scroll) => mapFields(scroll, SCROLL_FROM_NAMES)],
 ]);
 
 /** Converts the fields that have a converter; the others, such as numbers and booleans, pass through. */

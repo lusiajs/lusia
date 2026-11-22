@@ -1,19 +1,20 @@
 import { runtimeError } from "../../errors.ts";
 import type { ComputedVariable } from "../../variable/compute.ts";
 import { isReactive } from "../../variable/reactive.ts";
-import { SCROLL_AT } from "../modes/scroll-modes.ts";
 import {
+  DEFAULT_END,
   DEFAULT_RANGE,
-  readScrollAt,
+  DEFAULT_START,
+  readScrollPoint,
   sameTouch,
-  type ScrollAt,
+  type ScrollPoint,
   type ScrollRange,
 } from "../scroll/scroll-touch.ts";
 import { animateConfig } from "./config-store.ts";
 
 export interface ScrollMore {
-  start?: ScrollAt;
-  end?: ScrollAt;
+  start?: ScrollPoint;
+  end?: ScrollPoint;
   follow?: ComputedVariable<Element | null>;
   part?: [number, number];
 }
@@ -64,8 +65,8 @@ export function scrollDefault(): ScrollRead {
 function readRange(start: unknown, end: unknown): ScrollRange {
   const config = animateConfig().scroll ?? {};
   const range = {
-    start: readScrollAt(start ?? config.start ?? SCROLL_AT.ENTER, "start"),
-    end: readScrollAt(end ?? config.end ?? SCROLL_AT.LEAVE, "end"),
+    start: readScrollPoint(start ?? config.start ?? DEFAULT_START, "start"),
+    end: readScrollPoint(end ?? config.end ?? DEFAULT_END, "end"),
   };
   if (sameTouch(range.start, range.end)) throw runtimeError("L2018");
   return range;

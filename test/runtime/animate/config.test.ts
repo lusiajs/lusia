@@ -6,7 +6,6 @@ import { readAnimateConfig, setAnimateConfig } from "#runtime/animate/options/co
 import { animateDefault } from "#runtime/animate/options/defaults.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
 import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
-import { SCROLL_AT } from "#runtime/animate/modes/scroll-modes.ts";
 import { WHEN } from "#runtime/animate/modes/trigger.ts";
 
 const fade = { 0: { opacity: 0 }, 1: { opacity: 1 } };
@@ -71,10 +70,10 @@ describe("config sets the defaults", () => {
 
   test("scroll start, end and part", () => {
     setAnimateConfig({
-      scroll: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE, part: [0.2, 0.8] },
+      scroll: { start: [0.5, 0.5], end: [1, 0], part: [0.2, 0.8] },
     });
     const scroll = readScroll({});
-    expect(scroll.range.start).toEqual({ element: 0.5, window: 0.5 });
+    expect(scroll.range.start).toEqual({ element: 0.5, screen: 0.5 });
     expect(scroll.part).toEqual([0.2, 0.8]);
   });
 
@@ -198,7 +197,7 @@ describe("config validation", () => {
   test("a start equal to the end fails at config time", () => {
     expect(
       thrown(() =>
-        readAnimateConfig({ scroll: { start: SCROLL_AT.CENTER, end: SCROLL_AT.CENTER } }),
+        readAnimateConfig({ scroll: { start: [0.5, 0.5], end: [0.5, 0.5] } }),
       ).code,
     ).toBe("L2018");
   });

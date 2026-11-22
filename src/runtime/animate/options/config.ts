@@ -2,7 +2,7 @@ import { readDefault, type DefaultEasing } from "./keyform.ts";
 import type { EaseStyle } from "../modes/easing.ts";
 import type { Ease } from "../modes/modes.ts";
 import type { MidwayMode, TurnMode } from "../modes/midway-modes.ts";
-import type { ScrollAt } from "../scroll/scroll-touch.ts";
+import type { ScrollPoint } from "../scroll/scroll-touch.ts";
 import type { Part } from "./scroll-options.ts";
 import type { Keyframes } from "./keyframes.ts";
 import { runtimeError } from "../../errors.ts";
@@ -43,8 +43,8 @@ export interface HoverConfig {
 }
 
 export interface ScrollConfig {
-  start?: ScrollAt;
-  end?: ScrollAt;
+  start?: ScrollPoint;
+  end?: ScrollPoint;
   part?: Part;
 }
 

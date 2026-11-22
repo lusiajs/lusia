@@ -119,7 +119,7 @@ export function scrollProgress(el: Element, range: ScrollRange): number {
 }
 
 function topWhenTouching(touch: ScrollTouch, viewport: number, height: number): number {
-  return touch.window * viewport - touch.element * height;
+  return touch.screen * viewport - touch.element * height;
 }
 
 // A tall element runs from its top edge to its bottom edge.
