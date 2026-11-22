@@ -1,10 +1,6 @@
-import * as sass from "sass";
-import { readFileSync } from "node:fs";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { parse, type Section } from "#compiler/parse/sections.ts";
 import { markupClasses, styleClasses, type StyleClass } from "#compiler/style/classes.ts";
-import { depsCurrent, type StyleDep } from "#compiler/style/sass.ts";
+import { compileLintScss, lintStyleCurrent, type CompiledStyle } from "#language/lint/style-compile";
 import { styleMode } from "#compiler/style/modes.ts";
 import { parseLusiaImports } from "../../parse/imports.ts";
 import { scriptSection } from "../../parse/sections.ts";
@@ -80,43 +76,20 @@ function lineAt(source: string, offset: number): string {
   return source.slice(start, end === -1 ? source.length : end);
 }
 
-interface CompiledStyle {
-  css: string;
-  deps: StyleDep[];
-}
-
 // The editor lints on every keystroke, so the same style is compiled once.
 const compiledStyles = new Map<string, CompiledStyle>();
 const COMPILED_LIMIT = 200;
 
 function compiledCss(section: Section, file: string | undefined): string | undefined {
   if (section.attrs.lang === "css") return section.content;
-  const key = `${file ? dirname(file) : ""}\0${section.content}`;
+  const key = `${file ?? ""}\0${section.content}`;
   const hit = compiledStyles.get(key);
-  if (hit && depsCurrent(hit.deps)) return hit.css;
-  const compiled = compileScss(section.content, file);
+  if (hit && lintStyleCurrent(hit)) return hit.css;
+  const compiled = compileLintScss(section.content, file);
   if (!compiled) return undefined;
   if (compiledStyles.size >= COMPILED_LIMIT) compiledStyles.clear();
   compiledStyles.set(key, compiled);
   return compiled.css;
-}
-
-function compileScss(content: string, file: string | undefined): CompiledStyle | undefined {
-  try {
-    const result = sass.compileString(content, {
-      loadPaths: file ? [dirname(file)] : [],
-      style: "expanded",
-      logger: sass.Logger.silent,
-    });
-    return { css: result.css, deps: result.loadedUrls.map(readDep) };
-  } catch {
-    return undefined;
-  }
-}
-
-function readDep(url: URL): StyleDep {
-  const path = fileURLToPath(url);
-  return { path, text: readFileSync(path, "utf8") };
 }
 
 function classToken(section: Section, name: string): number | undefined {
