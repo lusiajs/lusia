@@ -1,5 +1,5 @@
 <script>
-import { rows } from "./rows.ts";
+  import { rows } from "./rows.ts";
 </script>
 
 <ul class="each-list">

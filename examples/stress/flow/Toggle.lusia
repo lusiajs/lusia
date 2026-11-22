@@ -1,16 +1,20 @@
 <script>
-import { WHEN, PRESET } from "lusiajs";
-import { on } from "./on.ts";
+  import { WHEN, PRESET } from "lusiajs";
+  import { on } from "./on.ts";
 
-// Each badge leaves with this OUT animation, so removal waits for it.
-const fadeOut = {
-  0: { opacity: 1 },
-  1: { opacity: 0 },
-};
+  // Each badge leaves with this OUT animation, so removal waits for it.
+  const fadeOut = {
+    0: { opacity: 1 },
+    1: { opacity: 0 },
+  };
 </script>
 
 <div class="flow-toggle">
   <IF {on.value}>
-    <span class="badge" animate={[{ style: PRESET.FADE_IN, when: WHEN.ATTACH, duration: 20 }, { style: fadeOut, when: WHEN.DETACH, duration: 20 }]}>On</span>
+    <span
+      class="badge"
+      animate={[{ style: PRESET.FADE_IN, when: WHEN.ATTACH, duration: 20 }, { style: fadeOut, when: WHEN.DETACH, duration: 20 }]}
+      >On</span
+    >
   </IF>
 </div>

@@ -1,5 +1,5 @@
 <script>
-import { count, label, tick, tone } from "../variable.ts";
+  import { count, label, tick, tone } from "../variable.ts";
 </script>
 
 <li class="cell {tone}" data-count={count}>
@@ -9,13 +9,17 @@ import { count, label, tick, tone } from "../variable.ts";
 </li>
 
 <style>
-.cell {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  font-family: ui-monospace, monospace;
-  font-size: 0.8rem;
-}
-.odd { background: #fff4ec; }
-.even { background: #f1f6ff; }
+  .cell {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+  .odd {
+    background: #fff4ec;
+  }
+  .even {
+    background: #f1f6ff;
+  }
 </style>

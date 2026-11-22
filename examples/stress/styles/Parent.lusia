@@ -14,9 +14,13 @@
 </div>
 
 <style>
-  .mark { outline: 2px solid rebeccapurple; }
+  .mark {
+    outline: 2px solid rebeccapurple;
+  }
 
   @scoped {
-    .mark { background: lightyellow; }
+    .mark {
+      background: lightyellow;
+    }
   }
 </style>

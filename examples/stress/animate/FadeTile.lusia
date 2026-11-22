@@ -1,34 +1,37 @@
 <script>
-import { WHEN, EASE } from "lusiajs";
+  import { WHEN, EASE } from "lusiajs";
 
-const colorAndMove = {
-  0: { color: "#e11d48", translate: "-12px 0px" },
-  1: [EASE.STYLE.QUART, EASE.INOUT, { color: "#2563eb", translate: "0px 0px" }],
-};
+  const colorAndMove = {
+    0: { color: "#e11d48", translate: "-12px 0px" },
+    1: [EASE.STYLE.QUART, EASE.INOUT, { color: "#2563eb", translate: "0px 0px" }],
+  };
 
-const fade = {
-  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
-  1: [EASE.STYLE.LINEAR, EASE.OUT, { opacity: 1 }],
-};
+  const fade = {
+    0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+    1: [EASE.STYLE.LINEAR, EASE.OUT, { opacity: 1 }],
+  };
 
-const fadeOut = {
-  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
-  1: [EASE.STYLE.LINEAR, EASE.OUT, { opacity: 0 }],
-};
+  const fadeOut = {
+    0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
+    1: [EASE.STYLE.LINEAR, EASE.OUT, { opacity: 0 }],
+  };
 </script>
 
-<li class="tile" animate={[
+<li
+  class="tile"
+  animate={[
   { style: colorAndMove, when: WHEN.ATTACH, duration: 300 },
   { style: fade, when: WHEN.ATTACH, duration: 300 },
   { style: fadeOut, when: WHEN.DETACH, duration: 300, more: { animateSpace: false } },
-]}>
+]}
+>
   <span>Tile</span>
 </li>
 
 <style>
-.tile {
-  padding: 0.25rem 0.5rem;
-  font-family: ui-monospace, monospace;
-  font-size: 0.8rem;
-}
+  .tile {
+    padding: 0.25rem 0.5rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
 </style>

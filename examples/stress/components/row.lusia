@@ -1,7 +1,7 @@
 <script>
-import { props } from "lusiajs";
+  import { props } from "lusiajs";
 
-const { label, value } = props({ label: "", value: 0 });
+  const { label, value } = props({ label: "", value: 0 });
 </script>
 
 <div class="row">
@@ -10,11 +10,11 @@ const { label, value } = props({ label: "", value: 0 });
 </div>
 
 <style>
-.row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.125rem 0.5rem;
-  font-family: ui-monospace, monospace;
-  font-size: 0.75rem;
-}
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.125rem 0.5rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+  }
 </style>
