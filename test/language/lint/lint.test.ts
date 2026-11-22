@@ -134,20 +134,38 @@ attach(Badge, document.body);
 
 describe("flow and bind-value lint rules", () => {
   test("flow-chain flags an ELSE with no IF before it", () => {
-    const issues = lintLusia("<p>x</p>\n<ELSE>\n<p>y</p>\n</ELSE>", childProps);
+    const issues = lintLusia("<p>x</p>\n<ELSE>\n<p>y</p>\n", childProps);
     expect(issues.map((issue) => [issue.code, issue.severity, issue.line])).toEqual([
       ["flow-chain", "error", 2],
     ]);
-    expect(issues[0]?.message).toBe("<ELSE> must come right after </IF> or </ELSEIF>");
+    expect(issues[0]?.message).toBe("<ELSE> must be inside an <IF> block");
   });
 
-  test("flow-chain passes ELSEIF and ELSE right after a branch", () => {
-    const source = "<IF {a}>\n</IF>\n<ELSEIF {b}>\n</ELSEIF>\n<ELSE>\n</ELSE>";
+  test("flow-chain passes ELSEIF and ELSE inside an IF, closed once", () => {
+    const source = "<IF {a}>\n<ELSEIF {b}>\n<ELSE>\n</IF>";
     expect(codes(source)).toEqual([]);
   });
 
-  test("flow-chain flags an ELSE after other markup", () => {
-    expect(codes("<IF {a}>\n</IF>\n<p>gap</p>\n<ELSE>\n</ELSE>")).toEqual(["flow-chain"]);
+  test("flow-chain flags a branch after ELSE", () => {
+    expect(codes("<IF {a}>\n<ELSE>\n<ELSEIF {b}>\n</IF>")).toEqual(["flow-chain"]);
+    expect(codes("<IF {a}>\n<ELSE>\n<ELSE>\n</IF>")).toEqual(["flow-chain"]);
+  });
+
+  test("flow-chain flags an ELSE after a closed IF", () => {
+    expect(codes("<IF {a}>\n</IF>\n<p>gap</p>\n<ELSE>\n")).toEqual(["flow-chain"]);
+  });
+
+  test("flow-chain flags a closing ELSE and ELSEIF as not used", () => {
+    const issues = lintLusia("<IF {a}>\n<ELSE>\n</ELSE>\n</IF>", childProps);
+    expect(issues.map((issue) => issue.message)).toEqual([
+      "</ELSE> is not used. <ELSE> has no closing tag",
+    ]);
+    expect(codes("<IF {a}>\n<ELSEIF {b}>\n</ELSEIF>\n</IF>")).toEqual(["flow-chain"]);
+  });
+
+  test("flow-chain allows a branch inside a nested IF in another branch", () => {
+    const source = "<IF {a}>\n<IF {b}>\n</IF>\n<ELSE>\n<IF {c}>\n<ELSE>\n</IF>\n</IF>";
+    expect(codes(source)).toEqual([]);
   });
 
   test("bind-target flags bind-value on a plain tag that is not a form control", () => {
@@ -247,12 +265,12 @@ describe("lint disable comments", () => {
   });
 
   test("a disable comment names only its rules", () => {
-    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
+    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<ELSE>\n";
     expect(codes(source)).toEqual(["flow-chain"]);
   });
 
   test("a disable comment with no code turns every rule off", () => {
-    const source = "<!-- lusia-lint-disable -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
+    const source = "<!-- lusia-lint-disable -->\n<p>{ }</p>\n<ELSE>\n";
     expect(lintLusia(source, childProps)).toEqual([]);
   });
 
