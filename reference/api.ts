@@ -9,6 +9,7 @@ import { componentTypeEntries } from "./api/component-types.ts";
 import { configEntries } from "./api/config.ts";
 import { eventEntries } from "./api/events.ts";
 import { flowEntries } from "./api/flow.ts";
+import { listenEntries } from "./api/listen.ts";
 import { markupEntries } from "./api/markup.ts";
 import { stylingEntries } from "./api/styling.ts";
 import { variableEntries } from "./api/variables.ts";
@@ -24,6 +25,7 @@ export const api: ApiEntry[] = [
 	...componentTypeEntries,
 	...markupEntries,
 	...eventEntries,
+	...listenEntries,
 	...stylingEntries,
 	...componentTagEntries,
 	...animateOptionEntries,

@@ -40,7 +40,7 @@ describe("generated docs", () => {
   test("writes one api page per entry", async () => {
     const pages = await readdir(join(firstDir, "docs", "api"));
     expect(pages.length).toBe(api.length);
-    expect(api.length).toBe(57);
+    expect(api.length).toBe(61);
   });
 
   test("errors.md has a row for every code", async () => {
