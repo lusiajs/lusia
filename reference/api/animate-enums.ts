@@ -67,48 +67,19 @@ export const animateEnumEntries: ApiEntry[] = [
 		],
 	},
 	{
-		id: "scroll-at",
-		name: "SCROLL_AT",
-		kind: "value",
-		group: "motion",
-		signature:
-			"const SCROLL_AT: { readonly ENTER: ScrollAtMode; readonly CENTER: ScrollAtMode; readonly LEAVE: ScrollAtMode }",
-		summary: "Where the element meets the window, for the start and end of WHEN.SCROLL.",
-		bullets: [
-			"Use it as more: { start: SCROLL_AT.ENTER, end: SCROLL_AT.LEAVE }. The defaults are ENTER and LEAVE.",
-			"Or write { element, window } with EDGE values: element is the point on the element, window the point on the window.",
-			"{ element: EDGE.TOP, window: EDGE.BOTTOM } is the same as ENTER.",
-		],
-		example: `import { WHEN, SCROLL_AT } from "lusiajs";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
-		members: [
-			{
-				name: "ENTER",
-				summary: "The element's top meets the window's bottom. The default start.",
-			},
-			{
-				name: "CENTER",
-				summary: "The element's centre meets the window's centre.",
-			},
-			{
-				name: "LEAVE",
-				summary: "The element's bottom meets the window's top. The default end.",
-			},
-		],
-	},
-	{
 		id: "edge",
 		name: "EDGE",
 		kind: "value",
 		group: "motion",
 		signature:
 			"const EDGE: { readonly TOP: 0; readonly CENTER: 0.5; readonly BOTTOM: 1 }",
-		summary: "A point on an element or the window, for { element, window } in WHEN.SCROLL.",
+		summary: "A point on an element or the screen, for start and end in WHEN.SCROLL.",
 		bullets: [
 			"Each value is a fraction of the height: 0 is the top, 1 the bottom. A plain number from 0 to 1 works too.",
-			"Use it in an object: more: { start: { element: EDGE.TOP, window: EDGE.CENTER } }.",
-			"A plain number works too: { element: 0.25, window: 0.5 } is a quarter of the way down the element.",
+			"start and end are pairs: [element edge, screen edge]. The first point is on the element, the second on the screen.",
+			"Default: start [EDGE.TOP, EDGE.BOTTOM], end [EDGE.BOTTOM, EDGE.TOP].",
 		],
-		example: `<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: { element: EDGE.TOP, window: EDGE.CENTER } } }}>...</div>`,
+		example: `<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: [EDGE.TOP, EDGE.CENTER], end: [EDGE.BOTTOM, EDGE.TOP] } }}>...</div>`,
 		members: [
 			{ name: "TOP", summary: "The top edge, 0." },
 			{ name: "CENTER", summary: "The middle, 0.5." },
@@ -146,12 +117,12 @@ export const animateEnumEntries: ApiEntry[] = [
 		kind: "type",
 		group: "motion",
 		signature:
-			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { area?: HoverArea; inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { animateSpace?: boolean }",
+			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { area?: HoverArea; inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: [number, number]; end?: [number, number]; follow?: Variable<Element | null>; part?: [number, number] } | { animateSpace?: boolean }",
 		summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
 		bullets: [
 			'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
 			"HOVER: area (HOVER_AREA.FINAL, the default, checks the resting box; HOVER_AREA.ELEMENT checks the box as it is drawn now), inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
-			"SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
+			"SCROLL: start and end (each a pair [element edge, screen edge], default [EDGE.TOP, EDGE.BOTTOM] and [EDGE.BOTTOM, EDGE.TOP]) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
 			"DETACH and ATTACH: animateSpace, default false. See animateSpace.",
 			"Any other trigger that sets more is an error.",
 		],

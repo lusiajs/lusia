@@ -191,12 +191,12 @@
           "description": "Options for WHEN.SCROLL",
           "properties": {
             "start": {
-              "$ref": "#/$defs/scrollAt",
-              "description": "Where the progress starts. Default: ENTER"
+              "$ref": "#/$defs/scrollPoint",
+              "description": "Where the progress starts, as [element edge, screen edge]. Default: [0, 1]"
             },
             "end": {
-              "$ref": "#/$defs/scrollAt",
-              "description": "Where the progress ends. Default: LEAVE"
+              "$ref": "#/$defs/scrollPoint",
+              "description": "Where the progress ends, as [element edge, screen edge]. Default: [1, 0]"
             },
             "part": {
               "type": "array",
@@ -259,20 +259,12 @@
     "ease": {
       "enum": ["IN", "OUT", "INOUT"]
     },
-    "scrollAt": {
-      "description": "A name, or a point on the element and the window. Each point is a number from 0 (top) to 1 (bottom).",
-      "oneOf": [
-        { "enum": ["ENTER", "CENTER", "LEAVE"] },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["element", "window"],
-          "properties": {
-            "element": { "type": "number", "minimum": 0, "maximum": 1 },
-            "window": { "type": "number", "minimum": 0, "maximum": 1 }
-          }
-        }
-      ]
+    "scrollPoint": {
+      "description": "[element edge, screen edge]. Each edge is a number from 0 (top) to 1 (bottom).",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number", "minimum": 0, "maximum": 1 }
     },
     "preset": {
       "enum": [
