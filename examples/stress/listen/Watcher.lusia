@@ -1,0 +1,31 @@
+<script>
+  import { EVENT, keepRunning, listen, onAttach } from "lusiajs";
+  import { cardIds, counts, keptStops } from "./cards.ts";
+
+  function pressOutside() {
+    counts.outsidePresses++;
+  }
+
+  onAttach((root) => {
+    for (const card of root.querySelectorAll<HTMLElement>(".card")) {
+      listen(card, EVENT.VIEW, () => {
+        counts.viewChanges++;
+      });
+    }
+    keepRunning(() => {
+      const log = root.querySelector<HTMLElement>(".log")!;
+      keptStops.push(
+        listen(log, "click", () => {
+          counts.logClicks++;
+        }),
+      );
+    });
+  });
+</script>
+
+<div class="watcher">
+  <EACH {cardIds} as={id}>
+    <div class="card" on:click-outside={pressOutside}>{id}</div>
+  </EACH>
+  <p class="log">Log</p>
+</div>

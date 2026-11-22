@@ -1,0 +1,30 @@
+<script>
+  import { SCREEN } from "lusiajs";
+</script>
+
+<div class="sized">
+  <p class="name">
+    <IF {SCREEN.PHONE}>phone<ELSEIF {SCREEN.TABLET}>tablet<ELSE>desktop</IF>
+  </p>
+  <div class="card">Card</div>
+</div>
+
+<IF {SCREEN.PHONE}>
+  <style>
+    .card {
+      padding: 8px;
+    }
+  </style>
+<ELSEIF {SCREEN.TABLET}>
+  <style>
+    .card {
+      padding: 16px;
+    }
+  </style>
+<ELSE>
+  <style>
+    .card {
+      padding: 24px;
+    }
+  </style>
+</IF>

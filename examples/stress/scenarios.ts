@@ -5,6 +5,8 @@ import * as each from "./each/main.ts";
 import * as expressions from "./expressions/main.ts";
 import * as flow from "./flow/main.ts";
 import * as layout from "./layout/main.ts";
+import * as listen from "./listen/main.ts";
+import * as screen from "./screen/main.ts";
 import * as styles from "./styles/main.ts";
 import * as updates from "./updates/main.ts";
 
@@ -19,4 +21,6 @@ export const scenarios = [
   layout.run,
   each.run,
   flow.run,
+  listen.run,
+  screen.run,
 ];

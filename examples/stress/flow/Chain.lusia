@@ -1,0 +1,27 @@
+<script>
+  import { first, second, third } from "./chain.ts";
+</script>
+
+<div class="chain">
+  <IF {first.value}>
+    <p class="leaf">A</p>
+    <IF {second.value}>
+      <p class="leaf">A-B</p>
+    <ELSEIF {third.value}>
+      <p class="leaf">A-C</p>
+    <ELSE>
+      <p class="leaf">A-none</p>
+    </IF>
+  <ELSEIF {second.value}>
+    <p class="leaf">B</p>
+    <IF {third.value}>
+      <p class="leaf">B-C</p>
+    <ELSE>
+      <p class="leaf">B-else</p>
+    </IF>
+  <ELSEIF {third.value}>
+    <p class="leaf">C</p>
+  <ELSE>
+    <p class="leaf">none</p>
+  </IF>
+</div>

@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
+import { CHAIN_STATES, setChain } from "./chain.ts";
+import { CHAIN_BATCH, CHAIN_SWITCHES, chainMatches } from "./chain-run.ts";
+import Chain from "./Chain.lusia";
 import { on } from "./on.ts";
 import { SETTLE_MS } from "./main.ts";
 import Toggle from "./Toggle.lusia";
@@ -48,5 +51,45 @@ describe("IF with many toggles", () => {
 
     await wait(SETTLE_MS);
     expect(root.querySelectorAll(".badge").length).toBe(0);
+  });
+});
+
+describe("IF chain with nested chains", () => {
+  let root: HTMLElement | null = null;
+  let chain: Instance | null = null;
+
+  afterEach(() => {
+    chain?.detach();
+    root?.remove();
+    chain = null;
+    root = null;
+    setChain(0);
+  });
+
+  test("every flag combination shows exactly its leaves", () => {
+    root = createTarget("div");
+    chain = attach(Chain, root);
+    for (let step = 0; step < CHAIN_STATES; step++) {
+      setChain(step);
+      expect(chainMatches(root)).toBe(true);
+    }
+  });
+
+  test(`${CHAIN_SWITCHES} switches keep the DOM right in every batch`, () => {
+    root = createTarget("div");
+    chain = attach(Chain, root);
+    for (let start = 0; start < CHAIN_SWITCHES; start += CHAIN_BATCH) {
+      for (let step = start; step < start + CHAIN_BATCH; step++) setChain(step);
+      expect(chainMatches(root)).toBe(true);
+    }
+  });
+
+  test("detaching removes every element the chain made", () => {
+    root = createTarget("div");
+    chain = attach(Chain, root);
+    setChain(5);
+    chain.detach();
+    chain = null;
+    expect(root.querySelectorAll("*").length).toBe(0);
   });
 });

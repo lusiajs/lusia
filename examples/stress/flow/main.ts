@@ -1,6 +1,7 @@
 import { attach } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
+import { runChain } from "./chain-run.ts";
 import { on } from "./on.ts";
 import Toggle from "./Toggle.lusia";
 
@@ -26,5 +27,6 @@ export async function run(): Promise<Result[]> {
   return [
     { name: `IF toggled ${TOGGLES} times (OUT animations)`, value: formatMs(toggleMs) },
     { name: "Badges left after the leaves finish (expect 0)", value: String(left) },
+    ...runChain(),
   ];
 }
