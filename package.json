@@ -51,6 +51,10 @@
     "./compiler/*": "./src/compiler/*"
   },
   "imports": {
+    "#language/lint/style-compile": {
+      "browser": "./src/language/lint/rules/style-compile.browser.ts",
+      "default": "./src/language/lint/rules/style-compile.ts"
+    },
     "#runtime/*": "./src/runtime/*",
     "#compiler/*": "./src/compiler/*",
     "#bun-plugin/*": "./src/bun-plugin/*",
