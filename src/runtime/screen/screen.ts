@@ -1,16 +1,14 @@
 import { runtimeError } from "../errors.ts";
 import { compute, type ComputedVariable } from "../variable/compute.ts";
 import { startScreenState, type ScreenState } from "./screen-state.ts";
+import type { ProjectScreens, ScreenFlags, ScreenNamesFrom } from "./screen-names.ts";
 import { configuredScreens } from "./screens-store.ts";
 import { REDUCED_MOTION } from "./screens.ts";
 
 export type ScreenFlag = ComputedVariable<boolean>;
 
-export type ScreenObject = Readonly<Record<string, ScreenFlag>> & {
-  PHONE: ScreenFlag;
-  TABLET: ScreenFlag;
-  DESKTOP: ScreenFlag;
-  REDUCED_MOTION: ScreenFlag;
+export type ScreenObject = ScreenFlags<ScreenNamesFrom<ProjectScreens>> & {
+  readonly REDUCED_MOTION: ScreenFlag;
 };
 
 // Made on the first read of each name, so an app that never reads SCREEN pays nothing.

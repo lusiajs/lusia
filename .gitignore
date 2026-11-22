@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 dist/
+# Generated type file (screens.d.ts) of each app
+.lusia/
 out/
 *.tsbuildinfo
 /docs/

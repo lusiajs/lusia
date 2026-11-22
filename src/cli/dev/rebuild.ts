@@ -9,6 +9,7 @@ import type { Logger } from "../log/log.ts";
 import { formatRebuild, now, type Steps } from "../build/timings.ts";
 import { chooseUpdate, describeUpdate, RELOAD, type Update } from "./update.ts";
 import { buildHotModules } from "./hot-plan.ts";
+import { writeScreenTypes } from "../types/screen-types.ts";
 import { type DevConfig, isConfigFile, readDevConfig } from "./config-reload.ts";
 
 interface Change {
@@ -68,6 +69,7 @@ export function createRebuild({
       const config = await readDevConfig(root);
       if (!config.ok) return report(config.messages);
       applyConfig(config.config);
+      await writeScreenTypes(root, config.config.screens);
     }
     const build = await buildDev(root, lazy, animate, screens);
     if (!build.ok) return report(build.messages);

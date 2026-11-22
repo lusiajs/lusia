@@ -9,6 +9,7 @@ import { colorEnabled } from "../log/color.ts";
 import { createLogger } from "../log/log.ts";
 import { copyPublic } from "./public.ts";
 import { writeRouteIndexes } from "./routes.ts";
+import { writeScreenTypes } from "../types/screen-types.ts";
 import { fileRows, formatReport } from "./report.ts";
 import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./timings.ts";
 
@@ -37,6 +38,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     log.error(`the output folder must not contain the app folder: ${outdir}`);
     return 1;
   }
+  await writeScreenTypes(dir, options.screens);
 
   const steps: Steps = {};
   const started = now();

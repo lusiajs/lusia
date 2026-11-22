@@ -69,6 +69,7 @@ export const screenEntries: ApiEntry[] = [
       "The smallest screen must start at 0. Each screen needs its own start width.",
       "REDUCED_MOTION is not a screen name. It is always there.",
       "Set it in lusia.config. It cannot be set with setConfig.",
+      "SCREEN gets these names. lusia dev and lusia build write .lusia/screens.d.ts for it; add .lusia to tsconfig include.",
     ],
     example: `// lusia.config.ts\nimport { defineConfig } from "lusiajs/config";\n\nexport default defineConfig({\n  screens: { PHONE: 0, TABLET: 700, DESKTOP: 1200 },\n});`,
   },

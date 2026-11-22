@@ -9,6 +9,7 @@ import { createLogger } from "../log/log.ts";
 import { formatBrowserReady } from "../build/timings.ts";
 import { createRebuild } from "./rebuild.ts";
 import { watchFolder } from "./watch.ts";
+import { writeScreenTypes } from "../types/screen-types.ts";
 
 export interface DevOptions {
   dir: string;
@@ -36,6 +37,7 @@ export async function startDev({
   const root = resolve(dir);
   const log = createLogger("dev");
   entryPath(root);
+  await writeScreenTypes(root, screens);
 
   const server = createDevServer({
     dir: root,

@@ -34,5 +34,6 @@ export type { AnimateConfig } from "./animate/options/config.ts";
 export { setConfig, SCOPE } from "./config/set-config.ts";
 export { SCREEN } from "./screen/screen.ts";
 export type { ScreenFlag, ScreenObject } from "./screen/screen.ts";
+export type { ProjectScreens } from "./screen/screen-names.ts";
 export type { ConfigScope } from "./config/set-config.ts";
 export type { RuntimeConfig } from "./config/scope.ts";
