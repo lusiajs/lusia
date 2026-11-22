@@ -38,7 +38,7 @@ export async function buildDev(
   });
   addBundleStep(steps, now() - start);
   if (!result.success)
-    return { ok: false, messages: [formatBuildFailure(result.logs, colorEnabled())] };
+    return { ok: false, messages: [formatBuildFailure(result.logs, colorEnabled(), dir)] };
   const entries = await Promise.all(result.outputs.map(toEntry));
   const runtime = [assetKey(RUNTIME_PATH), await runtimeModule()] as const;
   return { ok: true, assets: new Map([...entries, runtime]), changes, steps };

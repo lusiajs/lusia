@@ -18,9 +18,14 @@ type Painter = (text: string, code: string) => string;
 function headline(error: LusiaError, paintWith: Painter): string {
   const code = error.code ? ` ${error.code}` : "";
   const message = `${paintWith("error", ANSI.red)}${paintWith(code, ANSI.red)}: ${messageText(error)}`;
-  if (error.file === undefined || error.line === undefined) return message;
-  const place = `${paintWith(displayPath(error.file), ANSI.cyan)}:${paintWith(`${error.line}:${error.column ?? 1}`, ANSI.yellow)}`;
-  return `${place} - ${message}`;
+  if (error.file === undefined) return message;
+  return `${place(error, error.file, paintWith)} - ${message}`;
+}
+
+function place(error: LusiaError, file: string, paintWith: Painter): string {
+  const path = paintWith(displayPath(file), ANSI.cyan);
+  if (error.line === undefined) return path;
+  return `${path}:${paintWith(`${error.line}:${error.column ?? 1}`, ANSI.yellow)}`;
 }
 
 /** Dev runtime errors end with their location, which the headline already shows. */

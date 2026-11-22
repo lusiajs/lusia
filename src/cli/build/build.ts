@@ -50,7 +50,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   });
   addBundleStep(steps, now() - bundleStart);
   if (!result.success) {
-    process.stderr.write(`${formatBuildFailure(result.logs, colorEnabled())}\n`);
+    process.stderr.write(`${formatBuildFailure(result.logs, colorEnabled(), dir)}\n`);
     return 1;
   }
 

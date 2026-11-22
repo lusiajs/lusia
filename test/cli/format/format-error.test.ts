@@ -14,6 +14,13 @@ function sample(): LusiaError {
 }
 
 describe("formatError", () => {
+  test("prints the file alone when the line is unknown", () => {
+    const error = new LusiaError("cannot resolve", FILE, undefined, undefined, { code: "L3002" });
+    expect(formatError(error, undefined, false)).toBe(
+      "src/Card.lusia - error L3002: cannot resolve",
+    );
+  });
+
   test("prints a tsc-style location, code frame and hint without color", () => {
     expect(formatError(sample(), SOURCE, false)).toBe(
       [

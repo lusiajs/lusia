@@ -6,6 +6,7 @@ import { dirname } from "node:path";
 import { stripAnsi } from "../log/color.ts";
 import { exportsOf, missingExportHint } from "./export-hint.ts";
 import { formatError } from "../format/format-error.ts";
+import { findImport, findInSource } from "./find-import.ts";
 
 export type BuildLog = BuildMessage | ResolveMessage;
 
@@ -21,8 +22,8 @@ const UNRESOLVED = /^Could not resolve: "(.+)"$/;
 const IMPORT_FROM = /\bfrom\s+["']([^"']+)["']/;
 const LUSIA_ERROR = /\berror L\d{4}: /;
 
-export function formatBuildFailure(logs: BuildLog[], color: boolean): string {
-  const blocks = logs.map((log) => formatLog(log, color));
+export function formatBuildFailure(logs: BuildLog[], color: boolean, root = process.cwd()): string {
+  const blocks = logs.map((log) => formatLog(log, color, root));
   return [...blocks, summary(logs.length)].join("\n\n");
 }
 
@@ -30,25 +31,32 @@ function summary(count: number): string {
   return `Build failed: ${count} ${count === 1 ? "error" : "errors"}`;
 }
 
-function formatLog(log: BuildLog, color: boolean): string {
+function formatLog(log: BuildLog, color: boolean, root: string): string {
   // A .lusia compile error is already formatted by the plugin, so it is printed as it is.
   if (LUSIA_ERROR.test(stripAnsi(log.message))) return log.message;
-  const error = toLusiaError(log);
+  const error = toLusiaError(log, root);
   return formatError(error, error.file === undefined ? undefined : readSource(error.file), color);
 }
 
-function toLusiaError(log: BuildLog): LusiaError {
+function toLusiaError(log: BuildLog, root: string): LusiaError {
   const missing = MISSING_EXPORT.exec(log.message);
-  if (missing) return missingExportError(log, missing[1]!, missing[2]!);
+  if (missing) return missingExportError(log, missing[1]!, missing[2]!, root);
   const unresolved = UNRESOLVED.exec(log.message);
-  if (unresolved)
-    return bundleError("L3002", { name: unresolved[1]! }, whereOf(log), CODES.L3002.hint);
+  if (unresolved) {
+    const where = locateImport(whereOf(log), unresolved[1]!, root);
+    return bundleError("L3002", { name: unresolved[1]! }, where, CODES.L3002.hint);
+  }
   return bundleError("L3003", { message: log.message }, whereOf(log), CODES.L3003.hint);
 }
 
-function missingExportError(log: BuildLog, modulePath: string, name: string): LusiaError {
-  const where = whereOf(log);
+function missingExportError(
+  log: BuildLog,
+  modulePath: string,
+  name: string,
+  root: string,
+): LusiaError {
   const specifier = importSpecifier(log) ?? modulePath;
+  const where = locateImport(whereOf(log), specifier, root);
   const exportNames = where.file === undefined ? [] : exportsOf(specifier, dirname(where.file));
   return bundleError(
     "L3001",
@@ -56,6 +64,14 @@ function missingExportError(log: BuildLog, modulePath: string, name: string): Lu
     where,
     missingExportHint(name, exportNames),
   );
+}
+
+// Bun can omit the position, or give a compiled one that does not match the source line.
+function locateImport(where: Where, specifier: string, root: string): Where {
+  if (where.line !== undefined) return where;
+  if (where.file === undefined) return findImport(root, specifier) ?? where;
+  const place = findInSource(readSource(where.file) ?? "", specifier);
+  return place ? { file: where.file, ...place } : where;
 }
 
 function importSpecifier(log: BuildLog): string | undefined {
@@ -92,7 +108,12 @@ function lusiaWhere(file: string, lineText: string, column: number, length: numb
   if (lines === undefined || row === -1) return { file, length };
   const sourceIndent = leadingSpaces(lines[row]!);
   const compiledIndent = leadingSpaces(lineText);
-  return { file, line: row + 1, column: column - compiledIndent + sourceIndent, length };
+  return {
+    file,
+    line: row + 1,
+    column: column - compiledIndent + sourceIndent,
+    length,
+  };
 }
 
 function leadingSpaces(text: string): number {
