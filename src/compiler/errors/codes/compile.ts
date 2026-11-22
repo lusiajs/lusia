@@ -179,4 +179,16 @@ export const COMPILE_CODES = {
     message: '"$name" is an HTML tag, so it cannot be a component name',
     hint: 'Rename the import, for example import $suggestion from "...". Any name works if it is not an HTML tag.',
   },
+  L1047: {
+    message: "<style> cannot be inside <EACH> or <FOR>",
+    hint: "Move the <style> out of the loop. Only <IF {SCREEN.X}> may wrap a <style>.",
+  },
+  L1048: {
+    message: "<style> inside <IF {$test}> needs a SCREEN condition",
+    hint: "Styles are built once, so only screen sizes can switch them: <IF {SCREEN.PHONE}>. Use a class for other conditions.",
+  },
+  L1049: {
+    message: "SCREEN.$name is not a screen size",
+    hint: "Use one of: $names. Sizes come from screens in lusia.config.ts.",
+  },
 } as const satisfies Record<string, ErrorCode>;

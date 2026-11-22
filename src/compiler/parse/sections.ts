@@ -3,6 +3,7 @@ import { skipExpression } from "../utils/braces.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { parseAttrs } from "./attrs.ts";
 import { extractMarkers, type FallbackBlock } from "./markers.ts";
+import { styleBranches, type StyleBranch } from "./style-branches.ts";
 
 export interface Section {
   content: string;
@@ -11,6 +12,8 @@ export interface Section {
   line: number;
   /** Index in the source where the content starts. */
   from: number;
+  /** For a style: the IF branches around it, outermost first. Empty at the top level. */
+  branches?: StyleBranch[];
 }
 
 export interface ParsedFile {
@@ -96,6 +99,12 @@ function toSection(source: string, section: SectionMatch): Section {
   };
 }
 
+function branchesOfStyles(source: string, sections: SectionMatch[], file: string): StyleBranch[][] {
+  const starts = sections.filter((section) => section.kind === "style").map((section) => section.start);
+  const skip = sections.map((section) => ({ start: section.start, end: section.end }));
+  return styleBranches(source, starts, skip, file);
+}
+
 export function parse(source: string, file: string): ParsedFile {
   const result: ParsedFile = {
     script: null,
@@ -107,10 +116,12 @@ export function parse(source: string, file: string): ParsedFile {
   };
   let markup = "";
   let last = 0;
-  for (const section of findSections(source, file)) {
+  const sections = findSections(source, file);
+  const branches = branchesOfStyles(source, sections, file);
+  for (const section of sections) {
     const { kind, start, end } = section;
     if (kind === "style") {
-      result.styles.push(toSection(source, section));
+      result.styles.push({ ...toSection(source, section), branches: branches.shift()! });
     } else {
       if (result.script) throw lusiaError("L1002", {}, spanAt(source, start, file));
       result.script = toSection(source, section);

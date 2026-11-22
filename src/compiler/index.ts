@@ -20,5 +20,6 @@ export function compile(source: string, file: string, options: CompileOptions = 
     displayFile: relative(process.cwd(), file),
     styles: (style, index, id) => compileStyleResult(style, file, id, index),
     lazy: options.lazy,
+    screens: options.screens,
   });
 }

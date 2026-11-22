@@ -9,12 +9,16 @@ import { scriptRange } from "./template/check/script-range.ts";
 import { compileTemplate } from "./template/scan/scanner.ts";
 import type { StyleResult } from "./style/sass.ts";
 import { extractSourceMap } from "./sourcemap/extract.ts";
+import { withScreenMedia } from "./style/screen-style.ts";
+import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 
 export interface CompileOptions {
   /** Dev builds keep runtime error locations. Default false. */
   dev?: boolean;
   /** Splits imported .lusia files into their own chunks. Off when absent. */
   lazy?: LazyOptions;
+  /** Screen sizes for `<style>` inside `<IF {SCREEN.X}>`. Defaults to PHONE, TABLET and DESKTOP. */
+  screens?: Screens;
 }
 
 export interface CompileResult {
@@ -39,6 +43,7 @@ export interface PipelineOptions {
   displayFile: string;
   styles: StyleCompiler;
   lazy?: LazyOptions;
+  screens?: Screens;
 }
 
 /** The shared compile steps. The Node build and the browser build differ only in the style step. */
@@ -49,7 +54,10 @@ export function compileParts(
 ): CompileResult {
   const parsed = parse(source, file);
   const id = hash(file);
-  const styles = parsed.styles.map((style, index) => options.styles(style, index, id));
+  const screens = options.screens ?? DEFAULT_SCREENS;
+  const styles = parsed.styles.map((style, index) =>
+    withScreenMedia(options.styles(style, index, id), style, screens, file),
+  );
   const css = styles.map((style) => style.css).join("\n");
   const scopes = scopeClassesOf(css, id);
   const { statements, body, components } = splitImports(parsed.script, file);
