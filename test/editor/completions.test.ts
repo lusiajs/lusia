@@ -77,6 +77,10 @@ describe("markup completions", () => {
       "onkeydown",
       "onfocus",
       "onblur",
+      "on:view",
+      "on:scroll",
+      "on:size",
+      "on:click-outside",
       "bind-element",
     ]);
   });
@@ -187,6 +191,16 @@ describe("motion completions", () => {
       "IN",
       "OUT",
       "INOUT",
+    ]);
+  });
+
+  test("completes VIEW, SCROLL, SIZE and CLICK_OUTSIDE after EVENT.", () => {
+    const text = "<script>\n\n</script>\nx = EVENT.";
+    expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
+      "VIEW",
+      "SCROLL",
+      "SIZE",
+      "CLICK_OUTSIDE",
     ]);
   });
 
@@ -349,6 +363,10 @@ describe("flow and element completions", () => {
       "onkeydown",
       "onfocus",
       "onblur",
+      "on:view",
+      "on:scroll",
+      "on:size",
+      "on:click-outside",
       "bind-element",
     ]);
   });

@@ -78,6 +78,17 @@ const EVENT_ITEMS: CompletionItemData[] = EVENT_NAMES.map((name) => ({
   entryId: "event",
 }));
 
+const ON_NAME_EVENTS = ["view", "scroll", "size", "click-outside"];
+
+const ON_NAME_ITEMS: CompletionItemData[] = ON_NAME_EVENTS.map((name) => ({
+  label: `on:${name}`,
+  kind: "property",
+  insertText: `on:${name}={$1}`,
+  snippet: true,
+  detail: findApiById("on-name")?.summary,
+  entryId: "on-name",
+}));
+
 const BIND_ELEMENT_ITEM: CompletionItemData = {
   label: "bind-element",
   kind: "property",
@@ -107,6 +118,6 @@ const FORM_BIND_ITEMS: CompletionItemData[] = [
 ];
 
 export function markupAttributeItems(tag: string): CompletionItemData[] {
-  const common = [...MOTION_ATTRIBUTE_ITEMS, ...EVENT_ITEMS, BIND_ELEMENT_ITEM];
+  const common = [...MOTION_ATTRIBUTE_ITEMS, ...EVENT_ITEMS, ...ON_NAME_ITEMS, BIND_ELEMENT_ITEM];
   return FORM_TAGS.has(tag) ? [...common, ...FORM_BIND_ITEMS] : common;
 }
