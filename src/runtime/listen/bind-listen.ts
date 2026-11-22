@@ -7,7 +7,7 @@ const MARKUP_EVENTS: ReadonlyMap<string, LusiaEvent> = new Map<string, LusiaEven
   ["view", EVENT.VIEW],
   ["scroll", EVENT.SCROLL],
   ["size", EVENT.SIZE],
-  ["outside", EVENT.OUTSIDE],
+  ["click-outside", EVENT.CLICK_OUTSIDE],
 ]);
 
 /** Compiled `on:name={fn}`: an EVENT name or a DOM event, stopped with the element's bindings. */

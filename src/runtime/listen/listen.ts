@@ -5,7 +5,7 @@ import {
   EVENT,
   isLusiaEvent,
   type LusiaEvent,
-  type OutsideEvent,
+  type ClickOutsideEvent,
   type ScrollEvent,
   type SizeEvent,
   type ViewEvent,
@@ -21,8 +21,8 @@ export type EventOf<W> = W extends typeof EVENT.VIEW
     ? ScrollEvent
     : W extends typeof EVENT.SIZE
       ? SizeEvent
-      : W extends typeof EVENT.OUTSIDE
-        ? OutsideEvent
+      : W extends typeof EVENT.CLICK_OUTSIDE
+        ? ClickOutsideEvent
         : W extends keyof DomEvents
           ? DomEvents[W]
           : Event;

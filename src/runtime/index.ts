@@ -8,7 +8,7 @@ export { listen } from "./listen/listen.ts";
 export type { EventOf } from "./listen/listen.ts";
 export { keepRunning } from "./listen/keep-running.ts";
 export { EVENT } from "./listen/events.ts";
-export type { LusiaEvent, OutsideEvent, ScrollEvent, SizeEvent, ViewEvent } from "./listen/events.ts";
+export type { LusiaEvent, ClickOutsideEvent, ScrollEvent, SizeEvent, ViewEvent } from "./listen/events.ts";
 export type { ListenOptions, Stop } from "./listen/sources.ts";
 export { props } from "./dom/component/props.ts";
 export type { Prop, PropVariables } from "./dom/component/props.ts";

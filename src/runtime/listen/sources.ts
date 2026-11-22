@@ -18,7 +18,7 @@ export function startEvent(
   if (what === EVENT.VIEW) return startView(el, handler, options);
   if (what === EVENT.SCROLL) return startScroll(el, handler, options);
   if (what === EVENT.SIZE) return startSize(el, handler);
-  return startOutside(el, handler);
+  return startClickOutside(el, handler);
 }
 
 function elementOf(target: EventTarget, what: LusiaEvent): Element {
@@ -53,7 +53,7 @@ function startSize(el: Element, handler: (event: unknown) => void): Stop {
 // Capture sees the press before anything inside the page can stop it.
 const CAPTURE = { capture: true };
 
-function startOutside(el: Element, handler: (event: unknown) => void): Stop {
+function startClickOutside(el: Element, handler: (event: unknown) => void): Stop {
   const onPress = (event: PointerEvent): void => {
     if (!el.contains(event.target as Node)) handler(event);
   };

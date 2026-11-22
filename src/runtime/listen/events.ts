@@ -1,9 +1,9 @@
 const VIEW: unique symbol = Symbol("VIEW");
 const SCROLL: unique symbol = Symbol("SCROLL");
 const SIZE: unique symbol = Symbol("SIZE");
-const OUTSIDE: unique symbol = Symbol("OUTSIDE");
+const CLICK_OUTSIDE: unique symbol = Symbol("CLICK_OUTSIDE");
 
-export const EVENT = Object.freeze({ VIEW, SCROLL, SIZE, OUTSIDE } as const);
+export const EVENT = Object.freeze({ VIEW, SCROLL, SIZE, CLICK_OUTSIDE } as const);
 
 export type LusiaEvent = (typeof EVENT)[keyof typeof EVENT];
 
@@ -27,4 +27,4 @@ export interface SizeEvent {
 }
 
 /** A click or tap outside the element, or the Escape key. */
-export type OutsideEvent = PointerEvent | KeyboardEvent;
+export type ClickOutsideEvent = PointerEvent | KeyboardEvent;

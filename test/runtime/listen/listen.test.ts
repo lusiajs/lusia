@@ -66,10 +66,10 @@ describe("listen", () => {
     expect(events).toEqual(["ping"]);
   });
 
-  test("EVENT.OUTSIDE fires on a press outside and on Escape, not inside", () => {
+  test("EVENT.CLICK_OUTSIDE fires on a press outside and on Escape, not inside", () => {
     const box = host();
     const inside = box.appendChild(document.createElement("button"));
-    stops.push(listen(box, EVENT.OUTSIDE, (event) => events.push(event.type)));
+    stops.push(listen(box, EVENT.CLICK_OUTSIDE, (event) => events.push(event.type)));
     inside.dispatchEvent(new Event("pointerdown", { bubbles: true }));
     document.body.dispatchEvent(new Event("pointerdown", { bubbles: true }));
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
