@@ -4,10 +4,8 @@ import { state } from "./state.ts";
 
 <IF {state.mode.value === "a"}>
   <p class="branch">A</p>
-</IF>
 <ELSEIF {state.mode.value === "b"}>
   <p class="branch">B</p>
-</ELSEIF>
 <ELSE>
   <p class="branch">other</p>
-</ELSE>
+</IF>
