@@ -69,6 +69,7 @@ const CONTRACT_NAMESPACES = [
   "apiLookup",
   "autoImport",
   "errorPosition",
+  "semanticTokens",
   "scriptSymbols",
   "format",
   "formatExpressions",

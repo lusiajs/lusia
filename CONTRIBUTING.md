@@ -68,6 +68,8 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.
 - Bump `EDITOR_API_VERSION` in `src/editor/host.ts` when a namespace changes in a breaking way.
+- Namespaces (the contract, checked by `test/editor/host.test.ts`): `range`, `completions`, `completionData`, `markupItems`, `hover`, `markdown`, `apiLookup`, `autoImport`, `errorPosition`, `semanticTokens`, `scriptSymbols`, `format`, `formatExpressions`, `indentSetting`, `prettierParts`, `lint`, `parseImports`, `parseProps`, `parseRegions`, `parseSections`, `parseTag`, `compiler`, `api`, `runtime`.
+- `semanticTokens.semanticTokens(source)` returns tokens for markup. Editors build their legend from `semanticTokens.TOKEN_TYPES` and `semanticTokens.TOKEN_MODIFIERS`.
 
 ## Open a pull request
 

@@ -12,6 +12,7 @@ export * as markdown from "./markdown.ts";
 export * as apiLookup from "./api-lookup.ts";
 export * as autoImport from "./auto-import.ts";
 export * as errorPosition from "./error-position.ts";
+export * as semanticTokens from "./semantic-tokens.ts";
 export * as scriptSymbols from "./script/symbols.ts";
 export * as format from "../language/format/format.ts";
 export * as formatExpressions from "../language/format/format-expressions.ts";
