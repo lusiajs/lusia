@@ -15,9 +15,9 @@ export interface CachedModule {
 // Module scope: Bun.build makes a new plugin per build, so a cache inside setup() would never hit.
 const modules = new Map<string, CachedModule>();
 
-/** One key for a compile. It changes when the lazy settings or the animate config change. */
-export function compileKey(lazyKey: string, animateKey: string): string {
-  return JSON.stringify([lazyKey, animateKey]);
+/** One key for a compile. It changes when the lazy, animate or screen settings change. */
+export function compileKey(lazyKey: string, animateKey: string, screensKey: string): string {
+  return JSON.stringify([lazyKey, animateKey, screensKey]);
 }
 
 export function toCachedModule(

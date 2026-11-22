@@ -1,5 +1,6 @@
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Screens } from "#runtime/screen/screens.ts";
 import { colorEnabled, stripAnsi } from "../log/color.ts";
 import { buildDev } from "../build/dev-build.ts";
 import type { DevServer } from "./dev-server.ts";
@@ -26,6 +27,7 @@ interface RebuildOptions {
   quiet: boolean;
   lazy: LazySettings;
   animate?: AnimateConfig;
+  screens?: Screens;
 }
 
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
@@ -36,6 +38,7 @@ export function createRebuild({
   quiet,
   lazy: startLazy,
   animate: startAnimate,
+  screens: startScreens,
 }: RebuildOptions): Rebuild {
   let busy = false;
   let pending: Change | null = null;
@@ -43,12 +46,14 @@ export function createRebuild({
   let needsReload = false;
   let lazy = startLazy;
   let animate = startAnimate;
-  let hotBuilder: HotBuilder = createHotBuilder(animate);
+  let screens = startScreens;
+  let hotBuilder: HotBuilder = createHotBuilder(animate, screens);
 
   function applyConfig(config: DevConfig): void {
     lazy = config.lazy;
     animate = config.animate;
-    hotBuilder = createHotBuilder(animate);
+    screens = config.screens;
+    hotBuilder = createHotBuilder(animate, screens);
   }
 
   function report(messages: string[]): void {
@@ -64,7 +69,7 @@ export function createRebuild({
       if (!config.ok) return report(config.messages);
       applyConfig(config.config);
     }
-    const build = await buildDev(root, lazy, animate);
+    const build = await buildDev(root, lazy, animate, screens);
     if (!build.ok) return report(build.messages);
     const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
     let update = planned;

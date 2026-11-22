@@ -1,5 +1,6 @@
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Screens } from "#runtime/screen/screens.ts";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
@@ -20,6 +21,7 @@ export interface BuildOptions {
   quiet?: boolean;
   lazy: LazySettings;
   animate?: AnimateConfig;
+  screens?: Screens;
 }
 
 export async function runBuild(options: BuildOptions): Promise<number> {
@@ -47,6 +49,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     steps,
     lazy: options.lazy,
     animate: options.animate,
+    screens: options.screens,
   });
   addBundleStep(steps, now() - bundleStart);
   if (!result.success) {

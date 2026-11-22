@@ -46,6 +46,7 @@ async function parseBuild(args: string[]): Promise<Command> {
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
     animate: config.animate ?? {},
+    screens: config.screens,
   };
 }
 
@@ -80,6 +81,7 @@ async function parseDev(args: string[], env: Record<string, string | undefined>)
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
     animate: config.animate ?? {},
+    screens: config.screens,
   };
 }
 

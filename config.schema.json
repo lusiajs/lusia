@@ -87,6 +87,14 @@
         }
       }
     },
+    "screens": {
+      "type": "object",
+      "description": "Screen sizes for SCREEN and the screen() Sass mixin. Each name is the width where that screen starts, in px. The smallest must start at 0. Default: PHONE 0, TABLET 600, DESKTOP 1000",
+      "propertyNames": { "pattern": "^[A-Z][A-Z0-9_]*$" },
+      "not": { "required": ["REDUCED_MOTION"] },
+      "additionalProperties": { "type": "integer", "minimum": 0 },
+      "minProperties": 1
+    },
     "animate": {
       "type": "object",
       "additionalProperties": false,

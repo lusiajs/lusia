@@ -1,5 +1,6 @@
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Screens } from "#runtime/screen/screens.ts";
 import type { LintRuleSettings } from "#language/lint/lint.ts";
 
 export type Command =
@@ -13,6 +14,7 @@ export type Command =
       quiet: boolean;
       lazy: LazySettings;
       animate: AnimateConfig;
+      screens?: Screens;
     }
   | {
       name: "dev";
@@ -21,6 +23,7 @@ export type Command =
       quiet: boolean;
       lazy: LazySettings;
       animate: AnimateConfig;
+      screens?: Screens;
     }
   | {
       name: "format";

@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Screens } from "#runtime/screen/screens.ts";
 import { colorEnabled } from "../log/color.ts";
 import { entryPath } from "../build/bundle.ts";
 import { createDevServer } from "./dev-server.ts";
@@ -16,6 +17,7 @@ export interface DevOptions {
   quiet?: boolean;
   lazy: LazySettings;
   animate?: AnimateConfig;
+  screens?: Screens;
 }
 
 export interface DevHandle {
@@ -29,6 +31,7 @@ export async function startDev({
   quiet = false,
   lazy,
   animate,
+  screens,
 }: DevOptions): Promise<DevHandle> {
   const root = resolve(dir);
   const log = createLogger("dev");
@@ -41,7 +44,7 @@ export async function startDev({
       if (!quiet) log.info(formatBrowserReady(ms, colorEnabled()));
     },
   });
-  const rebuild = createRebuild({ root, server, log, quiet, lazy, animate });
+  const rebuild = createRebuild({ root, server, log, quiet, lazy, animate, screens });
   await rebuild.request({ files: [], waitMs: 0 });
 
   const watcher = watchFolder(root, (files, waitMs) => {

@@ -15,4 +15,5 @@ export interface LusiaConfig {
   lint?: { rules?: LintRuleSettings };
   format?: { indentScriptAndStyle?: boolean };
   animate?: AnimateConfig;
+  screens?: Record<string, number>;
 }

@@ -1,5 +1,6 @@
 import { lusia } from "#bun-plugin/index.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { Screens } from "#runtime/screen/screens.ts";
 import { basename } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
 import { colorEnabled } from "../log/color.ts";
@@ -18,7 +19,7 @@ export interface HotBuilder {
   build(file: string): Promise<HotBuild>;
 }
 
-export function createHotBuilder(animate?: AnimateConfig): HotBuilder {
+export function createHotBuilder(animate?: AnimateConfig, screens?: Screens): HotBuilder {
   let sequence = 0;
 
   return {
@@ -31,7 +32,7 @@ export function createHotBuilder(animate?: AnimateConfig): HotBuilder {
         throw: false,
         metafile: true,
         external: [RUNTIME_SPECIFIER],
-        plugins: [lusia({ dev: true, animate }), runtimeShim()],
+        plugins: [lusia({ dev: true, animate, screens }), runtimeShim()],
       });
       if (!result.success)
         return { ok: false, messages: [formatBuildFailure(result.logs, colorEnabled())] };
