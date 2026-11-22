@@ -18,7 +18,7 @@ export function compile(source: string, file: string, options: CompileOptions = 
   return compileParts(source, file, {
     dev: options.dev ?? false,
     displayFile: relative(process.cwd(), file),
-    styles: (style, index, id) => compileStyleResult(style, file, id, index),
+    styles: (style, index, id) => compileStyleResult(style, file, id, index, options.screens),
     lazy: options.lazy,
     screens: options.screens,
   });

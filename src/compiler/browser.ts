@@ -4,7 +4,9 @@ import { LusiaError } from "./errors/error.ts";
 import { compileParts } from "./pipeline.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { scopeCss, styleMode } from "./style/modes.ts";
+import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 import { compileSectionScss } from "./style/sass-browser.ts";
+import { screenImporter } from "./style/screen-mixin.ts";
 import type { StyleResult } from "./style/sass.ts";
 
 export { LusiaError } from "./errors/error.ts";
@@ -12,6 +14,8 @@ export { LusiaError } from "./errors/error.ts";
 export interface BrowserOptions {
   /** Sass importers. They are the only way `@use` and `@import` find files in the browser. */
   importers?: sass.Importer[];
+  /** Screen sizes for the screen() mixin and SCREEN styles. Default: PHONE, TABLET, DESKTOP. */
+  screens?: Screens;
 }
 
 export interface BrowserCompile {
@@ -24,11 +28,13 @@ export function compileForBrowser(
   options: BrowserOptions = {},
 ): BrowserCompile {
   checkScriptSyntax(source, file);
-  const importers = options.importers ?? [];
+  const screens = options.screens ?? DEFAULT_SCREENS;
+  const importers = [screenImporter(screens), ...(options.importers ?? [])];
   const { code } = compileParts(source, file, {
     dev: true,
     displayFile: file,
     styles: (style, _index, id) => browserStyle(style, file, id, importers),
+    screens,
   });
   return { code: stripTypes(code, file) };
 }
