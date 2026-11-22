@@ -18,6 +18,22 @@ export const eventEntries: ApiEntry[] = [
     example: `<script>\nimport { variable } from "lusiajs";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
   },
   {
+    id: "on-name",
+    name: "on:name={fn}",
+    kind: "markup",
+    group: "events",
+    signature: "on:<name>={handler}",
+    summary: "Runs a function on an element for a DOM event or an EVENT value.",
+    bullets: [
+      "on:click works like onclick. Any DOM event name works after on:.",
+      "on:view, on:scroll, on:size and on:click-outside take the EVENT values VIEW, SCROLL, SIZE and CLICK_OUTSIDE.",
+      "on:scroll is the progress event, from 0 to 1. Use onscroll for the DOM scroll event.",
+      "Each one stops when the component detaches, like listen() in a component.",
+      "On a child component, on: is a compile error. Use onclick on a component.",
+    ],
+    example: `<script>\nimport { variable, type ViewEvent } from "lusiajs";\n\nconst seen = variable("Not seen");\n\nfunction showView(event: ViewEvent) {\n  seen.value = event.in ? "Seen" : "Not seen";\n}\n</script>\n\n<section on:view={showView}>\n  <p>{seen}</p>\n</section>`,
+  },
+  {
     id: "bind-value",
     name: "bind-value={variable}",
     kind: "markup",
