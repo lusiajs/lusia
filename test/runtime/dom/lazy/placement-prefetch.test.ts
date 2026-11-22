@@ -30,7 +30,7 @@ const waitForIdle = () => new Promise((done) => setTimeout(done, 50));
 
 // Places the component the way a parent component's markup does, with a given scope.
 function placeWithScope(component: Component, el: HTMLElement, scope?: Scope) {
-  return component.place(el, null, { props: {}, bound: {}, scope }, []);
+  return component.place(el, null, { props: {}, bound: {}, scope, inherited: "" }, []);
 }
 
 describe("placementPrefetch", () => {
