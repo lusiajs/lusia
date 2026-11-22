@@ -1,6 +1,7 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { generateDtsBundle } from "dts-bundle-generator";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const PACKAGE_DIR = "packages/language-tools";
@@ -39,20 +40,13 @@ async function bundleEntry(root: string, distDir: string, version: string, exter
   }
 }
 
-async function emitTypes(root: string): Promise<void> {
-  const types = Bun.spawn(["bun", "x", "tsc", "-p", join(root, "tsconfig.editor.json")], {
-    cwd: root,
-    stdout: "pipe",
-    stderr: "pipe",
-  });
-  const [output, errors, code] = await Promise.all([
-    Bun.readableStreamToText(types.stdout),
-    Bun.readableStreamToText(types.stderr),
-    types.exited,
-  ]);
-  if (code !== 0) {
-    throw new Error(`editor types failed\n${output}${errors}`);
-  }
+// Bundles the types from the source, so every `#alias` import is resolved into one file.
+async function bundleTypes(root: string, distDir: string): Promise<void> {
+  const declarations = generateDtsBundle(
+    [{ filePath: join(root, "src/editor/host.ts"), output: { noBanner: true } }],
+    { preferredConfigPath: join(root, "tsconfig.editor.json") },
+  );
+  await writeFile(join(distDir, `${VSCODE_ENTRY}.d.ts`), declarations.join(""));
 }
 
 export async function buildEditor(root: string = ROOT): Promise<void> {
@@ -63,11 +57,7 @@ export async function buildEditor(root: string = ROOT): Promise<void> {
   await rm(distDir, { recursive: true, force: true });
 
   await bundleEntry(root, distDir, rootPackage.version ?? "", externalNames(toolsPackage));
-  await emitTypes(root);
-  await writeFile(
-    join(distDir, `${VSCODE_ENTRY}.d.ts`),
-    `export * from "./types/src/editor/host.js";\n`,
-  );
+  await bundleTypes(root, distDir);
 }
 
 if (import.meta.main) {
