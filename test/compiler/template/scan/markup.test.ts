@@ -181,7 +181,7 @@ describe("bind-value", () => {
 describe("IF, ELSEIF and ELSE", () => {
   test("one marker for the whole chain, with a branch per tag", () => {
     const { html, bindings } = compileTemplate(
-      "<IF {a}><p>1</p></IF>\n<ELSEIF {b}>2</ELSEIF>\n<ELSE>3</ELSE>",
+      "<IF {a}><p>1</p>\n<ELSEIF {b}>2\n<ELSE>3</IF>",
       FILE,
     );
     expect(html).toBe(TEXT);
@@ -189,29 +189,45 @@ describe("IF, ELSEIF and ELSE", () => {
       {
         kind: "if",
         branches: [
-          { test: { code: "a", line: 1, column: 6 }, body: { html: "<p>1</p>", bindings: [] } },
-          { test: { code: "b", line: 2, column: 10 }, body: { html: "2", bindings: [] } },
+          { test: { code: "a", line: 1, column: 6 }, body: { html: "<p>1</p>\n", bindings: [] } },
+          { test: { code: "b", line: 2, column: 10 }, body: { html: "2\n", bindings: [] } },
           { body: { html: "3", bindings: [] } },
         ],
       },
     ]);
   });
 
-  test("ELSE without a preceding IF is an error", () => {
-    expect(() => compileTemplate("<ELSE>x</ELSE>", FILE)).toThrow(
-      "<ELSE> must directly follow </IF> or </ELSEIF>",
+  test("blocks nest inside a branch", () => {
+    const { bindings } = compileTemplate("<IF {a}><IF {b}>x<ELSE>y</IF><ELSE>z</IF>", FILE);
+    const outer = bindings[0] as { branches: unknown[] };
+    expect(outer.branches).toHaveLength(2);
+  });
+
+  test("ELSE outside an IF block is an error", () => {
+    expect(() => compileTemplate("<ELSE>x", FILE)).toThrow("<ELSE> must be inside an <IF> block");
+  });
+
+  test("the old form with </IF> before ELSE says where </IF> goes", () => {
+    expect(() => compileTemplate("<IF {a}>x</IF> <ELSE>y</ELSE>", FILE)).toThrow(
+      "<ELSE> must be inside an <IF> block",
     );
   });
 
-  test("text between </IF> and ELSE breaks the chain", () => {
-    expect(() => compileTemplate("<IF {a}>x</IF> hi <ELSE>y</ELSE>", FILE)).toThrow(
-      "<ELSE> must directly follow",
+  test("a closing </ELSE> from the old form is an error", () => {
+    expect(() => compileTemplate("<IF {a}>x<ELSE>y</ELSE></IF>", FILE)).toThrow(
+      "</ELSE> is not used. <ELSE> has no closing tag",
     );
   });
 
   test("ELSE after ELSE is an error", () => {
-    expect(() => compileTemplate("<IF {a}>x</IF><ELSE>y</ELSE><ELSE>z</ELSE>", FILE)).toThrow(
-      "<ELSE> must directly follow",
+    expect(() => compileTemplate("<IF {a}>x<ELSE>y<ELSE>z</IF>", FILE)).toThrow(
+      "<ELSE> must be the last branch",
+    );
+  });
+
+  test("ELSEIF after ELSE is an error", () => {
+    expect(() => compileTemplate("<IF {a}>x<ELSE>y<ELSEIF {b}>z</IF>", FILE)).toThrow(
+      "<ELSE> must be the last branch",
     );
   });
 
@@ -220,7 +236,7 @@ describe("IF, ELSEIF and ELSE", () => {
   });
 
   test("ELSE takes no attributes", () => {
-    expect(() => compileTemplate('<IF {a}>x</IF><ELSE class="y">z</ELSE>', FILE)).toThrow(
+    expect(() => compileTemplate('<IF {a}>x<ELSE class="y">z</IF>', FILE)).toThrow(
       "ELSE takes no attributes",
     );
   });

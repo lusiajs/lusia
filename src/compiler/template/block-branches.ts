@@ -1,40 +1,45 @@
 import type { AttrKind } from "./check/checks.ts";
 import { expectClose, readHeader } from "./block-header.ts";
-import { CHAIN_TAG, type BodyReader } from "./block-tokens.ts";
+import { CHAIN_TAG, CLOSE_TAG, type BodyReader } from "./block-tokens.ts";
 import type { Cursor } from "./scan/cursor.ts";
 import type { IfBinding } from "./types/if.ts";
 import type { Branch } from "./types/template.ts";
 
+type BranchName = "IF" | "ELSEIF" | "ELSE";
+
 const NO_ATTRS: ReadonlyMap<string, AttrKind> = new Map();
 
-function readBranch(c: Cursor, name: "IF" | "ELSEIF" | "ELSE", body: BodyReader): Branch {
+function readBranch(c: Cursor, name: BranchName, body: BodyReader): Branch {
   const start = c.pos;
   const isElse = name === "ELSE";
   const header = readHeader(c, name, NO_ATTRS, !isElse);
   if (!isElse && header.expr === undefined) c.fail("L1029", { name }, start);
+  failOldBranchClose(c);
   const template = body();
-  expectClose(c, name, start);
+  failOldBranchClose(c);
   return isElse ? { body: template } : { test: header.expr, body: template };
 }
 
-/** Looks past whitespace for `<ELSEIF` or `<ELSE`. Moves the cursor onto it, or leaves it where it was. */
-function readChainName(c: Cursor): "ELSEIF" | "ELSE" | undefined {
-  const saved = c.pos;
-  c.skipWhitespace();
-  const match = c.match(CHAIN_TAG);
-  if (!match) {
-    c.pos = saved;
-    return undefined;
-  }
-  return match[1] as "ELSEIF" | "ELSE";
+function chainNameAt(c: Cursor): "ELSEIF" | "ELSE" | undefined {
+  return c.match(CHAIN_TAG)?.[1] as "ELSEIF" | "ELSE" | undefined;
 }
 
+// `</ELSEIF>` and `</ELSE>` belong to the old form, where each branch closed itself.
+function failOldBranchClose(c: Cursor): void {
+  const close = c.match(CLOSE_TAG)?.[1];
+  if (close === "ELSEIF" || close === "ELSE") c.fail("L1043", { tag: close });
+}
+
+/** `<IF {a}> ... <ELSEIF {b}> ... <ELSE> ... </IF>`: the branches split one block, closed once. */
 export function readIf(c: Cursor, body: BodyReader): IfBinding {
+  const start = c.pos;
   const branches = [readBranch(c, "IF", body)];
-  let name = readChainName(c);
+  let name = chainNameAt(c);
   while (name) {
+    if (branches.at(-1)!.test === undefined) c.fail("L1044", {});
     branches.push(readBranch(c, name, body));
-    name = name === "ELSEIF" ? readChainName(c) : undefined;
+    name = chainNameAt(c);
   }
+  expectClose(c, "IF", start);
   return { kind: "if", branches };
 }

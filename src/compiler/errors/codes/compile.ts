@@ -128,8 +128,8 @@ export const COMPILE_CODES = {
     hint: "Remove it, or open the block it closes.",
   },
   L1034: {
-    message: "<$tag> must directly follow </IF> or </ELSEIF>",
-    hint: "Put ELSEIF or ELSE right after the branch before it.",
+    message: "<$tag> must be inside an <IF> block",
+    hint: "Write it between <IF {...}> and </IF>, with no </IF> before it: <IF {a}> ... <$tag> ... </IF>.",
   },
   L1035: {
     message: "<CONTENT /> is used more than once",
@@ -162,6 +162,14 @@ export const COMPILE_CODES = {
   L1042: {
     message: "$what is not allowed in <FALLBACK>",
     hint: "<FALLBACK> shows before the script runs, so use plain elements and text only.",
+  },
+  L1043: {
+    message: "</$tag> is not used. <$tag> has no closing tag",
+    hint: "Remove </$tag>. One </IF> after the last branch closes the whole block: <IF {a}> ... <ELSEIF {b}> ... <ELSE> ... </IF>.",
+  },
+  L1044: {
+    message: "<ELSE> must be the last branch",
+    hint: "Move <ELSE> after every <ELSEIF>.",
   },
   L1045: {
     message: "$attr works on elements only, not on components",
