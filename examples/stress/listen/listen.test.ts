@@ -24,13 +24,14 @@ afterEach(() => {
 });
 
 describe("listen on many elements", () => {
-  test(`mounting ${CARD_COUNT} cards adds their listeners, detaching removes all of them`, () => {
+  test(`mounting ${CARD_COUNT} cards share one pair of document listeners, detaching removes it`, () => {
     spy = spyOnListeners();
     const baseline = spy.documentListeners();
     for (let cycle = 0; cycle < TEST_CYCLES; cycle++) {
       target = createTarget("div");
       instance = attach(Watcher, target);
-      expect(spy.documentListeners() - baseline).toBe(CARD_COUNT * 2);
+      // Every click-outside shares one pointerdown and one keydown listener.
+      expect(spy.documentListeners() - baseline).toBe(2);
       expect(spy.observedElements()).toBe(CARD_COUNT);
 
       instance.detach();

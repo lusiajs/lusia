@@ -37,7 +37,7 @@ export function run(): Result[] {
   return [
     { name: `Mount and detach ${CARD_COUNT} cards, ${CYCLES} times`, value: formatMs(cycleMs) },
     {
-      name: `Peak document listeners while mounted (expect ${CARD_COUNT * 2})`,
+      name: "Peak document listeners while mounted (expect 2, shared by every card)",
       value: String(peakDocument),
     },
     {

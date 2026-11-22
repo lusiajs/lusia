@@ -3,6 +3,7 @@ import { readViewMore, type ViewMore } from "../animate/options/view-options.ts"
 import { watchScroll } from "../animate/scroll/scroll.ts";
 import { watchView } from "../animate/scroll/view.ts";
 import { runtimeError } from "../errors.ts";
+import { watchClickOutside } from "./click-outside.ts";
 import { EVENT, type LusiaEvent } from "./events.ts";
 
 export type Stop = () => void;
@@ -18,7 +19,7 @@ export function startEvent(
   if (what === EVENT.VIEW) return startView(el, handler, options);
   if (what === EVENT.SCROLL) return startScroll(el, handler, options);
   if (what === EVENT.SIZE) return startSize(el, handler);
-  return startClickOutside(el, handler);
+  return watchClickOutside(el, handler);
 }
 
 function elementOf(target: EventTarget, what: LusiaEvent): Element {
@@ -48,22 +49,4 @@ function startSize(el: Element, handler: (event: unknown) => void): Stop {
   });
   observer.observe(el);
   return () => observer.disconnect();
-}
-
-// Capture sees the press before anything inside the page can stop it.
-const CAPTURE = { capture: true };
-
-function startClickOutside(el: Element, handler: (event: unknown) => void): Stop {
-  const onPress = (event: PointerEvent): void => {
-    if (!el.contains(event.target as Node)) handler(event);
-  };
-  const onKey = (event: KeyboardEvent): void => {
-    if (event.key === "Escape") handler(event);
-  };
-  document.addEventListener("pointerdown", onPress, CAPTURE);
-  document.addEventListener("keydown", onKey, CAPTURE);
-  return () => {
-    document.removeEventListener("pointerdown", onPress, CAPTURE);
-    document.removeEventListener("keydown", onKey, CAPTURE);
-  };
 }
