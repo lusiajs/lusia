@@ -99,8 +99,8 @@ describe("hover for markup features", () => {
     expect(apiId(hoverAt(text, 3, noProps))).toBe("each");
   });
 
-  test("shows the ELSE entry on a closing tag name", () => {
-    const text = "<IF {ok}>\n</IF>\n<ELSE>\n</ELSE>";
+  test("shows the ELSE entry on its tag name", () => {
+    const text = "<IF {ok}>\n<ELSE>\n</IF>";
     expect(apiId(hoverAt(text, text.lastIndexOf("ELSE") + 1, noProps))).toBe("else");
   });
 
