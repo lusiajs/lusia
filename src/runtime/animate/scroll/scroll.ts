@@ -73,13 +73,23 @@ function schedule(): void {
 function update(): void {
   scheduled = false;
   measured.clear();
-  for (const target of tracked)
-    target.next = partProgress(targetProgress(target), target.scroll.part);
+  let waiting = false;
   for (const target of tracked) {
-    if (target.next === target.last) continue;
+    if (isMeasurable(target)) target.next = partProgress(targetProgress(target), target.scroll.part);
+    else waiting = true;
+  }
+  for (const target of tracked) {
+    if (Number.isNaN(target.next) || target.next === target.last) continue;
     target.last = target.next;
     target.group.show(target.next);
   }
+  // Elements watched before they join the page are measured again next frame, not on the first scroll.
+  if (waiting) schedule();
+}
+
+function isMeasurable(target: Tracked): boolean {
+  const el = target.scroll.follow ? target.followed : target.el;
+  return el === null || el.isConnected;
 }
 
 function targetProgress(target: Tracked): number {

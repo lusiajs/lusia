@@ -31,7 +31,7 @@ afterEach(() => setReducedMotion(false));
 
 /** Mounts a scroll item on an element whose top edge sits at `top` px from the viewport top. */
 function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
-  const el = document.createElement("div");
+  const el = pageElement();
   let position = top;
   el.getBoundingClientRect = () => ({ top: position, height: ELEMENT_HEIGHT }) as DOMRect;
   const cleanups: Array<() => void> = [];
@@ -59,6 +59,19 @@ describe("WHEN.SCROLL progress", () => {
     expect(opacity()).toBeCloseTo(0.5);
     scrollTo(-100);
     expect(opacity()).toBe(1);
+  });
+
+  test("an item watched before it joins the page shows its progress once attached, without a scroll", () => {
+    const el = document.createElement("div");
+    el.getBoundingClientRect = () => ({ top: 450, height: ELEMENT_HEIGHT }) as DOMRect;
+    const cleanups: Array<() => void> = [];
+    animate(el, () => ({ style: fade, when: WHEN.SCROLL }) as AnimateItem, cleanups, []);
+    onReset(() => cleanups.forEach((cleanup) => cleanup()));
+    advance(16);
+    document.body.appendChild(el);
+    onReset(() => el.remove());
+    advance(16);
+    expect(Number(el.style.opacity)).toBeCloseTo(0.5);
   });
 
   test("clamps below 0 and above 1", () => {
@@ -201,14 +214,14 @@ describe("WHEN.SCROLL errors", () => {
 /** A tall or short element whose rect a test can move. */
 function box(top: number, height: number) {
   const state = { top, height };
-  const el = document.createElement("div");
+  const el = pageElement();
   el.getBoundingClientRect = () => ({ top: state.top, height: state.height }) as DOMRect;
   return { el, state };
 }
 
 /** Mounts a follow item. The item's own element is not used for progress. */
 function mountFollow(more: { part?: [number, number]; start?: ScrollAt; end?: ScrollAt } = {}) {
-  const el = document.createElement("div");
+  const el = pageElement();
   const follow = variable<Element | null>(null);
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
@@ -354,3 +367,10 @@ describe("WHEN.SCROLL part errors", () => {
     );
   });
 });
+
+/** Real scroll items sit in the page; detached ones wait for the next frame instead of being measured. */
+function pageElement(): HTMLDivElement {
+  const el = document.body.appendChild(document.createElement("div"));
+  onReset(() => el.remove());
+  return el;
+}
