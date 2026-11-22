@@ -30,8 +30,9 @@ function attrCall({ name, parts }: AttrBinding): string {
   return `__attr(__node as Element, ${JSON.stringify(name)}, () => ${value}, __cleanups);`;
 }
 
-function eventCall({ type, expr }: EventBinding): string {
-  return `__listen(__node as Element, ${JSON.stringify(type)}, (${markedCode(expr)}), __cleanups);`;
+function eventCall({ type, listen, expr }: EventBinding): string {
+  const call = listen ? "__listenEvent" : "__listen";
+  return `${call}(__node as Element, ${JSON.stringify(type)}, (${markedCode(expr)}), __cleanups);`;
 }
 
 function bindCall(bind: BindBinding, ctx: GenContext): string {

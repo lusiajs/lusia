@@ -15,7 +15,7 @@ describe("events", () => {
       {
         kind: "element",
         attrs: [],
-        events: [{ type: "click", expr: { code: "go", line: 1, column: 18 } }],
+        events: [{ type: "click", listen: false, expr: { code: "go", line: 1, column: 18 } }],
         binds: [],
       },
     ]);
@@ -33,7 +33,7 @@ describe("events", () => {
       {
         kind: "element",
         attrs: [],
-        events: [{ type: "custom-thing", expr: { code: "f", line: 1, column: 22 } }],
+        events: [{ type: "custom-thing", listen: false, expr: { code: "f", line: 1, column: 22 } }],
         binds: [],
       },
     ]);
@@ -49,7 +49,11 @@ describe("events", () => {
         kind: "element",
         attrs: [],
         events: [
-          { type: "input", expr: { code: "(e) => { set(e.target.value) }", line: 1, column: 17 } },
+          {
+            type: "input",
+            listen: false,
+            expr: { code: "(e) => { set(e.target.value) }", line: 1, column: 17 },
+          },
         ],
         binds: [],
       },
@@ -348,5 +352,27 @@ describe("reserved tags", () => {
     expect(error.message).toBe("IF is a reserved tag name and cannot be a component");
     expect(error.line).toBe(2);
     expect(error.column).toBe(1);
+  });
+});
+
+describe("on:name", () => {
+  test("on:view on an element goes through listen", () => {
+    const { bindings } = compileTemplate("<p on:view={show}>x</p>", FILE);
+    const element = bindings[0] as { events: unknown[] };
+    expect(element.events).toEqual([
+      { type: "view", listen: true, expr: { code: "show", line: 1, column: 13 } },
+    ]);
+  });
+
+  test("on:click and onclick can sit side by side", () => {
+    const { bindings } = compileTemplate("<p onclick={a} on:click={b}>x</p>", FILE);
+    const element = bindings[0] as { events: Array<{ listen: boolean }> };
+    expect(element.events.map((event) => event.listen)).toEqual([false, true]);
+  });
+
+  test("on: on a component is an error", () => {
+    expect(() => compileTemplate("<card on:view={show} />", FILE, 1, new Set(["card"]))).toThrow(
+      "on:view works on elements only, not on components",
+    );
   });
 });

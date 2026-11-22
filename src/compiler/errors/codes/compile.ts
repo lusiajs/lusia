@@ -163,4 +163,8 @@ export const COMPILE_CODES = {
     message: "$what is not allowed in <FALLBACK>",
     hint: "<FALLBACK> shows before the script runs, so use plain elements and text only.",
   },
+  L1045: {
+    message: "$attr works on elements only, not on components",
+    hint: "Pass the function as a prop with an on name, like onselect={fn}, or put on: on an element inside the component.",
+  },
 } as const satisfies Record<string, ErrorCode>;

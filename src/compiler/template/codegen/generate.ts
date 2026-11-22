@@ -35,6 +35,7 @@ const RUNTIME_IMPORT = `import {
   lazyComponent as __lazyComponent,
   lazyTemplate as __lazyTemplate,
   bindEvent as __listen,
+  bindListen as __listenEvent,
   toText as __toText,
   unwrap as __unwrap,
   writableTarget as __writableTarget,

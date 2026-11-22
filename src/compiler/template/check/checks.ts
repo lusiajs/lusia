@@ -1,7 +1,7 @@
 import { checkAnimateAttribute } from "../animate.ts";
 import { expressionOf, hasExpression, type AttrCheck, type Fail } from "../scan/attributes.ts";
 import { BIND_NAME, FORM_TAGS, isBindName } from "../bind.ts";
-import { isEventName } from "../events.ts";
+import { isEventName, isListenName } from "../events.ts";
 import type { AttrBinding } from "../types/attribute.ts";
 
 export type AttrKind = "expression" | "identifier";
@@ -31,6 +31,7 @@ export function elementCheck(tag: string): AttrCheck {
 
 /** Components pass `onX={fn}` as a prop, and `bind-<prop>={variable}` two ways. `bind-element` is for elements. */
 export const componentCheck: AttrCheck = (attr, _previous, fail) => {
+  if (isListenName(attr.name)) fail("L1045", { attr: attr.name });
   if (!isBindName(attr.name)) return;
   if (!BIND_NAME.test(attr.name)) fail("L1014");
   if (expressionOf(attr) === undefined) fail("L1015", { attr: attr.name });

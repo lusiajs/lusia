@@ -63,12 +63,12 @@ function listenOne(
   options: ListenOptions,
 ): Stop {
   const handler = (event: unknown): void => batch(() => fn(event));
-  const stop = once(start(target, what, handler, options));
+  const stop = once(startListening(target, what, handler, options));
   if (!isKeeping()) stopOnDetach(stop);
   return stop;
 }
 
-function start(
+export function startListening(
   target: EventTarget,
   what: What,
   handler: (event: unknown) => void,

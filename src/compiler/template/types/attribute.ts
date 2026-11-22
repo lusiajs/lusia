@@ -9,6 +9,7 @@ export interface AttrBinding {
 
 export interface EventBinding {
   type: string;
+  listen: boolean;
   expr: Expr;
 }
 

@@ -1,5 +1,6 @@
 // Helpers used by compiled .lusia output; not part of the public API.
 export { attr, bindText, insert, bindEvent, toText } from "./dom/template/bindings.ts";
+export { bindListen } from "./listen/bind-listen.ts";
 export type { Binder, Cleanup } from "./dom/template/bindings.ts";
 export { bindComponent, defineComponent } from "./dom/component/component.ts";
 export type { Host } from "./dom/component/component.ts";
