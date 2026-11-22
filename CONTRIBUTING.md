@@ -55,6 +55,19 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 > [!TIP]
 > Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
 
+## Editor tools
+
+`@lusiajs/language-tools` is a separate package in `packages/language-tools`. It holds the built logic that editors load: completion, hover, lint and format.
+
+| Entry | File | Used by |
+| ----- | ---- | ------- |
+| `@lusiajs/language-tools/vscode` | `dist/vscode.js` | The VS Code extension |
+
+- Source: `src/editor/host.ts`. Build: `bun scripts/build-editor.ts` (also run by `bun run check`).
+- The version always matches `lusiajs`. A test checks it.
+- Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.
+- Bump `EDITOR_API_VERSION` in `src/editor/host.ts` when a namespace changes in a breaking way.
+
 ## Open a pull request
 
 1. Branch from `dev`.

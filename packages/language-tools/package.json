@@ -1,0 +1,24 @@
+{
+  "name": "@lusiajs/language-tools",
+  "version": "0.1.0-beta.3",
+  "description": "Language tools for Lusia editors: completion, hover, lint and format",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lusiajs/lusia.git",
+    "directory": "packages/language-tools"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./vscode": {
+      "types": "./dist/vscode.d.ts",
+      "import": "./dist/vscode.js"
+    }
+  },
+  "dependencies": {
+    "sass": "^1.80.0"
+  }
+}

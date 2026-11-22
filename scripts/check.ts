@@ -15,6 +15,9 @@ interface StepResult {
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 
+// The build runs first: the test imports its output.
+const BUILD: Step = { name: "build", cmd: ["bun", "scripts/build-editor.ts"], cwd: ROOT };
+
 // The steps touch separate outputs, so they run at the same time.
 const STEPS: Step[] = [
   { name: "typecheck", cmd: ["bun", "run", "typecheck"], cwd: ROOT },
@@ -55,7 +58,8 @@ function failureReport(result: StepResult): string {
 
 async function main(): Promise<void> {
   const start = performance.now();
-  const results = await Promise.all(STEPS.map(runStep));
+  const built = await runStep(BUILD);
+  const results = [built, ...(await Promise.all(STEPS.map(runStep)))];
   const totalMs = performance.now() - start;
   const allOk = results.every((result) => result.ok);
 
