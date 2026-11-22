@@ -35,8 +35,8 @@ describe("splitImports", () => {
   });
 
   test("a default import alongside named imports is a component", () => {
-    const { components } = split('\nimport a, { b } from "./a.lusia";\n');
-    expect([...components]).toEqual(["a"]);
+    const { components } = split('\nimport card, { b } from "./card.lusia";\n');
+    expect([...components]).toEqual(["card"]);
   });
 
   test("default imports of other files are not components", () => {
@@ -58,6 +58,33 @@ describe("splitImports", () => {
       '\nimport type Props from "./props.lusia";\nimport type { Shape } from "./shape.lusia";\n',
     );
     expect(components.size).toBe(0);
+  });
+
+  test("lowercase names that are not HTML tags are components", () => {
+    const { components } = split(
+      '\nimport row from "./row.lusia";\nimport myThing from "./my-thing.lusia";\n',
+    );
+    expect([...components]).toEqual(["row", "myThing"]);
+  });
+
+  test.each([
+    ["button", "ButtonBox"],
+    ["Button", "ButtonBox"],
+    ["svg", "SvgBox"],
+    ["foreignObject", "ForeignObjectBox"],
+    ["math", "MathBox"],
+  ])("%s is an HTML tag and cannot be a component name", (name, suggestion) => {
+    const error = catchError(() => split(`\nimport ${name} from "./${name}.lusia";\n`));
+    expect(error.code).toBe("L1046");
+    expect(error.message).toBe(`"${name}" is an HTML tag, so it cannot be a component name`);
+    expect(error.hint).toContain(`import ${suggestion} from`);
+    expect(error.line).toBe(2);
+    expect(error.column).toBe(1);
+  });
+
+  test("the reserved IF name is still L1004", () => {
+    const error = catchError(() => split('\nimport IF from "./if.lusia";\n'));
+    expect(error.code).toBe("L1004");
   });
 
   test("an export in the script is an error with its line and column", () => {

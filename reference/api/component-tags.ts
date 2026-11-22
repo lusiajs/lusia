@@ -39,7 +39,7 @@ export const componentTagEntries: ApiEntry[] = [
     signature: '<Name prop="text" prop={expr} flag />',
     summary: "Places an imported .lusia component in markup.",
     bullets: [
-      "The tag name must match the import name exactly.",
+      "The tag name must match the import name exactly. Any name works, except an HTML or SVG tag name such as button or svg.",
       "A string attribute passes the string.",
       "A {expr} attribute passes the variable's value and updates it.",
       "A bare attribute passes true. bind-<prop>={variable} links the prop both ways.",

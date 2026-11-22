@@ -1,6 +1,7 @@
 import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
 import { RESERVED_TAGS } from "./reserved.ts";
+import { HTML_TAGS } from "./html-tags.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
 
@@ -36,6 +37,17 @@ function defaultLusiaImport(statement: string, specifier: string): string | unde
   return DEFAULT_IMPORT.exec(statement)?.[1];
 }
 
+function boxName(name: string): string {
+  return `${name.charAt(0).toUpperCase()}${name.slice(1)}Box`;
+}
+
+function checkComponentName(name: string, script: Section, offset: number, file: string): void {
+  if (RESERVED_TAGS.has(name)) throw scriptError(script, offset, file, "L1004", { name });
+  if (HTML_TAGS.has(name.toLowerCase())) {
+    throw scriptError(script, offset, file, "L1046", { name, suggestion: boxName(name) });
+  }
+}
+
 function scriptError(
   script: Section,
   offset: number,
@@ -64,9 +76,10 @@ export function splitImports(section: Section | null, file: string): SplitScript
     IMPORT_STATEMENT,
     (statement, _quote, specifier: string, offset: number) => {
       const name = defaultLusiaImport(statement, specifier);
-      if (name && RESERVED_TAGS.has(name))
-        throw scriptError(section, offset, file, "L1004", { name });
-      if (name) components.add(name);
+      if (name) {
+        checkComponentName(name, section, offset, file);
+        components.add(name);
+      }
       statements.push({
         text: statement.trim(),
         lusia: name ? { name, specifier } : undefined,

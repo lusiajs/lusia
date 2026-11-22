@@ -175,4 +175,8 @@ export const COMPILE_CODES = {
     message: "$attr works on elements only, not on components",
     hint: "Pass the function as a prop with an on name, like onselect={fn}, or put on: on an element inside the component.",
   },
+  L1046: {
+    message: '"$name" is an HTML tag, so it cannot be a component name',
+    hint: 'Rename the import, for example import $suggestion from "...". Any name works if it is not an HTML tag.',
+  },
 } as const satisfies Record<string, ErrorCode>;
