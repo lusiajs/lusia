@@ -6,7 +6,6 @@ import { parse, type Section } from "./parse/sections.ts";
 import { scopeCss, styleMode } from "./style/modes.ts";
 import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 import { compileSectionScss } from "./style/sass-browser.ts";
-import { screenImporter } from "./style/screen-mixin.ts";
 import type { StyleResult } from "./style/sass.ts";
 
 export { LusiaError } from "./errors/error.ts";
@@ -29,11 +28,11 @@ export function compileForBrowser(
 ): BrowserCompile {
   checkScriptSyntax(source, file);
   const screens = options.screens ?? DEFAULT_SCREENS;
-  const importers = [screenImporter(screens), ...(options.importers ?? [])];
+  const importers = options.importers ?? [];
   const { code } = compileParts(source, file, {
     dev: true,
     displayFile: file,
-    styles: (style, _index, id) => browserStyle(style, file, id, importers),
+    styles: (style, _index, id) => browserStyle(style, file, id, importers, screens),
     screens,
   });
   return { code: stripTypes(code, file) };
@@ -69,8 +68,9 @@ function browserStyle(
   file: string,
   id: string,
   importers: sass.Importer[],
+  screens: Screens,
 ): StyleResult {
   const css =
-    style.attrs.lang === "css" ? style.content : compileSectionScss(style, file, importers);
+    style.attrs.lang === "css" ? style.content : compileSectionScss(style, file, importers, screens);
   return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
 }
