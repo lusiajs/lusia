@@ -5,6 +5,8 @@ export const DEFAULT_SCREENS: Screens = Object.freeze({ PHONE: 0, TABLET: 600, D
 
 export const REDUCED_MOTION = "REDUCED_MOTION";
 
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
 export interface ScreenRange {
   name: string;
   min: number;

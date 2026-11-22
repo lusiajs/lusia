@@ -26,4 +26,5 @@ export type { HotComponent } from "./dom/hot/define.ts";
 export { hotVariable } from "./dom/hot/variable.ts";
 export { swapComponent, swapStyle } from "./dom/hot/swap.ts";
 export { setAnimateConfig } from "./animate/options/config.ts";
+export { setScreens } from "./screen/screens-store.ts";
 export { animateConfigFromNames } from "./animate/options/config-names.ts";

@@ -6,6 +6,7 @@ import {
   type ScreenRange,
   type Screens,
 } from "#runtime/screen/screens.ts";
+import { joinedSpans, widthParts } from "#runtime/screen/width.ts";
 
 const SCREEN_TEST = /^SCREEN\.([A-Z][A-Z0-9_]*)$/;
 
@@ -64,23 +65,4 @@ function mediaText(where: Where, ranges: ScreenRange[]): string | undefined {
   const motion = where.motion === "any" ? [] : [`(prefers-reduced-motion: ${where.motion})`];
   const spans = joinedSpans(ranges.filter((range) => where.sizes.has(range.name)));
   return spans.map((span) => [...widthParts(span), ...motion].join(" and ")).join(", ");
-}
-
-/** Neighbouring screens merge into one span, so PHONE and TABLET give one max-width query. */
-function joinedSpans(chosen: ScreenRange[]): Array<{ min: number; until: number }> {
-  const spans: Array<{ min: number; until: number }> = [];
-  for (const range of chosen) {
-    const last = spans.at(-1);
-    if (last && last.until === range.min) last.until = range.until;
-    else spans.push({ min: range.min, until: range.until });
-  }
-  return spans;
-}
-
-// 0.02px below the next start avoids overlap at fractional widths, as Bootstrap does.
-function widthParts(span: { min: number; until: number }): string[] {
-  const parts: string[] = [];
-  if (span.min > 0) parts.push(`(min-width: ${span.min}px)`);
-  if (span.until !== Infinity) parts.push(`(max-width: ${span.until - 0.02}px)`);
-  return parts;
 }
