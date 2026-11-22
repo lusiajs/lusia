@@ -16,8 +16,8 @@ const FLOW_TAGS: Record<string, string> = {
 
 const FLOW_TAG_BODIES: Record<string, string> = {
   IF: "IF {$1}>\n\t$0\n</IF>",
-  ELSEIF: "ELSEIF {$1}>\n\t$0\n</ELSEIF>",
-  ELSE: "ELSE>\n\t$0\n</ELSE>",
+  ELSEIF: "ELSEIF {$1}>\n\t$0",
+  ELSE: "ELSE>\n\t$0",
   EACH: "EACH {$1} as={$2} key={$3}>\n\t$0\n</EACH>",
   FOR: "FOR {$1} from={$2} to={$3}>\n\t$0\n</FOR>",
   CONTENT: "CONTENT />",
