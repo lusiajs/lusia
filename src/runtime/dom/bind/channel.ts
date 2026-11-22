@@ -1,7 +1,7 @@
 import { watch } from "../../variable/graph.ts";
 import { isReactive } from "../../variable/reactive.ts";
 import type { Variable } from "../../variable/variable.ts";
-import { listen, type Cleanup } from "../template/bindings.ts";
+import { bindEvent, type Cleanup } from "../template/bindings.ts";
 import { runtimeError, withWhere } from "../../errors.ts";
 
 export interface Channel {
@@ -51,5 +51,5 @@ export function bindChannel(
     const next = channel.fromDom(el);
     if (!Object.is(next, variable.peek())) variable.value = next;
   };
-  for (const type of channel.events) listen(el, type, pull, cleanups);
+  for (const type of channel.events) bindEvent(el, type, pull, cleanups);
 }

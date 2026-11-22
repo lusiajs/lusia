@@ -62,7 +62,7 @@ function bindScroll(el: HTMLElement, scroll: ScrollRead, group: Group, cleanups:
     group.show(1);
     return;
   }
-  cleanups.push(watchScroll(el, group, scroll));
+  cleanups.push(watchScroll(el, (progress) => group.show(progress), scroll));
 }
 
 /** The first value is applied without animating. Later changes play forward or back from the current progress. */

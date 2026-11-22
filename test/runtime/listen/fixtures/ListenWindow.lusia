@@ -1,0 +1,14 @@
+<script>
+  import { listen, keepRunning, onAttach } from "lusiajs";
+  import { events } from "./listen-log.ts";
+
+  listen(window, "lusia-component-ping", () => events.push("setup"));
+  keepRunning(() => {
+    listen(window, "lusia-component-ping", () => events.push("kept"));
+  });
+  onAttach(() => {
+    listen(window, "lusia-component-ping", () => events.push("attach"));
+  });
+</script>
+
+<p>listening</p>

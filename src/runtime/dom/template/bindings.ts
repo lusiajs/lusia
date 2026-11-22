@@ -31,7 +31,7 @@ function batched(handler: EventListener): EventListener {
   return (event) => batch(() => handler(event));
 }
 
-export function listen(
+export function bindEvent(
   el: EventTarget,
   type: string,
   handler: EventListener,

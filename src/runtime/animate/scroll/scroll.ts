@@ -1,4 +1,3 @@
-import type { Group } from "../play/group.ts";
 import type { Part, ScrollRead } from "../options/scroll-options.ts";
 import type { ScrollRange, ScrollTouch } from "./scroll-touch.ts";
 import { unwrap } from "../../variable/reactive.ts";
@@ -7,7 +6,7 @@ import { watch } from "../../variable/graph.ts";
 
 interface Tracked {
   el: Element;
-  group: Group;
+  onProgress: (progress: number) => void;
   scroll: ScrollRead;
   followed: Element | null;
   stopFollow: (() => void) | undefined;
@@ -20,11 +19,15 @@ const tracked = new Set<Tracked>();
 const measured = new Map<Element, number>();
 let scheduled = false;
 
-/** Moves the group with the element's place on screen. One shared listener serves every scroll item. */
-export function watchScroll(el: Element, group: Group, scroll: ScrollRead): () => void {
+/** Reports the element's place on screen as progress. One shared listener serves every scroll item. */
+export function watchScroll(
+  el: Element,
+  onProgress: (progress: number) => void,
+  scroll: ScrollRead,
+): () => void {
   const target: Tracked = {
     el,
-    group,
+    onProgress,
     scroll,
     followed: null,
     stopFollow: undefined,
@@ -81,7 +84,7 @@ function update(): void {
   for (const target of tracked) {
     if (Number.isNaN(target.next) || target.next === target.last) continue;
     target.last = target.next;
-    target.group.show(target.next);
+    target.onProgress(target.next);
   }
   // Elements watched before they join the page are measured again next frame, not on the first scroll.
   if (waiting) schedule();

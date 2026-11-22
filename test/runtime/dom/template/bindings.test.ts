@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { attr, bindText, listen } from "#runtime/dom/template/bindings.ts";
+import { attr, bindText, bindEvent } from "#runtime/dom/template/bindings.ts";
 import { TEXT_MARKER } from "#runtime/markers.ts";
 import { watch } from "#runtime/variable/graph.ts";
 import { variable } from "#runtime/variable/variable.ts";
@@ -43,12 +43,12 @@ describe("attr", () => {
   });
 });
 
-describe("listen", () => {
+describe("bindEvent", () => {
   test("handler is removed after cleanups run", () => {
     const button = document.createElement("button");
     const cleanups: Array<() => void> = [];
     let clicks = 0;
-    listen(button, "click", () => clicks++, cleanups);
+    bindEvent(button, "click", () => clicks++, cleanups);
 
     button.dispatchEvent(new Event("click"));
     expect(clicks).toBe(1);
@@ -71,7 +71,7 @@ describe("listen", () => {
       second.value;
       third.value;
     });
-    listen(
+    bindEvent(
       button,
       "click",
       () => {

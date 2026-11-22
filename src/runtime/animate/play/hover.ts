@@ -1,4 +1,4 @@
-import { listen, type Cleanup } from "../../dom/template/bindings.ts";
+import { bindEvent, type Cleanup } from "../../dom/template/bindings.ts";
 import { prepareTimeline } from "../options/keyframes.ts";
 import type { Group } from "./group.ts";
 import { HOVER_AREA } from "../modes/hover-modes.ts";
@@ -61,7 +61,7 @@ export function bindHover(
 
   if (hover.area === HOVER_AREA.FINAL) bindFinalArea(el, state, enter, leave, cleanups);
   else bindElementArea(el, enter, leave, cleanups);
-  listen(
+  bindEvent(
     el,
     "pointerdown",
     (event) => {
@@ -71,7 +71,7 @@ export function bindHover(
     },
     cleanups,
   );
-  listen(
+  bindEvent(
     document,
     "pointerdown",
     (event) => {
@@ -79,8 +79,8 @@ export function bindHover(
     },
     cleanups,
   );
-  listen(el, "focusin", enter, cleanups);
-  listen(el, "focusout", leave, cleanups);
+  bindEvent(el, "focusin", enter, cleanups);
+  bindEvent(el, "focusout", leave, cleanups);
   cleanups.push(() => {
     cancel();
     outPlayer?.cancel();
@@ -94,7 +94,7 @@ function bindElementArea(
   leave: () => void,
   cleanups: Cleanup[],
 ): void {
-  listen(
+  bindEvent(
     el,
     "pointerenter",
     (event) => {
@@ -102,7 +102,7 @@ function bindElementArea(
     },
     cleanups,
   );
-  listen(
+  bindEvent(
     el,
     "pointerleave",
     (event) => {
@@ -120,7 +120,7 @@ function bindFinalArea(
   leave: () => void,
   cleanups: Cleanup[],
 ): void {
-  listen(
+  bindEvent(
     document,
     "pointermove",
     (event) => {
@@ -132,7 +132,7 @@ function bindFinalArea(
     },
     cleanups,
   );
-  listen(
+  bindEvent(
     document.documentElement,
     "pointerout",
     (event) => {
