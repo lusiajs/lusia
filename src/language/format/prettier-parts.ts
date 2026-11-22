@@ -1,5 +1,6 @@
 import type { FormatParts } from "./format.ts";
-import { protectFlowTags, restoreFlowTags } from "./flow-placeholders.ts";
+import { protectFlowTags } from "./flow-placeholders.ts";
+import { restoreFlowTags } from "./flow-restore.ts";
 import { convertOldFlowForm } from "./old-flow-form.ts";
 import { protectExpressions, restoreExpressions } from "./format-expressions.ts";
 
