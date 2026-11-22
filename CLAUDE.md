@@ -92,3 +92,15 @@ No allocations on hot paths where avoidable. Real-time code (audio, render loops
 
 # 28. Comments
 Default to no comments. Keep one line only for a non-obvious why. Never restate the code, and no doc comments on self-named symbols.
+
+# 29. Indent script and style
+Indent the code inside `<script>` and `<style>` of a `.lusia` file by 2 spaces, in source files, templates and every example. The framework allows flush-left code, but this is the house style. Full example: `docs/CLAUDE.md` rule 11.
+
+# 30. Messages: result first, then why
+Lint warnings and errors state the result first, then a short reason, then the fix: `".odd" is not used. No element in this component or its child components has this class.` Never open with what the compiler knows or cannot know.
+
+# 31. Style scoping uses classes
+Scoped styles match by short component classes, not ancestor selectors (about 40x faster style recalc). `lN` styles only the component's own markup, including markup it passes into a child's slot. `tN` styles the component and everything inside it. Child components get their ancestors' `tN` at runtime from one cached template copy per ancestor chain, and `attach()` reads them from the element it mounts into. Keep hot paths free of per-element work.
+
+# 32. Class lint stays quiet when unsure
+`unused-class` never flags a class that might be used. A class from an imported value counts as used only when its TypeScript type is a union of string literals. A wider type gets an `untyped-class` warning instead. `// @on-purpose` at the end of a line (or `/* @on-purpose */` in plain CSS and in markup braces) skips the warning.
