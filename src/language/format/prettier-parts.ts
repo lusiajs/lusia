@@ -1,5 +1,6 @@
 import type { FormatParts } from "./format.ts";
 import { protectFlowTags, restoreFlowTags } from "./flow-placeholders.ts";
+import { convertOldFlowForm } from "./old-flow-form.ts";
 import { protectExpressions, restoreExpressions } from "./format-expressions.ts";
 
 type Parser = "typescript" | "css" | "scss" | "html";
@@ -32,7 +33,7 @@ export function prettierParts(
       script: (code) => formatPart(code, "typescript"),
       style: (code, plainCss) => formatPart(code, plainCss ? "css" : "scss"),
       markup: async (markup) => {
-        const flow = protectFlowTags(markup);
+        const flow = protectFlowTags(convertOldFlowForm(markup));
         const protectedMarkup = protectExpressions(flow.text);
         const html = await formatPart(protectedMarkup.text, "html");
         return restoreExpressions(restoreFlowTags(html, flow.tags), protectedMarkup.expressions);
