@@ -16,7 +16,7 @@ import { unusedImport } from "./rules/unused-import.ts";
 import { untypedClass } from "./rules/untyped-class.ts";
 import type { ChildSourceLookup, LintFinding, LintIssue, LintOptions, LintRule } from "./types.ts";
 
-export { LINT_LEVELS, LINT_RULE_CODES } from "./types.ts";
+export { LINT_LEVELS, LINT_RULE_ALIASES, LINT_RULE_CODES } from "./types.ts";
 export type {
   ChildSource,
   ChildSourceLookup,

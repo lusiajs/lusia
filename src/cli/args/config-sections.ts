@@ -1,6 +1,7 @@
 import { LAZY_MODES, LAZY_PREFETCH } from "#compiler/lazy/options.ts";
 import {
   LINT_LEVELS,
+  LINT_RULE_ALIASES,
   LINT_RULE_CODES,
   type LintLevel,
   type LintRuleCode,
@@ -60,18 +61,21 @@ function optionalLintRules(lint: JsonObject): LintRuleSettings | undefined {
   if (lint.rules === undefined) return undefined;
   const rules = asObject(lint.rules, '"lint.rules" must be an object');
   const settings: LintRuleSettings = {};
-  for (const [code, level] of Object.entries(rules)) {
-    if (!isLintRule(code))
-      throw configError(`unknown lint rule "${code}", allowed: ${LINT_RULE_CODES.join(", ")}`);
+  for (const [name, level] of Object.entries(rules)) {
+    const code = lintRuleCode(name);
+    if (code === undefined)
+      throw configError(`unknown lint rule "${name}", allowed: ${LINT_RULE_CODES.join(", ")}`);
     if (!isLintLevel(level))
-      throw configError(`"lint.rules.${code}" must be one of: ${LINT_LEVELS.join(", ")}`);
+      throw configError(`"lint.rules.${name}" must be one of: ${LINT_LEVELS.join(", ")}`);
     settings[code] = level;
   }
   return settings;
 }
 
-function isLintRule(code: string): code is LintRuleCode {
-  return (LINT_RULE_CODES as readonly string[]).includes(code);
+function lintRuleCode(name: string): LintRuleCode | undefined {
+  const alias = LINT_RULE_ALIASES[name];
+  if (alias !== undefined) return alias;
+  return (LINT_RULE_CODES as readonly string[]).includes(name) ? (name as LintRuleCode) : undefined;
 }
 
 function isLintLevel(level: unknown): level is LintLevel {

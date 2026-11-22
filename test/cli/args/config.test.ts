@@ -125,7 +125,7 @@ describe("config file errors", () => {
     ['{ "lint": { "rules": [] } }', '"lint.rules" must be an object'],
     [
       '{ "lint": { "rules": { "nope": "warn" } } }',
-      'unknown lint rule "nope", allowed: unused-import, props-twice, unknown-prop, empty-expression, style-attribute, animate-keyframes, animate-key, scroll-numeric-line, flow-chain, bind-target',
+      'unknown lint rule "nope", allowed: unused-import, props-twice, unknown-prop, empty-expression, style-attribute, animate-keyframes, animate-key, scroll-old-form, flow-chain, bind-target',
     ],
     [
       '{ "lint": { "rules": { "unused-import": "info" } } }',
@@ -193,6 +193,13 @@ describe("CLI merge", () => {
       rules: { "empty-expression": "off" },
     });
     expect(await parseCommand(["lint"], {})).toMatchObject({ rules: undefined });
+  });
+
+  test("the old rule name maps to the new one", async () => {
+    const dir = appWith(JSON.stringify({ lint: { rules: { "scroll-numeric-line": "off" } } }));
+    expect(await parseCommand(["lint", dir], {})).toMatchObject({
+      rules: { "scroll-old-form": "off" },
+    });
   });
 
   test("the port comes from the flag, then PORT, then the file, then 3000", async () => {

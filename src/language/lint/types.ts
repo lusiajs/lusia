@@ -9,7 +9,7 @@ export const LINT_RULE_CODES = [
   "style-attribute",
   "animate-keyframes",
   "animate-key",
-  "scroll-numeric-line",
+  "scroll-old-form",
   "flow-chain",
   "bind-target",
   "unused-class",
@@ -17,6 +17,11 @@ export const LINT_RULE_CODES = [
 ] as const;
 
 export type LintRuleCode = (typeof LINT_RULE_CODES)[number];
+
+/** Old rule names that still work in config. They map to the new name. */
+export const LINT_RULE_ALIASES: Partial<Record<string, LintRuleCode>> = {
+  "scroll-numeric-line": "scroll-old-form",
+};
 
 export const LINT_LEVELS = ["off", "warn", "error"] as const;
 

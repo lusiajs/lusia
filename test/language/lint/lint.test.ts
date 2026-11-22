@@ -204,23 +204,23 @@ describe("flow and bind-value lint rules", () => {
     expect(codes("<p bind-element={el} bind-text-content={x}>y</p>")).toEqual([]);
   });
 
-  test("scroll-numeric-line flags an old start or end form in a file that uses WHEN.SCROLL", () => {
+  test("scroll-old-form flags an old start or end form in a file that uses WHEN.SCROLL", () => {
     const source =
       "<div animate={{ when: WHEN.SCROLL, more: { start: 0.2, end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
     expect(lintLusia(source, childProps).map((issue) => [issue.code, issue.column])).toEqual([
-      ["scroll-numeric-line", 44],
+      ["scroll-old-form", 44],
     ]);
   });
 
-  test("scroll-numeric-line accepts the pair form", () => {
+  test("scroll-old-form accepts the pair form", () => {
     const source =
       "<div animate={{ when: WHEN.SCROLL, more: { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
-    expect(codes(source)).not.toContain("scroll-numeric-line");
+    expect(codes(source)).not.toContain("scroll-old-form");
   });
 
-  test("scroll-numeric-line ignores files without WHEN.SCROLL", () => {
+  test("scroll-old-form ignores files without WHEN.SCROLL", () => {
     expect(codes("<div animate={{ when: WHEN.VIEW, more: { start: 0.2 } }}>")).not.toContain(
-      "scroll-numeric-line",
+      "scroll-old-form",
     );
   });
 });
