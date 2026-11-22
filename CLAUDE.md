@@ -49,10 +49,10 @@ In public names and docs: `variable.watch`, `count.onUpdate`, `UpdateOptions`. T
 A new option for the same idea reuses the word with a prefix: `duration` -> `outDuration`. Never add a synonym (`time`, `length`, `curve`, `transition`).
 
 # 14. The user designs markup syntax
-Do not invent new syntax or borrow Svelte's (`{#if}`, `on:`, runes, `export let`). Syntax changes need the user.
+Do not invent new syntax or borrow Svelte's (`{#if}`, runes, `export let`). Syntax changes need the user. `on:name={fn}` is the user's own design, not a borrowed one.
 
 # 15. Designed syntax is fixed
-Events (`onclick={fn}`), `bind-value`, flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) and `animate` follow the site Guide. Change them only with the user. `animate` uses one special attribute, options inside the value, and enums `EASE` (with `EASE.STYLE`) and `WHEN`.
+Events (`onclick={fn}` for DOM events, `on:name={fn}` for DOM and `EVENT` names through `listen`), `bind-value`, flow tags (`<IF {a}> ... <ELSEIF {b}> ... <ELSE> ... </IF>`, with one closing `</IF>`; `<EACH>`, `<FOR>`) and `animate` follow the site Guide. Change them only with the user. `animate` uses one special attribute, options inside the value, and enums `EASE` (with `EASE.STYLE`) and `WHEN`. `listen` uses `EVENT`. Scroll `start`/`end` are `[element edge, screen edge]` pairs of `EDGE`. Component names may be any identifier that is not an HTML, SVG or MathML tag.
 
 # 16. Deferred features
 SSR and hydration wait until designed with the user.
