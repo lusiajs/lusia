@@ -53,6 +53,26 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Publish @lusiajs/language-tools with the same version
+        run: |
+          bun scripts/build-editor.ts
+          ROOT_VERSION=$(bun -p "require('./package.json').version")
+          TOOLS_VERSION=$(bun -p "require('./packages/language-tools/package.json').version")
+          test "$TOOLS_VERSION" = "$ROOT_VERSION"
+          NAME=$(bun -p "require('./packages/language-tools/package.json').name")
+          TAG=latest
+          case "$TOOLS_VERSION" in *-*) TAG=beta ;; esac
+          cd packages/language-tools
+          bun publish --access public --tag "$TAG"
+          cd "$GITHUB_WORKSPACE"
+          LATEST=$(npm view "$NAME" dist-tags.latest)
+          case "$LATEST" in
+            ""|0.0.0*|*-*) npm dist-tag add "$NAME@$TOOLS_VERSION" latest ;;
+          esac
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Create the GitHub release
         run: |
           VERSION=$(bun -p "require('./package.json').version")
