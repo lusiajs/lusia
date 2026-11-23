@@ -104,3 +104,6 @@ Scoped styles match by short component classes, not ancestor selectors (about 40
 
 # 32. Class lint stays quiet when unsure
 `unused-class` never flags a class that might be used. A class from an imported value counts as used only when its TypeScript type is a union of string literals. A wider type gets an `untyped-class` warning instead. `// @on-purpose` at the end of a line (or `/* @on-purpose */` in plain CSS and in markup braces) skips the warning.
+
+# 33. Branches
+Work from `main`. Only `main` and `dev` stay long-lived. Delete a branch once it is merged.
