@@ -15,7 +15,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | `test/` | Tests. One folder per area, mirroring `src/` |
 | `examples/stress` | Scenarios that push the limits |
 | `reference/api.ts` | The API table, read by the extension and the docs site |
-| `scripts/` | `check.ts` for `bun run check`, `generate-docs.ts` for the package docs |
+| `scripts/` | `check.ts` for `bun run check`, `generate-docs.ts` for the local `docs/` folder |
 
 ## Other repos
 
@@ -34,7 +34,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - A change to the API or to `.lusia` markup updates `reference/api.ts` and `examples/stress` in the same change.
 - Then update `lusiajs/docs` (Guide, demos, Prism language) and `lusiajs/vsix` (grammar, completion, hover, lint, formatter).
 - New error codes go in `src/compiler/errors/codes/`.
-- Never edit the generated files in `docs/`. Change the sources.
+- Never edit the generated files in `docs/`. Change the sources. `bun run docs:generate` writes `docs/` locally. It is not committed and not shipped; the AI docs are served at https://lusia.azpepoze.com/llms.txt.
 
 ## Set up
 
@@ -43,6 +43,8 @@ Thanks for helping. Read the rules, set up, then open a pull request.
    ```sh
    bun install
    ```
+
+   This also installs Prettier for the tests. Prettier is an optional peer for apps: only `lusia format` needs it.
 
 2. Check your change:
 

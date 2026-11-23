@@ -16,6 +16,9 @@ Needs [Bun](https://bun.sh) 1.4 or newer.
 | New app | `bun create lusiajs my-app` |
 | Add to a project | `bun add lusiajs` |
 
+> [!NOTE]
+> `lusia format` needs Prettier. Add it with `bun add -d prettier`.
+
 ## Example
 
 ```html
@@ -31,5 +34,6 @@ Needs [Bun](https://bun.sh) 1.4 or newer.
 | Topic | Link |
 | ----- | ---- |
 | Docs site | https://lusia.azpepoze.com |
+| AI docs for assistants | https://lusia.azpepoze.com/llms.txt |
 | Report a bug or ask a question | https://github.com/lusiajs/lusia/issues |
 | Contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
