@@ -17,9 +17,9 @@ async function main(argv: string[]): Promise<number> {
       process.stdout.write(USAGE);
       return 0;
     }
-    if (command.name === "build") return runBuild(command);
-    if (command.name === "format") return runFormat(command);
-    if (command.name === "lint") return runLint(command);
+    if (command.name === "build") return await runBuild(command);
+    if (command.name === "format") return await runFormat(command);
+    if (command.name === "lint") return await runLint(command);
     await startDev(command);
     return 0;
   } catch (error) {

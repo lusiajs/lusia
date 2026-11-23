@@ -3,7 +3,7 @@ import { formatLusia } from "#language/format/format.ts";
 import { ANSI, colorEnabled, paint } from "../log/color.ts";
 import { collectFiles } from "../files.ts";
 import { openFormatCache, type FormatCache } from "./format-cache.ts";
-import { partsFor, prettierConfigFor } from "./format-parts.ts";
+import { loadPrettier, partsFor, prettierConfigFor, type Prettier } from "./format-parts.ts";
 
 export interface FormatOptions {
   paths: string[];
@@ -14,6 +14,7 @@ export interface FormatOptions {
 }
 
 export async function runFormat(options: FormatOptions): Promise<number> {
+  const prettier = await loadPrettier();
   const files = await collectFiles(options.paths);
   const color = colorEnabled();
   const changed: string[] = [];
@@ -21,7 +22,7 @@ export async function runFormat(options: FormatOptions): Promise<number> {
   const cache = options.cache === false ? undefined : openFormatCache(process.cwd());
   for (const file of files) {
     try {
-      await formatOne(file, options, cache, changed);
+      await formatOne(file, options, prettier, cache, changed);
     } catch (error) {
       errors.push(`${display(file)}: ${messageOf(error)}`);
     }
@@ -34,12 +35,13 @@ export async function runFormat(options: FormatOptions): Promise<number> {
 async function formatOne(
   file: string,
   options: FormatOptions,
+  prettier: Prettier,
   cache: FormatCache | undefined,
   changed: string[],
 ): Promise<void> {
   const source = await Bun.file(file).text();
   const indent = options.indentScriptAndStyle ?? true;
-  const prettierConfig = await prettierConfigFor(file);
+  const prettierConfig = await prettierConfigFor(prettier, file);
   // The indent setting is part of the cache key, so turning it off reformats every file.
   const config = { ...prettierConfig, lusiaIndentScriptAndStyle: indent };
   const decision = cache?.decide(file, source, config) ?? "unknown";
@@ -48,7 +50,7 @@ async function formatOne(
     changed.push(display(file));
     return;
   }
-  const formatted = await formatLusia(source, partsFor(prettierConfig, indent));
+  const formatted = await formatLusia(source, partsFor(prettier, prettierConfig, indent));
   cache?.record(file, source, formatted, config);
   if (formatted === source) return;
   if (!options.check) await Bun.write(file, formatted);

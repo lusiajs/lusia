@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
 import { UsageError } from "#cli/args/args.ts";
 import { collectFiles } from "#cli/files.ts";
-import { partsFor, prettierConfigFor } from "#cli/format/format-parts.ts";
+import { loadPrettier, partsFor, prettierConfigFor } from "#cli/format/format-parts.ts";
 import { runFormat } from "#cli/format/format.ts";
 import { formatLusia } from "#language/format/format.ts";
 
@@ -76,7 +76,9 @@ describe("runFormat", () => {
     const formatted = await readFile(file, "utf8");
     expect(formatted).toContain('const name = variable("Ada");');
     expect(formatted).toContain(".card {");
-    expect(await formatLusia(UNFORMATTED, partsFor(await prettierConfigFor(file)))).toBe(formatted);
+    const prettier = await loadPrettier();
+    const parts = partsFor(prettier, await prettierConfigFor(prettier, file));
+    expect(await formatLusia(UNFORMATTED, parts)).toBe(formatted);
     expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(0);
     expect(await readFile(file, "utf8")).toBe(formatted);
   });

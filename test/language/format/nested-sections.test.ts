@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { formatLusia } from "#language/format/format.ts";
-import { partsFor } from "#cli/format/format-parts.ts";
+import { loadPrettier, partsFor } from "#cli/format/format-parts.ts";
 
-const parts = partsFor({});
+const parts = partsFor(await loadPrettier(), {});
 
 const source = `<div class="tile">
 <IF {SCREEN.PHONE}>

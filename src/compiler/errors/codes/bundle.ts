@@ -17,4 +17,8 @@ export const BUNDLE_CODES = {
     message: "$message",
     hint: "Fix the lusia config file, then run the command again.",
   },
+  L3005: {
+    message: "lusia format needs prettier.",
+    hint: "Run: bun add -d prettier",
+  },
 } as const satisfies Record<string, ErrorCode>;
