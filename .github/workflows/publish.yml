@@ -29,9 +29,6 @@ jobs:
           VERSION=$(bun -p "require('./package.json').version")
           test "v$VERSION" = "$GITHUB_REF_NAME"
 
-      - name: Generate the docs
-        run: bun run docs:generate
-
       - name: Publish
         run: |
           VERSION=$(bun -p "require('./package.json').version")

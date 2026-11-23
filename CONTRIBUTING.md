@@ -16,7 +16,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | `examples/stress` | Scenarios that push the limits |
 | `reference/api.ts` | The API table, read by the extension and the docs site |
 | `packages/prettier-plugin` | `@lusiajs/prettier-plugin`, the Prettier plugin for `.lusia` files |
-| `scripts/` | `check.ts` for `bun run check`, `generate-docs.ts` for the local `docs/` folder |
+| `scripts/` | `check.ts` for `bun run check` |
 
 ## Other repos
 
@@ -35,7 +35,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - A change to the API or to `.lusia` markup updates `reference/api.ts` and `examples/stress` in the same change.
 - Then update `lusiajs/docs` (Guide, demos, Prism language) and `lusiajs/vsix` (grammar, completion, hover, lint, formatter).
 - New error codes go in `src/compiler/errors/codes/`.
-- Never edit the generated files in `docs/`. Change the sources. `bun run docs:generate` writes `docs/` locally. It is not committed and not shipped; the AI docs are served at https://lusia.azpepoze.com/llms.txt.
+- The AI docs (`llms.txt` and markdown pages) are built by the `docs` repo from `reference/api.ts` and served at https://lusia.azpepoze.com/llms.txt.
 
 ## Set up
 
