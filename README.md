@@ -34,6 +34,7 @@ Needs [Bun](https://bun.sh) 1.4 or newer.
 | Topic | Link |
 | ----- | ---- |
 | Docs site | https://lusia.azpepoze.com |
+| Format `.lusia` files with Prettier | [packages/prettier-plugin/README.md](packages/prettier-plugin/README.md) |
 | AI docs for assistants | https://lusia.azpepoze.com/llms.txt |
 | Report a bug or ask a question | https://github.com/lusiajs/lusia/issues |
 | Contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |

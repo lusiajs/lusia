@@ -15,6 +15,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | `test/` | Tests. One folder per area, mirroring `src/` |
 | `examples/stress` | Scenarios that push the limits |
 | `reference/api.ts` | The API table, read by the extension and the docs site |
+| `packages/prettier-plugin` | `@lusiajs/prettier-plugin`, the Prettier plugin for `.lusia` files |
 | `scripts/` | `check.ts` for `bun run check`, `generate-docs.ts` for the local `docs/` folder |
 
 ## Other repos
@@ -72,6 +73,15 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - Bump `EDITOR_API_VERSION` in `src/editor/host.ts` when a namespace changes in a breaking way.
 - Namespaces (the contract, checked by `test/editor/host.test.ts`): `range`, `completions`, `completionData`, `markupItems`, `hover`, `markdown`, `apiLookup`, `autoImport`, `errorPosition`, `semanticTokens`, `scriptSymbols`, `format`, `formatExpressions`, `indentSetting`, `prettierParts`, `lint`, `parseImports`, `parseProps`, `parseRegions`, `parseSections`, `parseTag`, `compiler`, `api`, `runtime`.
 - `semanticTokens.semanticTokens(source)` returns tokens for markup. Editors build their legend from `semanticTokens.TOKEN_TYPES` and `semanticTokens.TOKEN_MODIFIERS`.
+
+## Prettier plugin
+
+`@lusiajs/prettier-plugin` is in `packages/prettier-plugin`. It formats `.lusia` files with the same formatter as `lusia format`.
+
+- Source: `src/prettier-plugin/`. Build: `bun scripts/build-prettier-plugin.ts`, which writes `packages/prettier-plugin/dist/index.js`.
+- The end-to-end test builds the plugin itself.
+- The version always matches `lusiajs`. A test checks it.
+- Users read [the plugin README](packages/prettier-plugin/README.md).
 
 ## Open a pull request
 
