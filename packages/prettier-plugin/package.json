@@ -1,0 +1,27 @@
+{
+  "name": "@lusiajs/prettier-plugin",
+  "version": "0.1.0-beta.6",
+  "description": "Prettier plugin that formats Lusia .lusia files",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "prettier",
+    "prettier-plugin",
+    "lusia"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lusiajs/lusia.git",
+    "directory": "packages/prettier-plugin"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "peerDependencies": {
+    "prettier": "^3"
+  }
+}
