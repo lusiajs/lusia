@@ -92,6 +92,10 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 4. Run `bun run check`. CI runs it too.
 5. Open the pull request into `dev`. Say what changed and how you checked it.
 
+## Release
+
+Run `bun scripts/release.ts <version>` on a clean `dev`, such as `bun scripts/release.ts 0.1.5-beta`. It sets the version in the three `package.json` files, runs `bun run check`, commits `chore(release): <version>` and tags `v<version>`. It does not push. It prints the next steps: push `dev`, fast-forward `main`, then push the tag, which starts the publish workflow.
+
 ## Release notes
 
 See the [GitHub releases](https://github.com/lusiajs/lusia/releases).
