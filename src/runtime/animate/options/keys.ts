@@ -4,6 +4,7 @@ import type { Values } from "../../../compiler/errors/create.ts";
 export const ITEM_KEYS: readonly string[] = [
   "play",
   "on",
+  "glide",
   "once",
   "options",
   "midway",

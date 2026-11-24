@@ -1,0 +1,41 @@
+<script>
+  import { variable } from "lusiajs";
+
+  // The cursor glides to whichever item was clicked last.
+  const cursor = variable(null);
+
+  function pick(event) {
+    cursor.value = event.currentTarget;
+  }
+</script>
+
+<ul class="row">
+  <li class="pick" onclick={pick}>One</li>
+  <li class="pick" onclick={pick}>Two</li>
+  <li class="pick" onclick={pick}>Three</li>
+  <li class="cursor" animate={{ glide: cursor, duration: 300 }}></li>
+</ul>
+
+<style>
+  .row {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+
+  .pick {
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+  }
+
+  .cursor {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #2563eb;
+    pointer-events: none;
+  }
+</style>

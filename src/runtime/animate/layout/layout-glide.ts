@@ -24,6 +24,8 @@ export interface GlideSpec {
   delay: number;
   /** The keyframes `ease`, if any. The engine default fills the rest. */
   easing: EaseValue | undefined;
+  /** Keeps the end box when the glide ends. Otherwise the element returns to its layout box. */
+  hold: boolean;
 }
 
 /** One element's glide. `view` is the visual box the last frame showed. */
@@ -45,6 +47,7 @@ export interface Glide {
   /** The inline size before the glide took over, restored when it ends. */
   baseWidth: string;
   baseHeight: string;
+  sizeRemembered: boolean;
 }
 
 export function newGlide(spec: GlideSpec): Glide {
@@ -63,6 +66,7 @@ export function newGlide(spec: GlideSpec): Glide {
     edges: { x: 0, y: 0, borderBox: true },
     baseWidth: "",
     baseHeight: "",
+    sizeRemembered: false,
   };
 }
 
@@ -73,7 +77,7 @@ export function startGlide(glide: Glide, el: HTMLElement, now: number): void {
   glide.easeStyle = easing.easeStyle ?? engine.easeStyle;
   glide.ease = easing.ease ?? engine.ease;
   if (glide.spec.mode.size) {
-    if (!glide.active) rememberBaseSize(glide, el);
+    if (!glide.sizeRemembered) rememberBaseSize(glide, el);
     readEdges(el, glide.edges);
   }
   copyBox(glide.from, glide.view);
@@ -83,10 +87,10 @@ export function startGlide(glide: Glide, el: HTMLElement, now: number): void {
 
 /** Writes this frame's glide. Returns false once it ends and the element is back on its layout box. */
 export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
-  const { duration, delay, mode } = glide.spec;
+  const { duration, delay, mode, hold } = glide.spec;
   const elapsed = now - glide.begin - delay;
   const progress = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 1;
-  if (progress >= 1) {
+  if (progress >= 1 && !hold) {
     clearGlide(glide, el);
     return false;
   }
@@ -94,11 +98,14 @@ export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
   glideBox(glide.from, glide.to, eased, mode, glide.visual);
   if (mode.size) writeSize(glide, el);
   if (mode.place) writeSlide(glide, el);
-  return true;
+  if (progress < 1) return true;
+  glide.active = false;
+  return false;
 }
 
 export function clearGlide(glide: Glide, el: HTMLElement): void {
   glide.active = false;
+  glide.sizeRemembered = false;
   glide.writtenSlide.x = 0;
   glide.writtenSlide.y = 0;
   el.style.removeProperty("translate");
@@ -131,6 +138,7 @@ function writeSize(glide: Glide, el: HTMLElement): void {
 function rememberBaseSize(glide: Glide, el: HTMLElement): void {
   glide.baseWidth = el.style.getPropertyValue("width");
   glide.baseHeight = el.style.getPropertyValue("height");
+  glide.sizeRemembered = true;
 }
 
 function setInline(el: HTMLElement, property: "width" | "height", value: string): void {

@@ -16,12 +16,13 @@ import type { SpaceSpec } from "../layout/space/space-closer.ts";
 import { bindAttach } from "../layout/space/space-attach.ts";
 import { bindDetach } from "../layout/space/space-detach.ts";
 import { bindPointer } from "./pointer.ts";
+import { bindGlideTarget } from "../layout/layout-target.ts";
 import type { Slot } from "./slots.ts";
 
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { on, once, options, glide, space, pointer, loops, group }: Slot,
+  { on, once, options, glide, glideTarget, space, pointer, loops, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
@@ -33,6 +34,7 @@ export function bindTrigger(
   else if (on === ON.HOVER) bindHover(el, group, once, options.hover, cleanups);
   else if (on === ON.SCROLL) bindScroll(el, options.scroll, group, cleanups);
   else if (pointer) bindPointer(el, pointer, cleanups);
+  else if (glideTarget && glide) bindGlideTarget(el, glideTarget, glide, cleanups);
   else if (glide) cleanups.push(watchLayout(el, glide, once, () => void group.forward()));
 }
 

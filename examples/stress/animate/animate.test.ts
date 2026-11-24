@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import Tile from "./Tile.lusia";
+import Glider from "./Glider.lusia";
 import Tilt from "./Tilt.lusia";
 import { attachTiles, DURATION, wait } from "./main.ts";
 
@@ -70,5 +71,14 @@ describe("animate on many elements", () => {
     card.dispatchEvent(new Event("pointermove"));
     await wait(50);
     expect(card.style.transform).toContain("rotateX(10deg)");
+  });
+
+  test("a glide cursor runs to the clicked item and stays there", async () => {
+    const target = newTarget();
+    attach(Glider, target);
+    const cursor = target.querySelector<HTMLElement>(".cursor")!;
+    target.querySelectorAll<HTMLElement>(".pick")[1]!.click();
+    await wait(DURATION + 100);
+    expect(cursor.style.getPropertyValue("width")).toBe("0px");
   });
 });

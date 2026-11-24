@@ -14,6 +14,7 @@ import { runtimeError } from "../../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 import { readKeyframes } from "./item-style.ts";
 import { readPointerPlay, type PointerSpec } from "./pointer-item.ts";
+import { readGlideTarget } from "./glide-item.ts";
 import { rejectOldNames } from "./old-names.ts";
 
 export interface Timing {
@@ -35,12 +36,15 @@ export interface ItemOptions {
   space: SpaceSpec | undefined;
   /** Set for ON.MOUSE_MOVE: the function play and the way back. */
   pointer: PointerSpec | undefined;
+  /** Set for a glide item: the variable that holds the element to glide to. */
+  glideTarget: Source | undefined;
 }
 
 export function readItem(item: AnimateItem): ItemOptions {
   rejectOldNames(item);
   rejectUnknownKeys(item);
-  const on = readOn(item);
+  const glideTarget = readGlideTarget(item);
+  const on = glideTarget === undefined ? readOn(item) : ON.MANUAL;
   rejectLoop(item, on);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
   const options = readOptions(on, item.options, { duration });
@@ -58,6 +62,7 @@ export function readItem(item: AnimateItem): ItemOptions {
     timing,
     space: readSpace(on, options, keyframes, timing),
     pointer: pointerPlay === undefined ? undefined : { play: pointerPlay, duration },
+    glideTarget,
     on,
     once: item.once ?? (on === ON.VIEW && !options.reverse),
     control: item.control,

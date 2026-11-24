@@ -47,6 +47,20 @@ export const animateOptionEntries: ApiEntry[] = [
     example: `import { ON } from "lusiajs";\n\n<div animate={{\n  on: ON.MOUSE_MOVE,\n  play: ({ x, y }) => ({ transform: \`rotateX(\${(0.5 - y) * 20}deg) rotateY(\${(x - 0.5) * 20}deg)\` }),\n  duration: 300,\n}}>Card</div>`,
   },
   {
+    id: "glide",
+    name: "Glide to an element",
+    kind: "markup",
+    group: "motion",
+    signature: "animate={{ glide: targetVariable, duration: 400 }}",
+    summary: "Moves the element to the place and size of the element a variable holds.",
+    bullets: [
+      "The variable holds an element, or null. Each new element is a box the element glides to.",
+      "The element stays at the new box. A null value does nothing.",
+      "duration, delay and the easing work as for a play. Do not add play or on.",
+    ],
+    example: `import { variable } from "lusiajs";\n\nconst highlight = variable(null);\n// in markup: <div animate={{ glide: highlight, duration: 400 }}>...</div>\nhighlight.value = document.querySelector("#next");`,
+  },
+  {
     id: "ease",
     name: "EASE",
     kind: "value",

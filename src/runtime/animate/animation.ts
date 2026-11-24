@@ -66,6 +66,14 @@ interface MouseMoveItem extends Omit<ItemBase, "play"> {
   options?: never;
 }
 
+/** A glide item moves its element to the element its variable holds. It has no play and no on. */
+interface GlideItem extends Omit<ItemBase, "play"> {
+  glide: Source;
+  play?: never;
+  on?: never;
+  options?: never;
+}
+
 export type AnimateItem =
   | PlainItem
   | AttachItem
@@ -74,7 +82,8 @@ export type AnimateItem =
   | ViewItem
   | HoverItem
   | ScrollItem
-  | MouseMoveItem;
+  | MouseMoveItem
+  | GlideItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 

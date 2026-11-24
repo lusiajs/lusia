@@ -11,9 +11,9 @@ const NO_PLAY: Keyframes = { 0: {}, 1: {} };
 /** The styles the glide writes. A layout item cannot animate them, or its keyframes would fight the glide. */
 const GLIDE_PROPS = ["translate", "scale"];
 
-/** A MOUSE_MOVE item has a function play, which runs on the pointer, so its keyframes are empty. */
+/** A MOUSE_MOVE item has a function play, and a glide item moves by itself, so neither has keyframes. */
 export function readKeyframes(item: AnimateItem, on: On | Source): Keyframes {
-  if (on === ON.MOUSE_MOVE) return NO_PLAY;
+  if (on === ON.MOUSE_MOVE || "glide" in item) return NO_PLAY;
   if (!item.play) return keyframesWithoutPlay(on);
   const keyframes = item.play as Keyframes;
   if (isLayoutOn(on)) rejectGlideStyles(keyframes);

@@ -73,4 +73,12 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
     message: "ON.MOUSE_MOVE needs play as a function, got $value",
     hint: "Write play: ({ x, y }) => ({ ... }), a function that returns a style object.",
   },
+  L2089: {
+    message: "glide cannot be used with play or on",
+    hint: "Remove play and on. A glide item only moves the element. Use a separate item for the play.",
+  },
+  L2090: {
+    message: "glide needs a variable that holds an element or null, got $value",
+    hint: "Pass a variable, such as glide: targetVariable.",
+  },
 } as const satisfies Record<string, ErrorCode>;

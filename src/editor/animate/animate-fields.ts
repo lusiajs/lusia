@@ -21,6 +21,13 @@ const FIELD_ITEMS: CompletionItemData[] = [
     detail: "Trigger: ON member or a variable (default ON.ATTACH)",
   },
   {
+    label: "glide",
+    kind: "property",
+    insertText: "glide: $1",
+    snippet: true,
+    detail: "Variable holding an element: the element glides to its place and size. No play or on",
+  },
+  {
     label: "control",
     kind: "property",
     insertText: "control: $1",

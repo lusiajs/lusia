@@ -232,6 +232,7 @@ describe("motion completions", () => {
     expect(labels).toEqual([
       "play",
       "on",
+      "glide",
       "control",
       "once",
       "options",
