@@ -1,10 +1,6 @@
 # CLAUDE.md
 
-Lusia is a Bun-native UI framework: single-file `.lusia` components, variables and scoped SCSS.
-
-Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). Site Guide: https://lusia.azpepoze.com/guide. API table: [reference/api.ts](reference/api.ts).
-
-This repo is the framework. Sibling repos live next to it, in the same parent folder: `create` (npm `create-lusiajs`), `vsix` (VS Code extension), `docs` (site). They depend on the published `lusiajs` package, so a framework change reaches them only after a release.
+Commands and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md). API table: [reference/api.ts](reference/api.ts).
 
 # 1. Keep docs in the same change
 
