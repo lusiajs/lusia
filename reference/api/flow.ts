@@ -54,9 +54,9 @@ export const flowEntries: ApiEntry[] = [
     bullets: [
       "as={name} names the item. Without it, the markup cannot read the item.",
       "index={name} holds the position. It is a variable, so show it as {i} or {i.value + 1}.",
-      "key={expr} gives each row an identity. Rows with the same key move, not rebuild. Keys must be unique.",
+      "key={expr} gives each row an identity. A row with the same key is kept, even when its item is a new object, and its text, attributes, props, IF and EACH update. Keys must be unique.",
       "Without key, the item itself is the key. The list can be an array or a variable that holds one.",
-      "A removed row plays its DETACH animations before it leaves the page.",
+      "A removed row plays its DETACH animations before it leaves the page. A bind-* target is read once per row, so it keeps the first item.",
     ],
     example: `<script>\n  import { variable } from "lusiajs";\n\n  const todos = variable([\n    { id: 1, title: "Write docs" },\n    { id: 2, title: "Ship" },\n  ]);\n\n  function remove(id: number) {\n    todos.value = todos.value.filter((todo) => todo.id !== id);\n  }\n</script>\n\n<ul>\n  <EACH {todos} as={todo} index={i} key={todo.id}>\n    <li>{i.value + 1}. {todo.title} <button onclick={() => remove(todo.id)}>Remove</button></li>\n  </EACH>\n</ul>`,
   },

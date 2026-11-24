@@ -8,7 +8,7 @@ import { mountBefore, moveBefore, type Mount } from "./mount.ts";
 import { Outlet } from "./outlet.ts";
 
 export type RowRender = (
-  item: unknown,
+  item: Variable<unknown>,
   index: Variable<number> | undefined,
   cleanups: Cleanup[],
   leaves: Leave[],
@@ -24,7 +24,7 @@ export interface EachSpec {
 }
 
 interface Row extends Mount {
-  item: unknown;
+  item: Variable<unknown>;
   key: unknown;
   index: Variable<number> | undefined;
 }
@@ -34,7 +34,7 @@ function listOf(value: unknown): readonly unknown[] {
   return Array.isArray(value) ? value : Array.from(value as Iterable<unknown>);
 }
 
-/** Keyed rows between a marker and the nodes that follow it. Rows with the same key are moved, never re-rendered. */
+/** Keyed rows between a marker and the nodes that follow it. A row with the same key is kept: it moves and takes the new item. */
 class EachBlock {
   private rows: Row[] = [];
   private readonly outlet: Outlet;
@@ -73,12 +73,8 @@ class EachBlock {
       keys[i] = key;
       const row = reusable.get(key);
       reusable.delete(key);
-      if (row && row.item === item) {
-        plan[i] = row;
-      } else {
-        if (row) this.outlet.retire(row);
-        plan[i] = undefined;
-      }
+      if (row && row.item.peek() !== item) row.item.value = item;
+      plan[i] = row;
     }
     for (const row of reusable.values()) this.outlet.retire(row);
     this.place(items, keys, plan);
@@ -107,16 +103,22 @@ class EachBlock {
     const cleanups: Cleanup[] = [];
     const leaves: Leave[] = [];
     const indexVariable = this.spec.indexed ? variable(index) : undefined;
-    const fragment = this.spec.render(item, indexVariable, cleanups, leaves);
+    const itemVariable = variable(item);
+    const fragment = this.spec.render(itemVariable, indexVariable, cleanups, leaves);
     const row: Row = {
       ...mountBefore(anchor, fragment, cleanups, leaves),
-      item,
+      item: itemVariable,
       key,
       index: indexVariable,
     };
     this.outlet.track(row);
     return row;
   }
+}
+
+/** Keeps a row's item local current, so its event handlers see the item the row now shows. */
+export function followItem(item: Variable<unknown>, assign: (value: unknown) => void): Cleanup {
+  return watch(() => assign(item.value));
 }
 
 /** Renders one row per item. The list is read in a watch, so a new array or variable value reconciles the rows. */

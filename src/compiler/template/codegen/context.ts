@@ -1,4 +1,5 @@
 import { formatWhere } from "#compiler/errors/where.ts";
+import { markedCode } from "#compiler/sourcemap/marker.ts";
 import { lineAt, columnAt, lineStarts } from "#compiler/utils/position.ts";
 import { bindersOf } from "./binders.ts";
 import { unknownKeysAt } from "../check/animate-keys.ts";
@@ -21,6 +22,9 @@ export interface GenOptions {
 export class GenContext {
   readonly declarations: string[] = [];
   private count = 0;
+  private rowCount = 0;
+  /** One refresh per EACH row being generated, such as `item = __row0.value`, outermost first. */
+  private readonly rowRefreshes: string[] = [];
   private lines: number[] | undefined;
 
   constructor(
@@ -69,6 +73,26 @@ export class GenContext {
   /** A render function for a block body. `params` is the parameter list, ending with the cleanups and leaves. */
   body(template: Template, params: string): string {
     return `(${params}) => ${this.fragment(template)}`;
+  }
+
+  /** A watched read of a markup expression. Inside EACH rows it first refreshes each row item, so it follows item updates. */
+  read(expr: Expr): string {
+    const code = markedCode(expr);
+    if (this.rowRefreshes.length === 0) return `__unwrap((${code}))`;
+    return `__unwrap((${this.rowRefreshes.join(", ")}, (${code})))`;
+  }
+
+  /** An EACH row render. The item arrives as a variable; `item` is a local the row's expressions and handlers read. */
+  rowBody(template: Template, item: string, index: string): string {
+    const row = `__row${this.rowCount++}`;
+    this.rowRefreshes.push(`${item} = ${row}.value`);
+    const fragment = this.fragment(template);
+    this.rowRefreshes.pop();
+    return `(${row}, ${index}, __cleanups, __leaves) => {
+  let ${item} = ${row}.peek();
+  __cleanups.push(__followItem(${row}, (value) => { ${item} = value; }));
+  return ${fragment};
+}`;
   }
 }
 

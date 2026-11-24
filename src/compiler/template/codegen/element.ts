@@ -4,16 +4,12 @@ import type { AttrBinding, AttrPart, BindBinding, EventBinding } from "../types/
 import type { ElementBinding } from "../types/element.ts";
 import type { Expr } from "../types/expression.ts";
 
-export function readExpression(expr: Expr): string {
-  return `__unwrap((${markedCode(expr)}))`;
-}
-
-export function attrValue(parts: AttrPart[]): string {
+export function attrValue(parts: AttrPart[], ctx: GenContext): string {
   if (parts.length === 0) return "true";
   const single = parts.length === 1 ? parts[0] : undefined;
-  if (typeof single === "object") return readExpression(single);
+  if (typeof single === "object") return ctx.read(single);
   const pieces = parts.map((part) =>
-    typeof part === "string" ? JSON.stringify(part) : `__toText(${readExpression(part)})`,
+    typeof part === "string" ? JSON.stringify(part) : `__toText(${ctx.read(part)})`,
   );
   return pieces.join(" + ");
 }
@@ -21,12 +17,12 @@ export function attrValue(parts: AttrPart[]): string {
 const CLASS = "class";
 
 /** A dynamic class is set whole, so it keeps the inherited tree classes the template gave the element. */
-function classValue(parts: AttrPart[]): string {
-  return `__withInheritedClasses(${attrValue(parts)}, __host.inherited)`;
+function classValue(parts: AttrPart[], ctx: GenContext): string {
+  return `__withInheritedClasses(${attrValue(parts, ctx)}, __host.inherited)`;
 }
 
-function attrCall({ name, parts }: AttrBinding): string {
-  const value = name === CLASS ? classValue(parts) : attrValue(parts);
+function attrCall({ name, parts }: AttrBinding, ctx: GenContext): string {
+  const value = name === CLASS ? classValue(parts, ctx) : attrValue(parts, ctx);
   return `__attr(__node as Element, ${JSON.stringify(name)}, () => ${value}, __cleanups);`;
 }
 
@@ -55,7 +51,7 @@ function animateCall(expr: Expr, ctx: GenContext): string {
 
 export function elementBinder(binding: ElementBinding, ctx: GenContext): string {
   const calls = [
-    ...binding.attrs.map(attrCall),
+    ...binding.attrs.map((attr) => attrCall(attr, ctx)),
     ...binding.events.map(eventCall),
     ...binding.binds.map((bind) => bindCall(bind, ctx)),
   ];

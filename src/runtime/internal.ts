@@ -15,7 +15,7 @@ export { writableTarget } from "./dom/bind/channel.ts";
 export { bindProp } from "./dom/bind/property.ts";
 export { bindElement } from "./dom/bind/element.ts";
 export { bindIf } from "./dom/blocks/if.ts";
-export { bindEach } from "./dom/blocks/each.ts";
+export { bindEach, followItem } from "./dom/blocks/each.ts";
 export { bindFor } from "./dom/blocks/range.ts";
 export { animate } from "./animate/bind.ts";
 export { unwrap } from "./variable/reactive.ts";

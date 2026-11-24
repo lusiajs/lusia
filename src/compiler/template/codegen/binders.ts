@@ -1,6 +1,6 @@
 import { markedCode } from "#compiler/sourcemap/marker.ts";
 import { trailingArg, type GenContext } from "./context.ts";
-import { attrValue, elementBinder, readExpression } from "./element.ts";
+import { attrValue, elementBinder } from "./element.ts";
 import { eachBinder, forBinder, ifBinder } from "./blocks.ts";
 import { ownClassNames } from "../../style/scope-classes.ts";
 import type { ComponentBinding } from "../types/component.ts";
@@ -8,15 +8,15 @@ import type { HtmlBinding } from "../types/html.ts";
 import type { TextBinding } from "../types/text.ts";
 import type { Binding } from "../types/template.ts";
 
-function textBinder({ expr }: TextBinding): string {
-  return `(__node, __cleanups) => __bindText(__node, () => ${readExpression(expr)}, __cleanups)`;
+function textBinder({ expr }: TextBinding, ctx: GenContext): string {
+  return `(__node, __cleanups) => __bindText(__node, () => ${ctx.read(expr)}, __cleanups)`;
 }
 
 /** Props are getters. A bind also reads its variable, so the prop shows the value. */
-function propsObject({ props, binds }: ComponentBinding): string {
+function propsObject({ props, binds }: ComponentBinding, ctx: GenContext): string {
   const entries = [
-    ...props.map(({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts)}`),
-    ...binds.map(({ prop, expr }) => `${JSON.stringify(prop)}: () => ${readExpression(expr)}`),
+    ...props.map(({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts, ctx)}`),
+    ...binds.map(({ prop, expr }) => `${JSON.stringify(prop)}: () => ${ctx.read(expr)}`),
   ];
   return `{ ${entries.join(", ")} }`;
 }
@@ -39,7 +39,7 @@ function slotOf({ children }: ComponentBinding, ctx: GenContext): string {
 function componentBinder(binding: ComponentBinding, ctx: GenContext): string {
   const { name } = binding;
   const childInherited = `__joinClasses(__host.inherited, ${JSON.stringify(ctx.scopes.tree)})`;
-  return `(__node, __cleanups, __leaves) => __bindComponent(__node, ${name}, ${propsObject(binding)}, ${boundObject(binding, ctx)}, __cleanups, __leaves, ${slotOf(binding, ctx)}, ${childInherited})`;
+  return `(__node, __cleanups, __leaves) => __bindComponent(__node, ${name}, ${propsObject(binding, ctx)}, ${boundObject(binding, ctx)}, __cleanups, __leaves, ${slotOf(binding, ctx)}, ${childInherited})`;
 }
 
 function contentBinder(): string {
@@ -49,13 +49,13 @@ function contentBinder(): string {
 /** Inserted markup gets the component's own scope classes and the inherited tree classes. */
 function htmlBinder({ expr }: HtmlBinding, ctx: GenContext): string {
   const classes = `__joinClasses(${JSON.stringify(ownClassNames(ctx.scopes))}, __host.inherited)`;
-  return `(__node, __cleanups) => __bindHtml(__node, () => ${readExpression(expr)}, __cleanups, ${classes})`;
+  return `(__node, __cleanups) => __bindHtml(__node, () => ${ctx.read(expr)}, __cleanups, ${classes})`;
 }
 
 function binderOf(binding: Binding, ctx: GenContext): string {
   switch (binding.kind) {
     case "text":
-      return textBinder(binding);
+      return textBinder(binding, ctx);
     case "html":
       return htmlBinder(binding, ctx);
     case "element":

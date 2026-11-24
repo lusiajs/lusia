@@ -4,8 +4,10 @@ import { TEXT_MARKER } from "#runtime/markers.ts";
 import { variable, type Variable } from "#runtime/variable/variable.ts";
 import Groups from "../fixtures/Groups.lusia";
 import Rows from "../fixtures/Rows.lusia";
+import UpdateRows from "../fixtures/UpdateRows.lusia";
 import { resetVariable, state, type Item } from "../fixtures/state.ts";
-import { host, mount, resetMounts, unmount } from "../fixtures/mount.ts";
+import { resetUpdateState, updateState, type Row } from "../fixtures/update-state.ts";
+import { click, host, mount, resetMounts, unmount } from "../fixtures/mount.ts";
 
 beforeEach(resetVariable);
 afterEach(resetMounts);
@@ -22,7 +24,7 @@ function textRow(indexed: boolean): RowRender {
   return (item, index, cleanups) => {
     const fragment = document.createDocumentFragment();
     const li = document.createElement("li");
-    li.textContent = String((item as Item).title);
+    li.textContent = String((item.peek() as Item).title);
     fragment.append(li);
     if (index) {
       const marker = document.createTextNode("");
@@ -70,7 +72,7 @@ describe("EACH in a component", () => {
     expect(after).toEqual([before[3]!, before[2]!, before[1]!, before[0]!]);
   });
 
-  test("a row whose key has a new object is rendered again", () => {
+  test("a row whose key has a new object is kept and shows the new item", () => {
     const el = host();
     state.items.value = items("a");
     mount(Rows, el);
@@ -78,7 +80,7 @@ describe("EACH in a component", () => {
 
     state.items.value = [{ id: 1, title: "renamed" }];
     expect(rowTexts(el)).toEqual(["0:renamed"]);
-    expect(el.querySelector(".row")).not.toBe(before);
+    expect(el.querySelector(".row")).toBe(before!);
   });
 
   test("clicking a row reads its item", () => {
@@ -113,6 +115,101 @@ describe("EACH in a component", () => {
   });
 });
 
+describe("EACH rows updated by a new item object", () => {
+  beforeEach(resetUpdateState);
+
+  function row(id: number, title: string, tags: string[] = [], done = false): Row {
+    return { id, title, tags, done };
+  }
+
+  function names(root: ParentNode): string[] {
+    return [...root.querySelectorAll(".name")].map((el) => el.textContent ?? "");
+  }
+
+  test("the same key keeps the row element and updates text and attributes", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a")];
+    mount(UpdateRows, el);
+    const before = el.querySelector<HTMLElement>(".row");
+
+    updateState.rows.value = [row(1, "b")];
+    const after = el.querySelector<HTMLElement>(".row")!;
+    expect(after).toBe(before!);
+    expect(names(el)).toEqual(["b"]);
+    expect(after.getAttribute("title")).toBe("b");
+  });
+
+  test("a child component is not created again and gets the new prop", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a")];
+    mount(UpdateRows, el);
+
+    updateState.rows.value = [row(1, "b")];
+    expect(updateState.attaches.peek()).toBe(1);
+    expect(el.querySelector(".stamp")!.textContent).toBe("b");
+  });
+
+  test("a click handler reports the new title after the item updates", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a")];
+    mount(UpdateRows, el);
+
+    updateState.rows.value = [row(1, "b")];
+    click(el, ".row");
+    expect(updateState.picked.peek()).toBe("b");
+  });
+
+  test("a nested EACH follows updates of the outer and the inner item", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a", ["x", "y"])];
+    mount(UpdateRows, el);
+    const nestedText = () => [...el.querySelectorAll(".nested")].map((n) => n.textContent);
+    expect(nestedText()).toEqual(["a/x", "a/y"]);
+
+    updateState.rows.value = [row(1, "b", ["x", "y"])];
+    expect(nestedText()).toEqual(["b/x", "b/y"]);
+
+    updateState.rows.value = [row(1, "b", ["z"])];
+    expect(nestedText()).toEqual(["b/z"]);
+  });
+
+  test("an expression with a same-name local still works and updates", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a", ["x", "y"])];
+    mount(UpdateRows, el);
+    expect(el.querySelector(".upper")!.textContent).toBe("X,Y");
+
+    updateState.rows.value = [row(1, "a", ["z"])];
+    expect(el.querySelector(".upper")!.textContent).toBe("Z");
+  });
+
+  test("an IF test that reads the item flips when the item updates", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a", [], false)];
+    mount(UpdateRows, el);
+    expect(el.querySelector(".done")).toBeNull();
+
+    updateState.rows.value = [row(1, "a", [], true)];
+    expect(el.querySelector(".done")).not.toBeNull();
+
+    updateState.rows.value = [row(1, "a", [], false)];
+    expect(el.querySelector(".done")).toBeNull();
+  });
+
+  test("removal and reorder by key move rows and drop the removed one", () => {
+    const el = host();
+    updateState.rows.value = [row(1, "a"), row(2, "b"), row(3, "c")];
+    mount(UpdateRows, el);
+    const [first, , third] = el.querySelectorAll(".row");
+
+    updateState.rows.value = [row(3, "c"), row(1, "a2")];
+    expect(names(el)).toEqual(["c", "a2"]);
+    const after = el.querySelectorAll(".row");
+    expect(after[0]).toBe(third!);
+    expect(after[1]).toBe(first!);
+  });
+});
+
 describe("EACH runtime", () => {
   test("duplicate keys are an error", () => {
     const marker = document.createComment(TEXT_MARKER);
@@ -134,9 +231,9 @@ describe("EACH runtime", () => {
     const render: RowRender = (item, _index, _cleanups, leaves) => {
       const fragment = document.createDocumentFragment();
       const li = document.createElement("li");
-      li.textContent = String(item);
+      li.textContent = String(item.peek());
       fragment.append(li);
-      leaves.push(() => new Promise<void>((resolve) => release.set(String(item), resolve)));
+      leaves.push(() => new Promise<void>((resolve) => release.set(String(item.peek()), resolve)));
       return fragment;
     };
     const cleanups: Array<() => void> = [];
@@ -171,7 +268,7 @@ describe("EACH runtime", () => {
     const pendingLeaveRow: RowRender = (item, _index, _cleanups, leaves) => {
       const fragment = document.createDocumentFragment();
       const li = document.createElement("li");
-      li.textContent = String(item);
+      li.textContent = String(item.peek());
       fragment.append(li);
       leaves.push(() => new Promise<void>(() => {}));
       return fragment;

@@ -1,0 +1,12 @@
+<script>
+import { onAttach, props } from "lusiajs";
+import { updateState } from "./update-state.ts";
+
+const { label } = props({ label: "" });
+
+onAttach(() => {
+  updateState.attaches.value++;
+});
+</script>
+
+<b class="stamp">{label}</b>
