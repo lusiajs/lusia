@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
-import { buildEditor } from "../../scripts/build-editor.ts";
+import { buildLanguageTools } from "../../scripts/build-language-tools.ts";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const TOOLS_DIR = "packages/language-tools";
@@ -106,7 +106,7 @@ async function loadWithPlainNode(entry: string): Promise<{ version: number; keys
 test(
   "built editor entry loads in plain node and exports the contract",
   async () => {
-    await buildEditor(ROOT);
+    await buildLanguageTools(ROOT);
     const loaded = await loadWithPlainNode(join(ROOT, TOOLS_DIR, "dist/vscode.js"));
 
     expect(loaded.version).toBe(1);
@@ -126,7 +126,7 @@ test("language tools version matches lusiajs", async () => {
 test(
   "built editor types check in a consumer without skipLibCheck",
   async () => {
-    await buildEditor(ROOT);
+    await buildLanguageTools(ROOT);
     const consumerDir = await mkdtemp(join(tmpdir(), "lusia-consumer-"));
     try {
       await writeConsumer(consumerDir);

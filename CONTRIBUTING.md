@@ -66,7 +66,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | ----- | ---- | ------- |
 | `@lusiajs/language-tools/vscode` | `dist/vscode.js` | The VS Code extension |
 
-- Source: `src/editor/host.ts`. Build: `bun scripts/build-editor.ts` (also run by `bun run check`).
+- Source: `src/editor/host.ts`. Build: `bun scripts/build-language-tools.ts` (also run by `bun run check`).
 - Types: `dist/vscode.d.ts` is one bundled file with no `#` imports, so consumers do not need `skipLibCheck`. A test type-checks a consumer project against it. The types use browser types (Element, Event), so a consumer needs `"lib": ["ESNext", "DOM"]` in its tsconfig, as VS Code extensions already have.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.

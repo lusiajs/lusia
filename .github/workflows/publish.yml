@@ -30,7 +30,7 @@ jobs:
           test "v$VERSION" = "$GITHUB_REF_NAME"
 
       - name: Build the editor packages
-        run: bun scripts/build-editor.ts && bun scripts/build-prettier-plugin.ts
+        run: bun scripts/build-language-tools.ts && bun scripts/build-prettier-plugin.ts
 
       - name: Publish to npm
         run: |

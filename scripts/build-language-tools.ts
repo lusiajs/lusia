@@ -49,7 +49,7 @@ async function bundleTypes(root: string, distDir: string): Promise<void> {
   await writeFile(join(distDir, `${VSCODE_ENTRY}.d.ts`), declarations.join(""));
 }
 
-export async function buildEditor(root: string = ROOT): Promise<void> {
+export async function buildLanguageTools(root: string = ROOT): Promise<void> {
   const rootPackage = await readPackageJson(join(root, "package.json"));
   const toolsDir = join(root, PACKAGE_DIR);
   const toolsPackage = await readPackageJson(join(toolsDir, "package.json"));
@@ -61,6 +61,6 @@ export async function buildEditor(root: string = ROOT): Promise<void> {
 }
 
 if (import.meta.main) {
-  await buildEditor();
+  await buildLanguageTools();
   console.log(`Built ${PACKAGE_DIR}/dist/${VSCODE_ENTRY}.js and .d.ts`);
 }
