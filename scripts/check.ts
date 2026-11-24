@@ -1,4 +1,7 @@
+import { mkdir, rm } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { formatSeconds, slowestReport } from "./check-report.ts";
 
 interface Step {
   name: string;
@@ -14,19 +17,15 @@ interface StepResult {
 }
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-
-// The build runs first: the test imports its output.
-const BUILD: Step = { name: "build", cmd: ["bun", "scripts/build-vscode-support.ts"], cwd: ROOT };
+const TEST_REPORT = join(ROOT, "node_modules", ".cache", "lusia", "test-report.xml");
+const TEST_ARGS = ["--parallel=6", "./test/", "./examples/"];
+const TEST_REPORT_ARGS = ["--reporter=junit", `--reporter-outfile=${TEST_REPORT}`];
 
 // The steps touch separate outputs, so they run at the same time.
 const STEPS: Step[] = [
   { name: "typecheck", cmd: ["bun", "run", "typecheck"], cwd: ROOT },
-  { name: "test", cmd: ["bun", "run", "test"], cwd: ROOT },
+  { name: "test", cmd: ["bun", "test", ...TEST_ARGS, ...TEST_REPORT_ARGS], cwd: ROOT },
 ];
-
-function formatSeconds(ms: number): string {
-  return `${(ms / 1000).toFixed(1)}s`;
-}
 
 function statusLabel(ok: boolean): string {
   return ok ? "ok" : "FAIL";
@@ -56,15 +55,32 @@ function failureReport(result: StepResult): string {
   return `--- ${result.name} output ---\n${result.output.trimEnd()}`;
 }
 
+async function prepareReportPath(): Promise<void> {
+  await mkdir(dirname(TEST_REPORT), { recursive: true });
+  await rm(TEST_REPORT, { force: true });
+}
+
+async function readTestReport(): Promise<string> {
+  return Bun.file(TEST_REPORT).text().catch(() => "");
+}
+
+async function printSlowest(): Promise<void> {
+  const report = slowestReport(await readTestReport());
+  if (report) {
+    console.log(`\n${report}`);
+  }
+}
+
 async function main(): Promise<void> {
   const start = performance.now();
-  const built = await runStep(BUILD);
-  const results = [built, ...(await Promise.all(STEPS.map(runStep)))];
+  await prepareReportPath();
+  const results = await Promise.all(STEPS.map(runStep));
   const totalMs = performance.now() - start;
   const allOk = results.every((result) => result.ok);
 
   console.log(results.map(summaryLine).join("\n"));
   console.log(`check  ${statusLabel(allOk)}  ${formatSeconds(totalMs)}`);
+  await printSlowest();
 
   for (const result of results.filter((item) => !item.ok)) {
     console.log(`\n${failureReport(result)}`);

@@ -51,7 +51,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
    | Command | What it does |
    | ------- | ------------ |
-   | `bun run check` | Typecheck and tests |
+   | `bun run check` | Typecheck and tests, then the slowest test files and tests |
    | `bun run format` | Format all files |
    | `bun run dev:stress` | Run the stress example on port 3000 |
 
@@ -66,7 +66,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | ----- | ---- | ------- |
 | `@lusiajs/vscode-support/vscode` | `dist/vscode.js` | The VS Code extension |
 
-- Source: `src/editor/host.ts`. Build: `bun scripts/build-vscode-support.ts` (also run by `bun run check`).
+- Source: `src/editor/host.ts`. Build: `bun scripts/build-vscode-support.ts` (the host test runs it once, so `bun run check` covers it).
 - Types: `dist/vscode.d.ts` is one bundled file with no `#` imports, so consumers do not need `skipLibCheck`. A test type-checks a consumer project against it. The types use browser types (Element, Event), so a consumer needs `"lib": ["ESNext", "DOM"]` in its tsconfig, as VS Code extensions already have.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.
