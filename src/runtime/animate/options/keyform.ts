@@ -9,10 +9,10 @@ export interface PartialEasing {
   ease?: Ease;
 }
 
-/** The forms of a `default`: [style, ease], [style] or [ease]. */
-export type DefaultEasing = [EaseStyle, Ease] | [EaseStyle] | [Ease];
+/** The forms of an `ease`: [style, ease], [style] or [ease]. */
+export type EaseValue = [EaseStyle, Ease] | [EaseStyle] | [Ease];
 
-export function readDefault(value: DefaultEasing | undefined): PartialEasing {
+export function readEase(value: EaseValue | undefined): PartialEasing {
   if (value === undefined) return {};
   if (!Array.isArray(value) || value.length < 1 || value.length > 2) throw runtimeError("L2032");
   const [first, second] = value;
@@ -24,7 +24,7 @@ export function readDefault(value: DefaultEasing | undefined): PartialEasing {
   return second === undefined ? { easeStyle } : { easeStyle, ease: checkEase(second) };
 }
 
-/** Resolves one key per part: the key first, then the keyframes `default`, then the engine default. */
+/** Resolves one key per part: the key first, then the keyframes `ease`, then the engine default. */
 export function readKey(
   value: KeyframeValue,
   fromKeyframes: PartialEasing,

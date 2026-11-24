@@ -3,7 +3,7 @@ import { prepareTimeline, type Keyframes } from "#runtime/animate/options/keyfra
 import { readItem } from "#runtime/animate/options/options.ts";
 import { withWhere } from "#runtime/errors.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 
 const { QUART } = EASE.STYLE;
 const frames = { 0: { opacity: 0 }, 1: { opacity: 1 } };
@@ -18,24 +18,31 @@ function thrown(read: () => unknown): { code?: string; hint?: string; message: s
 }
 
 describe("unknown keyframes keys", () => {
-  test("a typo of default names the key and suggests default", () => {
-    const bad = { defaut: [QUART, EASE.OUT], ...frames } as unknown as Keyframes;
+  test("a typo of ease names the key and suggests ease", () => {
+    const bad = { eas: [QUART, EASE.OUT], ...frames } as unknown as Keyframes;
     const error = thrown(() => prepareTimeline(bad));
     expect(error.code).toBe("L2054");
     expect(error.message).toBe(
-      "unknown keyframes key 'defaut'. Keys are numbers from 0 to 1 or 'default'",
+      "unknown keyframes key 'eas'. Keys are numbers from 0 to 1 or 'ease'",
     );
-    expect(error.hint).toBe("did you mean 'default'?");
+    expect(error.hint).toBe("did you mean 'ease'?");
+  });
+
+  test("the old default key throws L2083 and names ease", () => {
+    const old = { default: [QUART, EASE.OUT], ...frames } as unknown as Keyframes;
+    const error = thrown(() => prepareTimeline(old));
+    expect(error.code).toBe("L2083");
+    expect(error.message).toBe("keyframes default was renamed to ease");
   });
 
   test("a key far from every name gives the plain hint", () => {
     const bad = { banana: 1, ...frames } as unknown as Keyframes;
-    expect(thrown(() => prepareTimeline(bad)).hint).toBe("Use a number from 0 to 1, or 'default'.");
+    expect(thrown(() => prepareTimeline(bad)).hint).toBe("Use a number from 0 to 1, or 'ease'.");
   });
 
   test("a dev location for the key is used instead of the attribute's", () => {
-    const bad = { defaut: 1, ...frames } as unknown as Keyframes;
-    const keys = { defaut: "src/Card.lusia:3:9" };
+    const bad = { eas: 1, ...frames } as unknown as Keyframes;
+    const keys = { eas: "src/Card.lusia:3:9" };
     const error = withWhere("src/Card.lusia:12:4", () => thrown(() => prepareTimeline(bad)), keys);
     expect(error).toMatchObject({ file: "src/Card.lusia", line: 3, column: 9 });
   });
@@ -43,24 +50,24 @@ describe("unknown keyframes keys", () => {
 
 describe("unknown animate item keys", () => {
   test("a typo of an item key suggests the right key", () => {
-    const error = thrown(() => readItem({ style: frames, durtion: 400 } as never));
+    const error = thrown(() => readItem({ play: frames, durtion: 400 } as never));
     expect(error.code).toBe("L2055");
     expect(error.message).toBe("unknown animate key 'durtion'");
     expect(error.hint).toBe("did you mean 'duration'?");
   });
 
   test("a valid item gives no error", () => {
-    expect(() => readItem({ style: frames, duration: 400 })).not.toThrow();
+    expect(() => readItem({ play: frames, duration: 400 })).not.toThrow();
   });
 });
 
-describe("DETACH more animateSpace", () => {
-  const detach = (more: unknown) => ({ style: frames, when: WHEN.DETACH, more }) as never;
+describe("ON.DETACH options animateSpace", () => {
+  const detach = (options: unknown) => ({ play: frames, on: ON.DETACH, options }) as never;
 
   test("animateSpace must be true or false", () => {
     const error = thrown(() => readItem(detach({ animateSpace: "yes" })));
     expect(error.code).toBe("L2056");
-    expect(error.message).toBe("animate more animateSpace must be true or false, got yes");
+    expect(error.message).toBe("animate options animateSpace must be true or false, got yes");
   });
 
   test("a misspelled animateSpace names the right key", () => {
@@ -83,6 +90,6 @@ describe("DETACH more animateSpace", () => {
       delay: 0,
       keyframes: frames,
     });
-    expect(readItem(detach({ animateSpace: true })).more.space).toEqual({ animateSpace: true });
+    expect(readItem(detach({ animateSpace: true })).options.space).toEqual({ animateSpace: true });
   });
 });

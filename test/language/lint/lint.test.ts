@@ -107,16 +107,16 @@ attach(Badge, document.body);
     ).toEqual([]);
   });
 
-  test("animate-key flags a typo of default in keyframes kept in the script", () => {
+  test("animate-key flags a typo of ease in keyframes kept in the script", () => {
     const source =
-      "<script>\nconst fadeUp = { defaut: [EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };\n</script>\n<div animate={fadeUp}>x</div>";
+      "<script>\nconst fadeUp = { eas: [EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };\n</script>\n<div animate={fadeUp}>x</div>";
     const issues = lintLusia(source, childProps);
     expect(issues).toEqual([
       {
         line: 2,
         column: 18,
         message:
-          "unknown keyframes key 'defaut'. Keys are numbers from 0 to 1 or 'default' (did you mean 'default'?)",
+          "unknown keyframes key 'eas'. Keys are numbers from 0 to 1 or 'ease' (did you mean 'ease'?)",
         severity: "error",
         code: "animate-key",
       },
@@ -124,7 +124,7 @@ attach(Badge, document.body);
   });
 
   test("animate-key flags a typo of an item key", () => {
-    expect(codes("<div animate={{ style: fade, durtion: 400 }}>x</div>")).toEqual(["animate-key"]);
+    expect(codes("<div animate={{ play: fade, durtion: 400 }}>x</div>")).toEqual(["animate-key"]);
   });
 
   test("animate-keyframes skips a component tag, whose animate is a prop", () => {
@@ -204,22 +204,22 @@ describe("flow and bind-value lint rules", () => {
     expect(codes("<p bind-element={el} bind-text-content={x}>y</p>")).toEqual([]);
   });
 
-  test("scroll-old-form flags an old start or end form in a file that uses WHEN.SCROLL", () => {
+  test("scroll-old-form flags an old start or end form in a file that uses ON.SCROLL", () => {
     const source =
-      "<div animate={{ when: WHEN.SCROLL, more: { start: 0.2, end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
+      "<div animate={{ on: ON.SCROLL, options: { start: 0.2, end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
     expect(lintLusia(source, childProps).map((issue) => [issue.code, issue.column])).toEqual([
-      ["scroll-old-form", 44],
+      ["scroll-old-form", 43],
     ]);
   });
 
   test("scroll-old-form accepts the pair form", () => {
     const source =
-      "<div animate={{ when: WHEN.SCROLL, more: { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
+      "<div animate={{ on: ON.SCROLL, options: { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.BOTTOM, EDGE.TOP] } }}>";
     expect(codes(source)).not.toContain("scroll-old-form");
   });
 
-  test("scroll-old-form ignores files without WHEN.SCROLL", () => {
-    expect(codes("<div animate={{ when: WHEN.VIEW, more: { start: 0.2 } }}>")).not.toContain(
+  test("scroll-old-form ignores files without ON.SCROLL", () => {
+    expect(codes("<div animate={{ on: ON.VIEW, options: { start: 0.2 } }}>")).not.toContain(
       "scroll-old-form",
     );
   });

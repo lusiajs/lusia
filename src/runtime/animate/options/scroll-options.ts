@@ -12,7 +12,7 @@ import {
 } from "../scroll/scroll-touch.ts";
 import { animateConfig } from "./config-store.ts";
 
-export interface ScrollMore {
+export interface ScrollOptions {
   start?: ScrollPoint;
   end?: ScrollPoint;
   follow?: ComputedVariable<Element | null>;
@@ -44,7 +44,7 @@ export function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
 }
 
 // `part` cannot combine with start and end.
-export function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
+export function readScroll({ start, end, follow, part }: ScrollOptions): ScrollRead {
   if (follow === undefined) {
     return { range: readRange(start, end), part: readPart(part), follow: undefined, pinned: false };
   }
@@ -57,7 +57,7 @@ export function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead
   return { range: DEFAULT_RANGE, part: readPart(part), follow, pinned: true };
 }
 
-/** The `more` of a scroll item with no start, end or part: the config values, then the library ones. */
+/** The `options` of a scroll item with no start, end or part: the config values, then the library ones. */
 export function scrollDefault(): ScrollRead {
   return readScroll({});
 }

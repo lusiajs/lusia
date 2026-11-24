@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { animate } from "#runtime/animate/bind.ts";
 import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
-import { readMore as readWith } from "#runtime/animate/options/trigger-options.ts";
+import { readOptions as readWith } from "#runtime/animate/options/trigger-options.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 import { HOVER_AREA } from "#runtime/animate/modes/hover-modes.ts";
 import { HOVER_KEYS } from "#runtime/animate/options/keys.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
@@ -13,8 +13,8 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 useFakeClock();
 
 const readBase = { duration: 300 };
-const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
-  readWith(when, more, readBase);
+const readOptions = (on: Parameters<typeof readWith>[0], options: Parameters<typeof readWith>[1]) =>
+  readWith(on, options, readBase);
 
 const fade: Keyframes = {
   0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
@@ -23,7 +23,7 @@ const fade: Keyframes = {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function mount(item: Omit<AnimateItem, "style"> = {}) {
+function mount(item: Omit<AnimateItem, "play"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
@@ -31,11 +31,11 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
     el,
     () =>
       ({
-        style: fade,
+        play: fade,
         duration: 100,
-        when: WHEN.HOVER,
+        on: ON.HOVER,
         ...item,
-        more: { area: HOVER_AREA.ELEMENT, ...item.more },
+        options: { area: HOVER_AREA.ELEMENT, ...item.options },
       }) as AnimateItem,
     cleanups,
     leaves,
@@ -44,9 +44,9 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
   return { el, cleanups, opacity: () => Number(el.style.opacity) };
 }
 
-describe("WHEN.HOVER more outDelay", () => {
+describe("ON.HOVER more outDelay", () => {
   test("waits outDelay after pointer leave before it plays back", async () => {
-    const { el, opacity } = mount({ more: { outDelay: 50 } });
+    const { el, opacity } = mount({ options: { outDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     expect(opacity()).toBe(1);
@@ -59,7 +59,7 @@ describe("WHEN.HOVER more outDelay", () => {
   });
 
   test("entering again inside the delay cancels the play back", async () => {
-    const { el, opacity } = mount({ more: { outDelay: 50 } });
+    const { el, opacity } = mount({ options: { outDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -70,7 +70,7 @@ describe("WHEN.HOVER more outDelay", () => {
   });
 
   test("cleanup cancels a pending play back", async () => {
-    const { el, cleanups, opacity } = mount({ more: { outDelay: 50 } });
+    const { el, cleanups, opacity } = mount({ options: { outDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -90,17 +90,17 @@ describe("WHEN.HOVER more outDelay", () => {
   });
 
   test("rejects a negative or non-number outDelay", () => {
-    expect(() => readMore(WHEN.HOVER, { outDelay: -1 })).toThrow(
-      "animate more outDelay must be a time in ms, got -1",
+    expect(() => readOptions(ON.HOVER, { outDelay: -1 })).toThrow(
+      "animate options outDelay must be a time in ms, got -1",
     );
-    expect(() => readMore(WHEN.HOVER, { outDelay: Number.NaN })).toThrow(
+    expect(() => readOptions(ON.HOVER, { outDelay: Number.NaN })).toThrow(
       "outDelay must be a time in ms",
     );
   });
 
   test("more on HOVER only accepts its own keys", () => {
-    expect(() => readMore(WHEN.HOVER, { margin: 10 } as never)).toThrow(
-      'more has an unknown key "margin", use area, inDelay, outDelay, out or outDuration',
+    expect(() => readOptions(ON.HOVER, { margin: 10 } as never)).toThrow(
+      'options has an unknown key "margin", use area, inDelay, outDelay, out or outDuration',
     );
   });
 });
@@ -110,9 +110,9 @@ function touch(type: string, target: EventTarget = document.body): void {
   target.dispatchEvent(Object.assign(new Event(type, { bubbles: true }), { pointerType: "touch" }));
 }
 
-describe("WHEN.HOVER more inDelay", () => {
+describe("ON.HOVER more inDelay", () => {
   test("waits inDelay after pointer enter before it plays in", async () => {
-    const { el, opacity } = mount({ more: { inDelay: 50 } });
+    const { el, opacity } = mount({ options: { inDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     expect(opacity()).toBe(0);
@@ -122,7 +122,7 @@ describe("WHEN.HOVER more inDelay", () => {
   });
 
   test("leaving during the wait cancels the play in", async () => {
-    const { el, opacity } = mount({ more: { inDelay: 50 } });
+    const { el, opacity } = mount({ options: { inDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
     el.dispatchEvent(new Event("pointerleave"));
     await wait(80);
@@ -131,14 +131,14 @@ describe("WHEN.HOVER more inDelay", () => {
   });
 });
 
-describe("WHEN.HOVER more out", () => {
+describe("ON.HOVER more out", () => {
   const out: Keyframes = {
     0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
     1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0.5 }],
   };
 
   test("leaving plays out keyframes, not the in backward", () => {
-    const { el, opacity } = mount({ more: { out } });
+    const { el, opacity } = mount({ options: { out } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -151,7 +151,7 @@ describe("WHEN.HOVER more out", () => {
       0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
       1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
     };
-    const { el, opacity } = mount({ more: { out: linearOut, outDuration: 200 } });
+    const { el, opacity } = mount({ options: { out: linearOut, outDuration: 200 } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -162,7 +162,7 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("switching mid-way does not jump: the first out frame equals the last in frame", () => {
-    const { el, opacity } = mount({ more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
+    const { el, opacity } = mount({ options: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(50);
     const before = opacity();
@@ -174,7 +174,7 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("entering mid-way of the out plays in from the current look", () => {
-    const { el, opacity } = mount({ more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
+    const { el, opacity } = mount({ options: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -187,7 +187,7 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("leaving without an enter plays nothing", () => {
-    const { el, opacity } = mount({ more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
+    const { el, opacity } = mount({ options: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
     el.dispatchEvent(new Event("pointerleave"));
     advance(100);
     expect(opacity()).toBe(0);
@@ -196,7 +196,7 @@ describe("WHEN.HOVER more out", () => {
   test("once: leaving after the first enter does nothing", () => {
     const { el, opacity } = mount({
       once: true,
-      more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+      options: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
     });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
@@ -207,7 +207,7 @@ describe("WHEN.HOVER more out", () => {
 
   test("cleanup cancels a pending out", async () => {
     const { el, cleanups, opacity } = mount({
-      more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+      options: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
     });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
@@ -219,22 +219,22 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("out keys are validated when the item is read", () => {
-    expect(() => readMore(WHEN.HOVER, { out: "fade" } as never)).toThrow(
-      "animate more out must be keyframes",
+    expect(() => readOptions(ON.HOVER, { out: "fade" } as never)).toThrow(
+      "animate options out must be keyframes",
     );
-    expect(() => readMore(WHEN.HOVER, { out: [] } as never)).toThrow(
-      "animate more out must be keyframes",
+    expect(() => readOptions(ON.HOVER, { out: [] } as never)).toThrow(
+      "animate options out must be keyframes",
     );
   });
 
   test("outDuration needs out", () => {
-    expect(() => readMore(WHEN.HOVER, { outDuration: 200 })).toThrow(
-      "animate more outDuration needs out",
+    expect(() => readOptions(ON.HOVER, { outDuration: 200 })).toThrow(
+      "animate options outDuration needs out",
     );
   });
 });
 
-describe("WHEN.HOVER touch and keyboard", () => {
+describe("ON.HOVER touch and keyboard", () => {
   test("a tap toggles in and out, and a touch pointer enter does nothing", () => {
     const { el, opacity } = mount();
     touch("pointerenter", el);
@@ -269,19 +269,19 @@ describe("WHEN.HOVER touch and keyboard", () => {
   });
 });
 
-describe("WHEN.HOVER more area", () => {
+describe("ON.HOVER more area", () => {
   test("defaults to HOVER_AREA.FINAL", () => {
-    expect(readMore(WHEN.HOVER, undefined).hover.area).toBe(HOVER_AREA.FINAL);
-    expect(readMore(WHEN.HOVER, {}).hover.area).toBe(HOVER_AREA.FINAL);
+    expect(readOptions(ON.HOVER, undefined).hover.area).toBe(HOVER_AREA.FINAL);
+    expect(readOptions(ON.HOVER, {}).hover.area).toBe(HOVER_AREA.FINAL);
   });
 
   test("accepts HOVER_AREA.ELEMENT", () => {
-    expect(readMore(WHEN.HOVER, { area: HOVER_AREA.ELEMENT }).hover.area).toBe(HOVER_AREA.ELEMENT);
+    expect(readOptions(ON.HOVER, { area: HOVER_AREA.ELEMENT }).hover.area).toBe(HOVER_AREA.ELEMENT);
   });
 
   test("rejects a string such as 'final'", () => {
-    expect(() => readMore(WHEN.HOVER, { area: "final" } as never)).toThrow(
-      "animate more area must be HOVER_AREA.FINAL or HOVER_AREA.ELEMENT",
+    expect(() => readOptions(ON.HOVER, { area: "final" } as never)).toThrow(
+      "animate options area must be HOVER_AREA.FINAL or HOVER_AREA.ELEMENT",
     );
   });
 

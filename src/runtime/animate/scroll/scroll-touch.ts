@@ -9,7 +9,7 @@ export interface ScrollTouch {
   screen: ScrollEdge;
 }
 
-/** `start` and `end` of WHEN.SCROLL: the progress is 0 at `start` and 1 at `end`. */
+/** `start` and `end` of ON.SCROLL: the progress is 0 at `start` and 1 at `end`. */
 export interface ScrollRange {
   start: ScrollTouch;
   end: ScrollTouch;
@@ -25,10 +25,7 @@ export const DEFAULT_RANGE: ScrollRange = {
 
 export function readScrollPoint(value: unknown, name: "start" | "end"): ScrollTouch {
   if (!isPair(value)) throw runtimeError("L2017", { name });
-  return toTouch([
-    readEdge(value[0], `${name}[0]`),
-    readEdge(value[1], `${name}[1]`),
-  ]);
+  return toTouch([readEdge(value[0], `${name}[0]`), readEdge(value[1], `${name}[1]`)]);
 }
 
 function isPair(value: unknown): value is ScrollPoint {

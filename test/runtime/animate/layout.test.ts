@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { animate } from "#runtime/animate/bind.ts";
 import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();
@@ -30,7 +30,7 @@ type Axis = "width" | "height";
  * engine writes, and its rect follows that size and the translate, the way the browser draws it.
  */
 function mount(
-  item: Omit<AnimateItem, "style"> = {},
+  item: Omit<AnimateItem, "play"> = {},
   box: Box = { x: 100, y: 40, width: 200, height: 50 },
   attach = false,
 ) {
@@ -59,7 +59,7 @@ function mount(
   };
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ when: WHEN.MOVE, ...item }) as AnimateItem, cleanups, leaves);
+  animate(el, () => ({ on: ON.MOVE, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => {
     cleanups.forEach((cleanup) => cleanup());
     el.remove();
@@ -153,9 +153,9 @@ function numbers(text: string, fallback: number): [number, number] {
 
 afterEach(() => setReducedMotion(false));
 
-describe("WHEN.MOVE", () => {
+describe("ON.MOVE", () => {
   test("glides from the old place to the new one", () => {
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     view.change({ x: 300 }, 0);
     expect(view.translate().tx).toBeCloseTo(-200);
     view.run(150);
@@ -168,7 +168,7 @@ describe("WHEN.MOVE", () => {
   });
 
   test("ignores a size change", () => {
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     view.change({ width: 400 });
     expect(view.el.style.getPropertyValue("translate")).toBe("");
     expect(view.el.style.getPropertyValue("scale")).toBe("");
@@ -176,7 +176,7 @@ describe("WHEN.MOVE", () => {
   });
 
   test("never touches the size on a move", () => {
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     view.change({ x: 300 }, 0);
     view.run(150);
     expect(view.el.style.getPropertyValue("width")).toBe("");
@@ -185,9 +185,9 @@ describe("WHEN.MOVE", () => {
   });
 });
 
-describe("WHEN.RESIZE", () => {
+describe("ON.RESIZE", () => {
   test("glides the real width, never a scale", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 }, 0);
     expect(view.width()).toBeCloseTo(200);
 
@@ -208,7 +208,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("the size it writes is not read back as a new change", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 }, 0);
     view.run(150);
     expect(view.width()).toBeGreaterThan(200);
@@ -219,7 +219,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("a new size during a glide starts from the width it shows now", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 }, 0);
     view.run(150);
     const before = view.width();
@@ -233,14 +233,14 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("ignores a place change", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ x: 300 });
     expect(view.el.style.getPropertyValue("translate")).toBe("");
     expect(view.el.style.getPropertyValue("width")).toBe("");
   });
 
   test("a child keeps its shape: its rendered width stays its layout width", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 }, 0);
     for (const frame of sampleFrames(view, 8)) {
       expect(frame.scale).toBe("");
@@ -252,7 +252,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("the last frame matches the layout box, so dropping the inline size does not jump", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 }, 0);
     view.run(287);
     const nearEnd = view.width();
@@ -264,7 +264,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("a fractional layout size lands exactly on its box", () => {
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400.5 }, 0);
     view.run(400);
     expect(view.inline("width")).toBe("");
@@ -272,7 +272,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("a content-box element writes its content width", () => {
-    const view = mount({ when: WHEN.RESIZE }, undefined, true);
+    const view = mount({ on: ON.RESIZE }, undefined, true);
     view.el.style.paddingLeft = "10px";
     view.el.style.paddingRight = "10px";
     view.el.style.paddingTop = "4px";
@@ -287,7 +287,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("a border-box element writes the full width", () => {
-    const view = mount({ when: WHEN.RESIZE }, undefined, true);
+    const view = mount({ on: ON.RESIZE }, undefined, true);
     view.el.style.boxSizing = "border-box";
     view.el.style.paddingLeft = "10px";
     view.el.style.paddingRight = "10px";
@@ -298,7 +298,7 @@ describe("WHEN.RESIZE", () => {
 
   test("reduced motion jumps to the new size", () => {
     setReducedMotion(true);
-    const view = mount({ when: WHEN.RESIZE });
+    const view = mount({ on: ON.RESIZE });
     view.change({ width: 400 });
     expect(view.inline("width")).toBe("");
     expect(view.el.style.getPropertyValue("scale")).toBe("");
@@ -306,7 +306,7 @@ describe("WHEN.RESIZE", () => {
   });
 
   test("once glides only the first size change", () => {
-    const view = mount({ when: WHEN.RESIZE, once: true });
+    const view = mount({ on: ON.RESIZE, once: true });
     view.change({ width: 400 });
     view.run(400);
     view.change({ width: 200 }, 0);
@@ -315,15 +315,15 @@ describe("WHEN.RESIZE", () => {
   });
 });
 
-describe("WHEN.MOVE_OR_RESIZE", () => {
+describe("ON.MOVE_OR_RESIZE", () => {
   test("glides on a move", () => {
-    const view = mount({ when: WHEN.MOVE_OR_RESIZE });
+    const view = mount({ on: ON.MOVE_OR_RESIZE });
     view.change({ y: 200 }, 0);
     expect(view.translate().ty).toBeCloseTo(-160);
   });
 
   test("glides the real height on a resize", () => {
-    const view = mount({ when: WHEN.MOVE_OR_RESIZE });
+    const view = mount({ on: ON.MOVE_OR_RESIZE });
     view.change({ height: 100 }, 0);
     expect(view.height()).toBeCloseTo(50);
     view.run(150);
@@ -336,7 +336,7 @@ describe("WHEN.MOVE_OR_RESIZE", () => {
   });
 
   test("keeps a running place glide when the size changes mid-glide", () => {
-    const view = mount({ when: WHEN.MOVE_OR_RESIZE });
+    const view = mount({ on: ON.MOVE_OR_RESIZE });
     view.change({ x: 300, width: 400 }, 0);
     view.run(150);
     const before = view.visualLeft();
@@ -347,7 +347,7 @@ describe("WHEN.MOVE_OR_RESIZE", () => {
 
 describe("layout glide details", () => {
   test("a change during a glide starts from the current visual box, without a jump", () => {
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     view.change({ x: 300 }, 0);
     view.run(100);
     const before = view.visualLeft();
@@ -357,14 +357,14 @@ describe("layout glide details", () => {
 
   test("reduced motion jumps without a glide", () => {
     setReducedMotion(true);
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     view.change({ x: 300 });
     expect(view.el.style.getPropertyValue("translate")).toBe("");
     expect(view.visualLeft()).toBe(300);
   });
 
   test("once glides only for the first change", () => {
-    const view = mount({ when: WHEN.MOVE, once: true });
+    const view = mount({ on: ON.MOVE, once: true });
     view.change({ x: 300 });
     view.run(400);
     view.change({ x: 0 }, 0);
@@ -372,7 +372,7 @@ describe("layout glide details", () => {
   });
 
   test("works without style", () => {
-    const view = mount({ when: WHEN.MOVE });
+    const view = mount({ on: ON.MOVE });
     expect(view.el.style.getPropertyValue("translate")).toBe("");
   });
 });
@@ -382,15 +382,15 @@ describe("layout errors", () => {
     animate(document.createElement("div"), () => item as unknown as AnimateItem, [], []);
 
   test("loop is an error", () => {
-    expect(() => run({ when: WHEN.MOVE, loop: true })).toThrow(
-      "loop does not work with WHEN.MOVE, RESIZE or MOVE_OR_RESIZE",
+    expect(() => run({ on: ON.MOVE, loop: true })).toThrow(
+      "loop does not work with ON.MOVE, RESIZE or MOVE_OR_RESIZE",
     );
   });
 
   test("translate and scale in style are an error", () => {
     const style = { 0: { translate: "0px 0px" }, 1: { translate: "0px 0px" } };
-    expect(() => run({ when: WHEN.RESIZE, style })).toThrow(
-      "translate is set by the glide and cannot be in style",
+    expect(() => run({ on: ON.RESIZE, play: style })).toThrow(
+      "translate is set by the glide and cannot be in play",
     );
   });
 });

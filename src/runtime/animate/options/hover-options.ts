@@ -1,12 +1,12 @@
 import { runtimeError } from "../../errors.ts";
 import { HOVER_AREA, type HoverArea } from "../modes/hover-modes.ts";
 import type { Keyframes } from "./keyframes.ts";
-import type { MoreBase } from "./trigger-options.ts";
+import type { OptionsBase } from "./trigger-options.ts";
 import { animateConfig } from "./config-store.ts";
 import { readMs } from "./read-ms.ts";
 
-/** The `more` options of WHEN.HOVER. Times are in ms. `out` replaces the play back for leaving. */
-export interface HoverMore {
+/** The `options` of ON.HOVER. Times are in ms. `out` replaces the play back for leaving. */
+export interface HoverOptions {
   area?: HoverArea;
   inDelay?: number;
   outDelay?: number;
@@ -31,14 +31,14 @@ export function hoverDefault(): HoverRead {
   };
 }
 
-export function readHover(more: HoverMore, base: MoreBase): HoverRead {
-  if (more.out === undefined && more.outDuration !== undefined) throw runtimeError("L2013");
+export function readHover(options: HoverOptions, base: OptionsBase): HoverRead {
+  if (options.out === undefined && options.outDuration !== undefined) throw runtimeError("L2013");
   const fallback = hoverDefault();
   return {
-    area: readArea(more.area),
-    inDelay: readMs(more.inDelay, fallback.inDelay, "more inDelay"),
-    outDelay: readMs(more.outDelay, fallback.outDelay, "more outDelay"),
-    out: more.out === undefined ? undefined : readOut(more, base),
+    area: readArea(options.area),
+    inDelay: readMs(options.inDelay, fallback.inDelay, "options inDelay"),
+    outDelay: readMs(options.outDelay, fallback.outDelay, "options outDelay"),
+    out: options.out === undefined ? undefined : readOut(options, base),
   };
 }
 
@@ -59,10 +59,13 @@ export function sameHover(a: HoverRead, b: HoverRead): boolean {
 }
 
 /** The leave play lasts the item's duration unless `outDuration` or the config's hover.outDuration sets it. */
-function readOut({ out, outDuration }: HoverMore, base: MoreBase): NonNullable<HoverRead["out"]> {
+function readOut(
+  { out, outDuration }: HoverOptions,
+  base: OptionsBase,
+): NonNullable<HoverRead["out"]> {
   if (typeof out !== "object" || out === null || Array.isArray(out)) {
     throw runtimeError("L2014");
   }
   const fallback = animateConfig().hover?.outDuration ?? base.duration;
-  return { keyframes: out, duration: readMs(outDuration, fallback, "more outDuration") };
+  return { keyframes: out, duration: readMs(outDuration, fallback, "options outDuration") };
 }

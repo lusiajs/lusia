@@ -3,12 +3,12 @@ import { animate } from "#runtime/animate/bind.ts";
 import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { readMore as readWith } from "#runtime/animate/options/trigger-options.ts";
+import { readOptions as readWith } from "#runtime/animate/options/trigger-options.ts";
 
 const readBase = { duration: 300 };
-const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
-  readWith(when, more, readBase);
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+const readOptions = (on: Parameters<typeof readWith>[0], options: Parameters<typeof readWith>[1]) =>
+  readWith(on, options, readBase);
+import { ON } from "#runtime/animate/modes/trigger.ts";
 import { EDGE } from "#runtime/animate/modes/edge.ts";
 import type { ScrollPoint } from "#runtime/animate/scroll/scroll-touch.ts";
 import { variable } from "#runtime/variable/variable.ts";
@@ -30,13 +30,13 @@ beforeEach(() => {
 afterEach(() => setReducedMotion(false));
 
 /** Mounts a scroll item on an element whose top edge sits at `top` px from the viewport top. */
-function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
+function mount(item: Omit<AnimateItem, "play"> = {}, top = VIEWPORT_HEIGHT) {
   const el = pageElement();
   let position = top;
   el.getBoundingClientRect = () => ({ top: position, height: ELEMENT_HEIGHT }) as DOMRect;
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ style: fade, when: WHEN.SCROLL, ...item }) as AnimateItem, cleanups, leaves);
+  animate(el, () => ({ play: fade, on: ON.SCROLL, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return {
     el,
@@ -51,7 +51,7 @@ function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
   };
 }
 
-describe("WHEN.SCROLL progress", () => {
+describe("ON.SCROLL progress", () => {
   test("defaults [TOP, BOTTOM] to [BOTTOM, TOP]: 0 when the top meets the screen bottom, 1 when the bottom meets the screen top", () => {
     const { opacity, scrollTo } = mount();
     expect(opacity()).toBe(0);
@@ -65,7 +65,7 @@ describe("WHEN.SCROLL progress", () => {
     const el = document.createElement("div");
     el.getBoundingClientRect = () => ({ top: 450, height: ELEMENT_HEIGHT }) as DOMRect;
     const cleanups: Array<() => void> = [];
-    animate(el, () => ({ style: fade, when: WHEN.SCROLL }) as AnimateItem, cleanups, []);
+    animate(el, () => ({ play: fade, on: ON.SCROLL }) as AnimateItem, cleanups, []);
     onReset(() => cleanups.forEach((cleanup) => cleanup()));
     advance(16);
     document.body.appendChild(el);
@@ -84,7 +84,7 @@ describe("WHEN.SCROLL progress", () => {
   test("custom screen lines map the progress", () => {
     const start: ScrollPoint = [EDGE.TOP, 0.8];
     const end: ScrollPoint = [EDGE.TOP, 0.2];
-    const { opacity, scrollTo } = mount({ more: { start, end } }, 900);
+    const { opacity, scrollTo } = mount({ options: { start, end } }, 900);
     expect(opacity()).toBe(0);
     scrollTo(800);
     expect(opacity()).toBe(0);
@@ -103,10 +103,10 @@ describe("WHEN.SCROLL progress", () => {
   });
 });
 
-describe("WHEN.SCROLL start and end pairs", () => {
+describe("ON.SCROLL start and end pairs", () => {
   test("CENTER pair: 0 when the element's centre meets the screen centre", () => {
     const { opacity, scrollTo } = mount(
-      { more: { start: [EDGE.CENTER, EDGE.CENTER], end: [EDGE.BOTTOM, EDGE.TOP] } },
+      { options: { start: [EDGE.CENTER, EDGE.CENTER], end: [EDGE.BOTTOM, EDGE.TOP] } },
       450,
     );
     expect(opacity()).toBe(0);
@@ -118,7 +118,7 @@ describe("WHEN.SCROLL start and end pairs", () => {
 
   test("a pair takes its points from EDGE", () => {
     const start: ScrollPoint = [EDGE.TOP, EDGE.CENTER];
-    const { opacity, scrollTo } = mount({ more: { start, end: [EDGE.BOTTOM, EDGE.TOP] } }, 500);
+    const { opacity, scrollTo } = mount({ options: { start, end: [EDGE.BOTTOM, EDGE.TOP] } }, 500);
     expect(opacity()).toBe(0);
     scrollTo(200);
     expect(opacity()).toBeCloseTo(0.5);
@@ -126,36 +126,36 @@ describe("WHEN.SCROLL start and end pairs", () => {
 
   test("start and end cannot be the same point", () => {
     expect(() =>
-      readMore(WHEN.SCROLL, { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.TOP, EDGE.BOTTOM] }),
+      readOptions(ON.SCROLL, { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.TOP, EDGE.BOTTOM] }),
     ).toThrow("start and end must be different moments");
   });
 
   test("a number is rejected with the pair form", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: 0.2 } as never)).toThrow(
+    expect(() => readOptions(ON.SCROLL, { start: 0.2 } as never)).toThrow(
       "start must be a pair [element edge, screen edge]",
     );
   });
 
   test("the old object form is rejected with the pair form", () => {
     expect(() =>
-      readMore(WHEN.SCROLL, { start: { element: EDGE.TOP, window: EDGE.BOTTOM } } as never),
+      readOptions(ON.SCROLL, { start: { element: EDGE.TOP, window: EDGE.BOTTOM } } as never),
     ).toThrow("start must be a pair [element edge, screen edge]");
   });
 
   test("a pair with one edge is rejected", () => {
-    expect(() => readMore(WHEN.SCROLL, { end: [EDGE.TOP] } as never)).toThrow(
+    expect(() => readOptions(ON.SCROLL, { end: [EDGE.TOP] } as never)).toThrow(
       "end must be a pair [element edge, screen edge]",
     );
   });
 
   test("an edge outside 0 to 1 is rejected", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: [1.5, 0] } as never)).toThrow(
+    expect(() => readOptions(ON.SCROLL, { start: [1.5, 0] } as never)).toThrow(
       "start[0] must be EDGE.TOP",
     );
   });
 });
 
-describe("WHEN.SCROLL shared listener", () => {
+describe("ON.SCROLL shared listener", () => {
   test("two items share one scroll listener, removed when the last one stops", () => {
     const add = spyOn(document, "addEventListener");
     const remove = spyOn(document, "removeEventListener");
@@ -175,7 +175,7 @@ describe("WHEN.SCROLL shared listener", () => {
   });
 });
 
-describe("WHEN.SCROLL cleanup and reduced motion", () => {
+describe("ON.SCROLL cleanup and reduced motion", () => {
   test("after cleanup, scrolling no longer moves the item", () => {
     const { cleanups, opacity, scrollTo } = mount();
     scrollTo(-100);
@@ -198,17 +198,17 @@ describe("WHEN.SCROLL cleanup and reduced motion", () => {
   });
 });
 
-describe("WHEN.SCROLL errors", () => {
+describe("ON.SCROLL errors", () => {
   test("loop is rejected", () => {
     const el = document.createElement("div");
-    expect(() =>
-      animate(el, () => ({ style: fade, when: WHEN.SCROLL, loop: true }), [], []),
-    ).toThrow("loop does not work with WHEN.SCROLL");
+    expect(() => animate(el, () => ({ play: fade, on: ON.SCROLL, loop: true }), [], [])).toThrow(
+      "loop does not work with ON.SCROLL",
+    );
   });
 
   test("keys other than start and end are rejected", () => {
-    expect(() => readMore(WHEN.SCROLL, { outDelay: 10 } as never)).toThrow(
-      'more has an unknown key "outDelay", use start, end, follow or part',
+    expect(() => readOptions(ON.SCROLL, { outDelay: 10 } as never)).toThrow(
+      'options has an unknown key "outDelay", use start, end, follow or part',
     );
   });
 });
@@ -222,14 +222,16 @@ function box(top: number, height: number) {
 }
 
 /** Mounts a follow item. The item's own element is not used for progress. */
-function mountFollow(more: { part?: [number, number]; start?: ScrollPoint; end?: ScrollPoint } = {}) {
+function mountFollow(
+  options: { part?: [number, number]; start?: ScrollPoint; end?: ScrollPoint } = {},
+) {
   const el = pageElement();
   const follow = variable<Element | null>(null);
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
   animate(
     el,
-    () => ({ style: fade, when: WHEN.SCROLL, more: { follow, ...more } }) as AnimateItem,
+    () => ({ play: fade, on: ON.SCROLL, options: { follow, ...options } }) as AnimateItem,
     cleanups,
     leaves,
   );
@@ -237,7 +239,7 @@ function mountFollow(more: { part?: [number, number]; start?: ScrollPoint; end?:
   return { el, follow, cleanups, opacity: () => Number(el.style.opacity) };
 }
 
-describe("WHEN.SCROLL follow", () => {
+describe("ON.SCROLL follow", () => {
   test("a tall element: 0 when its top reaches the screen top, 1 when its bottom reaches the screen bottom", () => {
     const section = box(0, 2000);
     const { follow, opacity } = mountFollow();
@@ -347,24 +349,24 @@ describe("WHEN.SCROLL follow", () => {
   });
 
   test("follow must be a variable", () => {
-    expect(() => readMore(WHEN.SCROLL, { follow: { value: null } } as never)).toThrow(
+    expect(() => readOptions(ON.SCROLL, { follow: { value: null } } as never)).toThrow(
       "follow must be a variable",
     );
   });
 });
 
-describe("WHEN.SCROLL part errors", () => {
+describe("ON.SCROLL part errors", () => {
   test.each([[[0.5, 0.2]], [[-0.1, 0.5]], [[0.2, 1.5]], [[0.5, 0.5]], [[0.1, 0.2, 0.3]]])(
     "%j is rejected",
     (part) => {
-      expect(() => readMore(WHEN.SCROLL, { part } as never)).toThrow(
+      expect(() => readOptions(ON.SCROLL, { part } as never)).toThrow(
         "part must be [from, to] with 0 <= from < to <= 1",
       );
     },
   );
 
   test("part must be an array", () => {
-    expect(() => readMore(WHEN.SCROLL, { part: "abc" } as never)).toThrow(
+    expect(() => readOptions(ON.SCROLL, { part: "abc" } as never)).toThrow(
       "part must be [from, to]",
     );
   });

@@ -53,10 +53,10 @@ export async function attachSamples(
       list.insertBefore(gone, after);
 
       const value = {
-        style: { 0: { opacity: 0 }, 1: { opacity: 1 } },
-        when: (window as any).lusiaWhen.ATTACH,
+        play: { 0: { opacity: 0 }, 1: { opacity: 1 } },
+        on: (window as any).lusiaOn.ATTACH,
         duration: 400,
-        more: JSON.parse(moreText),
+        options: JSON.parse(moreText),
       };
       (window as any).lusiaAnimate(gone, () => value, [], []);
 

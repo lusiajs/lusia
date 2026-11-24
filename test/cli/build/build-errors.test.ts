@@ -64,7 +64,7 @@ describe("formatBuildFailure", () => {
     );
     expect(text).toContain('2 | import { variable, ACTIVE } from "lusiajs";');
     expect(text).toContain("  | " + " ".repeat(19) + "^~~~~~");
-    expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
+    expect(text).toContain("hint: ACTIVE was renamed to ON.");
     expect(text).toContain("Build failed: 1 error");
   });
 

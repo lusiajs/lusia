@@ -1,8 +1,8 @@
 <script>
-  import { WHEN } from "lusiajs";
+  import { ON } from "lusiajs";
 
   // Each item glides when the wrapping changes, so the whole list moves at once.
-  const glide = { when: WHEN.MOVE, duration: 400 };
+  const glide = { on: ON.MOVE, duration: 400 };
 </script>
 
 <li class="mover" animate={glide}>

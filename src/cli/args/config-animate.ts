@@ -5,7 +5,7 @@ import { asObject, checkKeys, type JsonObject } from "./config-values.ts";
 const ANIMATE_KEYS = ["duration", "delay", "ease", "keep", "in", "out"];
 
 const ANIMATE_SECTIONS: Readonly<Record<string, readonly string[]>> = {
-  midway: ["play", "turn", "turnDuration", "turnStyle", "turnEase"],
+  midway: ["mode", "duration", "ease", "play", "turn", "turnDuration", "turnStyle", "turnEase"],
   view: ["margin", "amount", "reverse"],
   hover: ["inDelay", "outDelay", "outDuration"],
   scroll: ["start", "end", "part"],

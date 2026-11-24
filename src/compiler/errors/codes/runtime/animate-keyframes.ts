@@ -2,7 +2,7 @@ import type { ErrorCode } from "../../codes.ts";
 
 export const RUNTIME_ANIMATE_KEYFRAMES_CODES = {
   L2032: {
-    message: "animate default must be [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y]",
+    message: "animate ease must be [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y]",
     hint: "Use one of the three listed forms.",
   },
   L2033: {
@@ -31,11 +31,15 @@ export const RUNTIME_ANIMATE_KEYFRAMES_CODES = {
     hint: "Add a key 0 for the start and a key 1 for the end.",
   },
   L2054: {
-    message: "unknown keyframes key '$key'. Keys are numbers from 0 to 1 or 'default'",
+    message: "unknown keyframes key '$key'. Keys are numbers from 0 to 1 or 'ease'",
     hint: "$tip",
   },
   L2055: {
     message: "unknown animate key '$key'",
     hint: "$tip",
+  },
+  L2083: {
+    message: "keyframes default was renamed to ease",
+    hint: "Write ease: [...] instead of default: [...] inside the keyframes.",
   },
 } as const satisfies Record<string, ErrorCode>;

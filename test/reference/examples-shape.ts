@@ -4,7 +4,7 @@ export type ExampleShape = "component" | "fragment" | "mixed" | "typescript";
 
 const SECTION_TAG = /<(script|style)[\s>]/;
 const MARKUP_LINE = /^\s*<[A-Za-z!/]/m;
-const FRAGMENT_PRELUDE = 'import { variable, WHEN, EASE, PRESET } from "lusiajs";';
+const FRAGMENT_PRELUDE = 'import { variable, ON, EASE, PRESET } from "lusiajs";';
 
 export function exampleShape(example: string): ExampleShape {
   if (SECTION_TAG.test(example)) return "component";

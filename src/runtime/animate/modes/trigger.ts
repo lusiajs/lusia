@@ -11,7 +11,7 @@ const RESIZE: unique symbol = Symbol("RESIZE");
 const MOVE_OR_RESIZE: unique symbol = Symbol("MOVE_OR_RESIZE");
 const MANUAL: unique symbol = Symbol("MANUAL");
 
-export const WHEN = Object.freeze({
+export const ON = Object.freeze({
   ATTACH,
   DETACH,
   VIEW,
@@ -23,25 +23,21 @@ export const WHEN = Object.freeze({
   MANUAL,
 } as const);
 
-export type When = (typeof WHEN)[keyof typeof WHEN];
+export type On = (typeof ON)[keyof typeof ON];
 
-export type LayoutWhen = typeof WHEN.MOVE | typeof WHEN.RESIZE | typeof WHEN.MOVE_OR_RESIZE;
+export type LayoutOn = typeof ON.MOVE | typeof ON.RESIZE | typeof ON.MOVE_OR_RESIZE;
 
 /** A variable or computed variable: truthy plays forward, falsy plays back. */
 export type Source = Variable<unknown> | ComputedVariable<unknown>;
 
-const WHENS: ReadonlySet<unknown> = new Set<unknown>(Object.values(WHEN));
+const ONS: ReadonlySet<unknown> = new Set<unknown>(Object.values(ON));
 
-export function isWhen(value: unknown): value is When {
-  return WHENS.has(value);
+export function isOn(value: unknown): value is On {
+  return ONS.has(value);
 }
 
-const LAYOUT_WHENS: ReadonlySet<unknown> = new Set<unknown>([
-  WHEN.MOVE,
-  WHEN.RESIZE,
-  WHEN.MOVE_OR_RESIZE,
-]);
+const LAYOUT_ONS: ReadonlySet<unknown> = new Set<unknown>([ON.MOVE, ON.RESIZE, ON.MOVE_OR_RESIZE]);
 
-export function isLayoutWhen(value: unknown): value is LayoutWhen {
-  return LAYOUT_WHENS.has(value);
+export function isLayoutOn(value: unknown): value is LayoutOn {
+  return LAYOUT_ONS.has(value);
 }

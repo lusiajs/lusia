@@ -1,71 +1,76 @@
 import type { EaseStyle } from "../modes/easing.ts";
-import { EASE, isEase, type Ease } from "../modes/modes.ts";
-import {
-  isMidwayMode,
-  isTurnMode,
-  MIDWAY,
-  TURN,
-  type MidwayMode,
-  type TurnMode,
-} from "../modes/midway-modes.ts";
+import { EASE, type Ease } from "../modes/modes.ts";
+import { isMidwayMode, MIDWAY, type MidwayMode } from "../modes/midway-modes.ts";
 import type { TurnFn } from "../play/turn.ts";
 import { runtimeError } from "../../errors.ts";
 import { animateConfig } from "./config-store.ts";
+import { readEase, type EaseValue } from "./keyform.ts";
 
-/** The `midway` field of an item. A MIDWAY member alone sets `play` and keeps the other defaults. */
+/** The `mode` of a midway: a MIDWAY member, or a function for a custom switch. */
+export type MidwayChoice = MidwayMode | TurnFn;
+
+/** The `midway` field of an item. Each field is optional and takes its config or library value. */
 export interface MidwayItem {
-  play?: MidwayMode;
-  turn?: TurnMode | TurnFn;
-  turnDuration?: number;
-  turnStyle?: EaseStyle;
-  turnEase?: Ease;
+  mode?: MidwayChoice;
+  duration?: number;
+  ease?: EaseValue;
 }
 
-export type AnimateMidway = MidwayMode | MidwayItem;
+export type AnimateMidway = MidwayItem;
 
 export interface MidwayOptions {
-  play: MidwayMode;
-  turn: TurnMode | TurnFn;
-  turnDuration: number;
-  turnStyle: EaseStyle;
-  turnEase: Ease;
+  mode: MidwayChoice;
+  duration: number;
+  easeStyle: EaseStyle;
+  ease: Ease;
 }
 
-export const MIDWAY_KEYS: readonly string[] = [
-  "play",
-  "turn",
-  "turnDuration",
-  "turnStyle",
-  "turnEase",
-];
+const MIDWAY_KEYS: readonly string[] = ["mode", "duration", "ease"];
+
+/** Keys from the old `turn` settings, with the key that replaces each one. */
+const RENAMED_MIDWAY_KEYS: ReadonlyMap<string, string> = new Map([
+  ["play", "mode"],
+  ["turn", "mode"],
+  ["turnDuration", "duration"],
+  ["turnStyle", "ease"],
+  ["turnEase", "ease"],
+]);
 
 /** The midway settings an item uses when it sets none: the config values, then the library ones. */
 export function midwayDefault(): MidwayOptions {
   const midway = animateConfig().midway ?? {};
+  const ease = readEase(midway.ease);
   return {
-    play: midway.play ?? MIDWAY.TURN,
-    turn: midway.turn ?? TURN.SUDDEN,
-    turnDuration: midway.turnDuration ?? 200,
-    turnStyle: midway.turnStyle ?? EASE.STYLE.CUBIC,
-    turnEase: midway.turnEase ?? EASE.INOUT,
+    mode: midway.mode ?? MIDWAY.SWITCH,
+    duration: midway.duration ?? 200,
+    easeStyle: ease.easeStyle ?? EASE.STYLE.CUBIC,
+    ease: ease.ease ?? EASE.INOUT,
   };
 }
 
 export function readMidway(midway: AnimateMidway | undefined): MidwayOptions {
   if (midway === undefined) return midwayDefault();
-  if (isMidwayMode(midway)) return { ...midwayDefault(), play: midway };
-  if (typeof midway !== "object" || midway === null) {
+  if (isMidwayMode(midway)) throw runtimeError("L2081");
+  if (typeof midway !== "object" || midway === null || Array.isArray(midway)) {
     throw runtimeError("L2023", { value: String(midway) });
   }
+  rejectRenamedKeys(midway);
   rejectUnknownKeys(midway);
   const base = midwayDefault();
+  const ease = readEase(midway.ease);
   return {
-    play: readPlay(midway.play ?? base.play),
-    turn: readTurn(midway.turn ?? base.turn),
-    turnDuration: readDuration(midway.turnDuration ?? base.turnDuration),
-    turnStyle: readTurnStyle(midway.turnStyle ?? base.turnStyle),
-    turnEase: readEase(midway.turnEase ?? base.turnEase),
+    mode: readMode(Object.hasOwn(midway, "mode") ? midway.mode : base.mode),
+    duration: readDuration(midway.duration ?? base.duration),
+    easeStyle: ease.easeStyle ?? base.easeStyle,
+    ease: ease.ease ?? base.ease,
   };
+}
+
+function rejectRenamedKeys(midway: object): void {
+  for (const key of Object.keys(midway)) {
+    const to = RENAMED_MIDWAY_KEYS.get(key);
+    if (to !== undefined) throw runtimeError("L2082", { key, to });
+  }
 }
 
 function rejectUnknownKeys(midway: object): void {
@@ -76,31 +81,14 @@ function rejectUnknownKeys(midway: object): void {
   }
 }
 
-function readPlay(play: MidwayMode): MidwayMode {
-  if (!isMidwayMode(play)) throw runtimeError("L2025", { value: String(play) });
-  return play;
+function readMode(mode: unknown): MidwayChoice {
+  if (typeof mode === "function" || isMidwayMode(mode)) return mode as MidwayChoice;
+  throw runtimeError("L2025", { value: String(mode) });
 }
 
-function readTurn(turn: TurnMode | TurnFn): TurnMode | TurnFn {
-  if (typeof turn === "function" || isTurnMode(turn)) return turn;
-  throw runtimeError("L2026", { value: String(turn) });
-}
-
-function readDuration(turnDuration: number): number {
-  if (!Number.isFinite(turnDuration) || turnDuration < 0) {
-    throw runtimeError("L2027", { value: String(turnDuration) });
+function readDuration(duration: number): number {
+  if (!Number.isFinite(duration) || duration < 0) {
+    throw runtimeError("L2027", { value: String(duration) });
   }
-  return turnDuration;
-}
-
-function readTurnStyle(turnStyle: EaseStyle): EaseStyle {
-  if (typeof turnStyle !== "function") {
-    throw runtimeError("L2028", { value: String(turnStyle) });
-  }
-  return turnStyle;
-}
-
-function readEase(turnEase: Ease): Ease {
-  if (!isEase(turnEase)) throw runtimeError("L2029", { value: String(turnEase) });
-  return turnEase;
+  return duration;
 }

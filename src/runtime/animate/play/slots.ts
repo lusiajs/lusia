@@ -2,19 +2,19 @@ import type { Controller } from "./controller.ts";
 import { Group } from "./group.ts";
 import type { ItemOptions } from "../options/options.ts";
 import type { Player } from "./player.ts";
-import type { ReadMore } from "../options/trigger-options.ts";
-import { sameMore } from "../options/trigger-options.ts";
-import { isLayoutWhen, type When, type Source } from "../modes/trigger.ts";
+import type { ReadOptions } from "../options/trigger-options.ts";
+import { sameOptions } from "../options/trigger-options.ts";
+import { isLayoutOn, type On, type Source } from "../modes/trigger.ts";
 import { layoutModeOf } from "../modes/layout-mode.ts";
 import type { GlideSpec } from "../layout/layout-glide.ts";
 import type { SpaceSpec } from "../layout/space/space-closer.ts";
 
-/** The players that share one trigger, `once`, controller and more. A group is driven together. */
+/** The players that share one trigger, `once`, controller and options. A group is driven together. */
 export interface Slot {
-  when: When | Source;
+  on: On | Source;
   once: boolean;
   control: Controller | undefined;
-  more: ReadMore;
+  options: ReadOptions;
   /** Set for the layout triggers, which glide the element. Each layout item has its own slot. */
   glide: GlideSpec | undefined;
   /** Set for an item that moves its siblings with `animateSpace`. Each such item has its own slot. */
@@ -24,10 +24,10 @@ export interface Slot {
 }
 
 interface Bucket {
-  when: When | Source;
+  on: On | Source;
   once: boolean;
   control: Controller | undefined;
-  more: ReadMore;
+  options: ReadOptions;
   glide: GlideSpec | undefined;
   space: SpaceSpec | undefined;
   loops: boolean;
@@ -37,11 +37,11 @@ interface Bucket {
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
   items.forEach((item, i) => addToBucket(buckets, item, players[i]!));
-  return buckets.map(({ when, once, control, more, glide, space, loops, players: members }) => ({
-    when,
+  return buckets.map(({ on, once, control, options, glide, space, loops, players: members }) => ({
+    on,
     once,
     control,
-    more,
+    options,
     glide,
     space,
     loops,
@@ -56,27 +56,30 @@ function addToBucket(buckets: Bucket[], item: ItemOptions, player: Player): void
 }
 
 function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
-  const { when, once, control, more, space } = item;
+  const { on, once, control, options, space } = item;
   const glide = glideSpecOf(item);
   const found =
     glide || space
       ? undefined
       : buckets.find(
           (b) =>
-            b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
+            b.on === on &&
+            b.once === once &&
+            b.control === control &&
+            sameOptions(b.options, options),
         );
   if (found) return found;
-  const bucket: Bucket = { when, once, control, more, glide, space, loops: false, players: [] };
+  const bucket: Bucket = { on, once, control, options, glide, space, loops: false, players: [] };
   buckets.push(bucket);
   return bucket;
 }
 
 function glideSpecOf(item: ItemOptions): GlideSpec | undefined {
-  if (!isLayoutWhen(item.when)) return undefined;
+  if (!isLayoutOn(item.on)) return undefined;
   return {
-    mode: layoutModeOf(item.when),
+    mode: layoutModeOf(item.on),
     duration: item.timing.duration,
     delay: item.timing.delay,
-    easing: item.keyframes.default,
+    easing: item.keyframes.ease,
   };
 }

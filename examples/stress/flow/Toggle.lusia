@@ -1,5 +1,5 @@
 <script>
-  import { WHEN, PRESET } from "lusiajs";
+  import { ON, PRESET } from "lusiajs";
   import { on } from "./on.ts";
 
   // Each badge leaves with this OUT animation, so removal waits for it.
@@ -13,7 +13,7 @@
   <IF {on.value}>
     <span
       class="badge"
-      animate={[{ style: PRESET.FADE_IN, when: WHEN.ATTACH, duration: 20 }, { style: fadeOut, when: WHEN.DETACH, duration: 20 }]}
+      animate={[{ play: PRESET.FADE_IN, on: ON.ATTACH, duration: 20 }, { play: fadeOut, on: ON.DETACH, duration: 20 }]}
       >On</span
     >
   </IF>

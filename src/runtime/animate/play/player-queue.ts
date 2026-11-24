@@ -1,7 +1,7 @@
 import type { Pass } from "./passes.ts";
 import type { PlayState } from "./player-state.ts";
 
-/** A request waiting for the running play (MIDWAY.FINISH). Only the last one runs, and every waiter resolves with it. */
+/** A request waiting for the running play (MIDWAY.WAIT). Only the last one runs, and every waiter resolves with it. */
 export interface Queued {
   passes: Iterable<Pass>;
   waiters: Array<() => void>;

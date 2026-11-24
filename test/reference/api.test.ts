@@ -75,7 +75,7 @@ describe("reference api table", () => {
     for (const id of [
       "animate",
       "ease",
-      "when",
+      "on",
       "animate-item",
       "animate-type",
       "keyframes-type",
@@ -86,7 +86,7 @@ describe("reference api table", () => {
   });
 
   test("each enum is one value entry listing its members in upper case", () => {
-    for (const name of ["EASE", "WHEN"]) {
+    for (const name of ["EASE", "ON"]) {
       const entry = api.find((item) => item.name === name);
       expect(entry?.kind, name).toBe("value");
       expect(entry?.members?.length ?? 0, name).toBeGreaterThan(0);

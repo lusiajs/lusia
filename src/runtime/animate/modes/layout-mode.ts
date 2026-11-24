@@ -1,4 +1,4 @@
-import { WHEN, type LayoutWhen } from "./trigger.ts";
+import { ON, type LayoutOn } from "./trigger.ts";
 
 /** Which parts of the layout box a trigger follows. This table is the only place the triggers combine. */
 export interface LayoutMode {
@@ -6,14 +6,14 @@ export interface LayoutMode {
   size: boolean;
 }
 
-const MODES: ReadonlyMap<LayoutWhen, LayoutMode> = new Map<LayoutWhen, LayoutMode>([
-  [WHEN.MOVE, { place: true, size: false }],
-  [WHEN.RESIZE, { place: false, size: true }],
-  [WHEN.MOVE_OR_RESIZE, { place: true, size: true }],
+const MODES: ReadonlyMap<LayoutOn, LayoutMode> = new Map<LayoutOn, LayoutMode>([
+  [ON.MOVE, { place: true, size: false }],
+  [ON.RESIZE, { place: false, size: true }],
+  [ON.MOVE_OR_RESIZE, { place: true, size: true }],
 ]);
 
-export function layoutModeOf(when: LayoutWhen): LayoutMode {
-  return MODES.get(when)!;
+export function layoutModeOf(on: LayoutOn): LayoutMode {
+  return MODES.get(on)!;
 }
 
 /** The layout box as the watcher reads it: the box's place and size, free of transforms and scrolling. */

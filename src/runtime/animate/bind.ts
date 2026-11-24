@@ -5,7 +5,7 @@ import { prepareTimeline } from "./options/keyframes.ts";
 import { readItem } from "./options/options.ts";
 import { Player } from "./play/player.ts";
 import { ownTimelines } from "./play/timeline.ts";
-import { WHEN } from "./modes/trigger.ts";
+import { ON } from "./modes/trigger.ts";
 import { bindTrigger } from "./play/triggers.ts";
 import { groupSlots, type Slot } from "./play/slots.ts";
 import { runtimeError, withWhere, type KeyWheres } from "../errors.ts";
@@ -65,7 +65,7 @@ function loadTimelines(el: HTMLElement, readValue: () => Animate, players: Playe
   const timelines = ownTimelines(
     items.map((item) => ({
       timeline: prepareTimeline(item.keyframes, el),
-      detach: item.when === WHEN.DETACH,
+      detach: item.on === ON.DETACH,
     })),
   );
   players.forEach((player, i) => player.load(timelines[i]!, items[i]!.timing));
@@ -73,6 +73,6 @@ function loadTimelines(el: HTMLElement, readValue: () => Animate, players: Playe
 
 /** DETACH slots write their start first, so an enter item's start values win on a shared property. */
 function startOrder(slots: Slot[]): Slot[] {
-  const detach = slots.filter((slot) => slot.when === WHEN.DETACH);
-  return [...detach, ...slots.filter((slot) => slot.when !== WHEN.DETACH)];
+  const detach = slots.filter((slot) => slot.on === ON.DETACH);
+  return [...detach, ...slots.filter((slot) => slot.on !== ON.DETACH)];
 }

@@ -1,6 +1,7 @@
 // Type-level checks. `tsc` runs this file; each @ts-expect-error line fails the build if it stops being an error.
 import {
-  WHEN,
+  MIDWAY,
+  ON,
   EASE,
   EDGE,
   setConfig,
@@ -27,16 +28,16 @@ const objectCss: Style = { opacity: { value: 1 } };
 // @ts-expect-error: key 1 is missing
 const missingOne: Keyframes = { 0: { opacity: 0 } };
 
-// The keyframes default takes the forms [style, ease], [style] or [ease].
-const withDefault: Keyframes = {
-  default: [EASE.STYLE.QUART, EASE.OUT],
+// The keyframes ease takes the forms [style, ease], [style] or [ease].
+const withEase: Keyframes = {
+  ease: [EASE.STYLE.QUART, EASE.OUT],
   0: { opacity: 0 },
   1: { opacity: 1 },
 };
-const defaultEase: Keyframes = { default: [EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };
-const defaultWrongOrder: Keyframes = {
+const easeOnly: Keyframes = { ease: [EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };
+const easeWrongOrder: Keyframes = {
   // @ts-expect-error: the parts are in the wrong order
-  default: [EASE.OUT, EASE.STYLE.QUART],
+  ease: [EASE.OUT, EASE.STYLE.QUART],
   0: { opacity: 0 },
   1: { opacity: 1 },
 };
@@ -49,55 +50,63 @@ const wrongStyle: Keyframes = { 0: { opacity: 0 }, 1: [EASE.STYLE.NOPE, EASE.OUT
 // @ts-expect-error: a direction (IN) is not an easing style
 const directionInStyle: Keyframes = { 0: { opacity: 0 }, 1: [EASE.IN, EASE.OUT, { opacity: 1 }] };
 
-// AnimateItem: `more` is typed by the trigger.
-const plain: AnimateItem = { style: keyframes };
+// AnimateItem: `options` is typed by the trigger.
+const plain: AnimateItem = { play: keyframes };
 const view: AnimateItem = {
-  style: keyframes,
-  when: WHEN.VIEW,
-  more: { margin: "10%", amount: 0.5, reverse: true },
+  play: keyframes,
+  on: ON.VIEW,
+  options: { margin: "10%", amount: 0.5, reverse: true },
 };
 const hover: AnimateItem = {
-  style: keyframes,
-  when: WHEN.HOVER,
-  more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+  play: keyframes,
+  on: ON.HOVER,
+  options: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
 };
 const scroll: AnimateItem = {
-  style: keyframes,
-  when: WHEN.SCROLL,
-  more: { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.BOTTOM, 0.2] },
+  play: keyframes,
+  on: ON.SCROLL,
+  options: { start: [EDGE.TOP, EDGE.BOTTOM], end: [EDGE.BOTTOM, 0.2] },
+};
+const midwayItem: AnimateItem = {
+  play: keyframes,
+  midway: { mode: MIDWAY.SWITCH_SMOOTH, duration: 100, ease: [EASE.STYLE.QUART, EASE.OUT] },
 };
 
 // @ts-expect-error: HOVER takes no margin
-const hoverMargin: AnimateItem = { style: keyframes, when: WHEN.HOVER, more: { margin: 10 } };
+const hoverMargin: AnimateItem = { play: keyframes, on: ON.HOVER, options: { margin: 10 } };
 
 // @ts-expect-error: VIEW takes no outDelay
-const viewOutDelay: AnimateItem = { style: keyframes, when: WHEN.VIEW, more: { outDelay: 50 } };
+const viewOutDelay: AnimateItem = { play: keyframes, on: ON.VIEW, options: { outDelay: 50 } };
 
-// @ts-expect-error: an item with no trigger takes no more
-const plainMore: AnimateItem = { style: keyframes, more: { margin: 10 } };
+// @ts-expect-error: an item with no trigger takes no options
+const plainOptions: AnimateItem = { play: keyframes, options: { margin: 10 } };
 
-// @ts-expect-error: a variable as when takes no more
-const variableMore: AnimateItem = { style: keyframes, when: WHEN.ATTACH, more: { reverse: true } };
+// @ts-expect-error: a variable as on takes no options
+const variableOptions: AnimateItem = { play: keyframes, on: ON.ATTACH, options: { reverse: true } };
 
-// @ts-expect-error: reverse moved into more
-const topReverse: AnimateItem = { style: keyframes, when: WHEN.VIEW, reverse: true };
+// @ts-expect-error: reverse moved into options
+const topReverse: AnimateItem = { play: keyframes, on: ON.VIEW, reverse: true };
 
-// @ts-expect-error: ease moved into the keyframes default
-const itemEase: AnimateItem = { style: keyframes, ease: EASE.IN };
+// @ts-expect-error: ease is not an item key. It goes in the keyframes
+const itemEase: AnimateItem = { play: keyframes, ease: EASE.IN };
+
+// @ts-expect-error: style was renamed to play
+const oldStyle: AnimateItem = { style: keyframes };
 
 // setConfig takes animate and lazy sections only.
 setConfig({ animate: { ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 } });
 // @ts-expect-error: speed is not a config key
 setConfig({ speed: 2 });
 
-export { css, defaultEase, hover, keyframes, missingOne, plain, scroll, view, withDefault };
+export { css, easeOnly, hover, keyframes, missingOne, midwayItem, plain, scroll, view, withEase };
 export {
-  defaultWrongOrder,
+  easeWrongOrder,
   directionInStyle,
   hoverMargin,
   itemEase,
-  plainMore,
-  variableMore,
+  oldStyle,
+  plainOptions,
+  variableOptions,
   topReverse,
   unknownCss,
   kebabCss,

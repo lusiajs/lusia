@@ -1,6 +1,6 @@
 import type { ErrorCode } from "../codes.ts";
 import { RUNTIME_ANIMATE_KEYFRAMES_CODES } from "./runtime/animate-keyframes.ts";
-import { RUNTIME_ANIMATE_MORE_CODES } from "./runtime/animate-more.ts";
+import { RUNTIME_ANIMATE_TRIGGER_CODES } from "./runtime/animate-trigger.ts";
 import { RUNTIME_ANIMATE_OPTIONS_CODES } from "./runtime/animate-options.ts";
 import { RUNTIME_ANIMATE_CODES } from "./runtime/animate.ts";
 import { RUNTIME_COMPONENT_CODES } from "./runtime/component.ts";
@@ -17,7 +17,7 @@ export const RUNTIME_CODES = {
   ...RUNTIME_COMPONENT_CODES,
   ...RUNTIME_CONFIG_CODES,
   ...RUNTIME_DOM_CODES,
-  ...RUNTIME_ANIMATE_MORE_CODES,
+  ...RUNTIME_ANIMATE_TRIGGER_CODES,
   ...RUNTIME_VARIABLE_CODES,
   ...RUNTIME_LAZY_CODES,
   ...RUNTIME_SCREEN_CODES,

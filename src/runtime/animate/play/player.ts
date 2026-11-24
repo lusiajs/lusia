@@ -49,11 +49,11 @@ export class Player {
   run(passes: Iterable<Pass>): Promise<void> {
     const state = this.state;
     if (!state.isBusy()) return startPlay(state, passes, undefined);
-    const midway = state.timing.midway.play;
-    if (midway === MIDWAY.IGNORE) return Promise.resolve();
-    if (midway === MIDWAY.FINISH) return queuePasses(state, passes);
-    if (midway === MIDWAY.SKIP) return this.skipThen(passes);
-    if (midway === MIDWAY.RESTART) return this.restartWith(passes);
+    const mode = state.timing.midway.mode;
+    if (mode === MIDWAY.KEEP_CURRENT) return Promise.resolve();
+    if (mode === MIDWAY.WAIT) return queuePasses(state, passes);
+    if (mode === MIDWAY.JUMP_TO_END) return this.skipThen(passes);
+    if (mode === MIDWAY.RESTART) return this.restartWith(passes);
     return this.turnInto(passes);
   }
 

@@ -2,7 +2,7 @@ import { withElementConfig } from "../../options/config-store.ts";
 import { animateDefault } from "../../options/defaults.ts";
 import type { EaseStyle } from "../../modes/easing.ts";
 import type { Keyframes } from "../../options/keyframes.ts";
-import { readDefault, readKey } from "../../options/keyform.ts";
+import { readEase, readKey } from "../../options/keyform.ts";
 import { startPlaying, type Playable } from "../../play/loop.ts";
 import type { Ease } from "../../modes/modes.ts";
 import { liftOut, placeLift, restoreLift, type Lift } from "./space-lift.ts";
@@ -102,10 +102,6 @@ function clampedProgress(elapsed: number, duration: number): number {
 
 /** The ease of the last key, which closes or opens the space. */
 export function easingOf(keyframes: Keyframes): [EaseStyle, Ease] {
-  const [easeStyle, ease] = readKey(
-    keyframes[1]!,
-    readDefault(keyframes.default),
-    animateDefault(),
-  );
+  const [easeStyle, ease] = readKey(keyframes[1]!, readEase(keyframes.ease), animateDefault());
   return [easeStyle, ease];
 }

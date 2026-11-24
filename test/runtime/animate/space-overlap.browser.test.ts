@@ -12,7 +12,11 @@ const LIST = `
     <div id="c" style="height:40px;margin:0"></div>
   </div>`;
 
-type Measure = { transforms: Record<string, string>; tops: Record<string, number>; bottoms: Record<string, number> };
+type Measure = {
+  transforms: Record<string, string>;
+  tops: Record<string, number>;
+  bottoms: Record<string, number>;
+};
 
 /** Inserts three 30px ATTACH slides before `#b` in one tick, waits for all of them, then measures. */
 async function insertThreeSlides(page: Page, delays: [number, number, number]): Promise<Measure> {
@@ -26,11 +30,11 @@ async function insertThreeSlides(page: Page, delays: [number, number, number]): 
       element.style.margin = "0";
       list.insertBefore(element, before);
       const value = {
-        style: { 0: { opacity: 0 }, 1: { opacity: 1 } },
-        when: (window as any).lusiaWhen.ATTACH,
+        play: { 0: { opacity: 0 }, 1: { opacity: 1 } },
+        on: (window as any).lusiaOn.ATTACH,
         duration: 400,
         delay: delayList[index],
-        more: { animateSpace: true },
+        options: { animateSpace: true },
       };
       (window as any).lusiaAnimate(element, () => value, [], []);
     });

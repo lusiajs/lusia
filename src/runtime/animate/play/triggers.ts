@@ -5,7 +5,7 @@ import { untrack, watch } from "../../variable/graph.ts";
 import { isReactive, unwrap } from "../../variable/reactive.ts";
 import type { Group } from "./group.ts";
 import type { ScrollRead } from "../options/scroll-options.ts";
-import { WHEN, type Source } from "../modes/trigger.ts";
+import { ON, type Source } from "../modes/trigger.ts";
 import type { ViewSettings } from "../options/view-options.ts";
 import { prefersReducedMotion } from "./reduced-motion.ts";
 import { watchScroll } from "../scroll/scroll.ts";
@@ -20,17 +20,17 @@ import type { Slot } from "./slots.ts";
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { when, once, more, glide, space, loops, group }: Slot,
+  { on, once, options, glide, space, loops, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
   if (loops) cleanups.push(pauseOffScreen(el, group));
-  if (isReactive(when)) bindSource(when, group, once, cleanups);
-  else if (when === WHEN.ATTACH) attachTrigger(el, group, space, cleanups);
-  else if (when === WHEN.DETACH) bindDetach(el, group, space, leaves, cleanups);
-  else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
-  else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
-  else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
+  if (isReactive(on)) bindSource(on, group, once, cleanups);
+  else if (on === ON.ATTACH) attachTrigger(el, group, space, cleanups);
+  else if (on === ON.DETACH) bindDetach(el, group, space, leaves, cleanups);
+  else if (on === ON.VIEW) bindView(el, options.view, group, once, cleanups);
+  else if (on === ON.HOVER) bindHover(el, group, once, options.hover, cleanups);
+  else if (on === ON.SCROLL) bindScroll(el, options.scroll, group, cleanups);
   else if (glide) cleanups.push(watchLayout(el, glide, once, () => void group.forward()));
 }
 

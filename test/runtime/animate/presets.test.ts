@@ -24,10 +24,10 @@ const NAMES_WITHOUT_OUT = [
   "TADA",
 ];
 
-/** The key styles of a preset, without its `default`. */
+/** The key styles of a preset, without its `ease`. */
 const keyStyles = (keyframes: Keyframes) =>
   Object.entries(keyframes)
-    .filter(([key]) => key !== "default")
+    .filter(([key]) => key !== "ease")
     .map(([, style]) => style);
 
 describe("PRESET", () => {

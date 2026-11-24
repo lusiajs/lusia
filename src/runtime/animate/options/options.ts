@@ -7,12 +7,13 @@ import { animateDefault } from "./defaults.ts";
 import { animateConfig } from "./config-store.ts";
 import { readMs } from "./read-ms.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
-import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "../modes/trigger.ts";
-import { readMore, type ReadMore } from "./trigger-options.ts";
+import { ON, isLayoutOn, isOn, type On, type Source } from "../modes/trigger.ts";
+import { readOptions, type ReadOptions } from "./trigger-options.ts";
 import type { SpaceSpec } from "../layout/space/space-closer.ts";
 import { runtimeError } from "../../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 import { readKeyframes } from "./item-style.ts";
+import { rejectOldNames } from "./old-names.ts";
 
 export interface Timing {
   duration: number;
@@ -25,23 +26,22 @@ export interface Timing {
 export interface ItemOptions {
   keyframes: Keyframes;
   timing: Timing;
-  when: When | Source;
+  on: On | Source;
   once: boolean;
   control: Controller | undefined;
-  more: ReadMore;
+  options: ReadOptions;
   /** Set for an ATTACH or DETACH item with `animateSpace`. It slides the siblings into the space. */
   space: SpaceSpec | undefined;
 }
 
 export function readItem(item: AnimateItem): ItemOptions {
   rejectOldNames(item);
-  rejectMovedReverse(item);
   rejectUnknownKeys(item);
-  const when = readWhen(item);
-  rejectLoop(item, when);
+  const on = readOn(item);
+  rejectLoop(item, on);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
-  const more = readMore(when, item.more, { duration });
-  const keyframes = readKeyframes(item, when);
+  const options = readOptions(on, item.options, { duration });
+  const keyframes = readKeyframes(item, on);
   const timing = {
     duration,
     delay: readMs(item.delay, animateConfig().delay ?? 0, "delay"),
@@ -52,39 +52,34 @@ export function readItem(item: AnimateItem): ItemOptions {
   return {
     keyframes,
     timing,
-    space: readSpace(when, more, keyframes, timing),
-    when,
-    once: item.once ?? (when === WHEN.VIEW && !more.reverse),
+    space: readSpace(on, options, keyframes, timing),
+    on,
+    once: item.once ?? (on === ON.VIEW && !options.reverse),
     control: item.control,
-    more,
+    options,
   };
 }
 
 function readSpace(
-  when: When | Source,
-  more: ReadMore,
+  on: On | Source,
+  options: ReadOptions,
   keyframes: Keyframes,
   timing: Timing,
 ): SpaceSpec | undefined {
-  if (!isSpaceWhen(when) || !more.space.animateSpace) return undefined;
+  if (!isSpaceOn(on) || !options.space.animateSpace) return undefined;
   return { duration: timing.duration, delay: timing.delay, keyframes };
 }
 
-function isSpaceWhen(when: When | Source): boolean {
-  return when === WHEN.ATTACH || when === WHEN.DETACH;
+function isSpaceOn(on: On | Source): boolean {
+  return on === ON.ATTACH || on === ON.DETACH;
 }
 
-/** A removed member such as WHEN.IN is undefined, so a `when` key with no value means an old name. */
-function readWhen(item: AnimateItem): When | Source {
-  if ("when" in item && item.when === undefined) throw runtimeError("L2044");
-  const when = item.when ?? WHEN.ATTACH;
-  if (isReactive(when) || isWhen(when)) return when;
-  throw runtimeError(isRenamedWhen(when) ? "L2044" : "L2002");
-}
-
-function isRenamedWhen(value: unknown): boolean {
-  if (typeof value === "symbol") return value.description === "IN" || value.description === "OUT";
-  return value === "IN" || value === "OUT";
+/** A removed member such as ON.IN is undefined, so an `on` key with no value means an old name. */
+function readOn(item: AnimateItem): On | Source {
+  if ("on" in item && item.on === undefined) throw runtimeError("L2044");
+  const on = item.on ?? ON.ATTACH;
+  if (isReactive(on) || isOn(on)) return on;
+  throw runtimeError("L2002");
 }
 
 /** An item keeps its last frame unless `keep: false`. Without its own value it takes the config's. */
@@ -93,19 +88,11 @@ function readKeep(keep: boolean | undefined): boolean {
   return keep !== false;
 }
 
-function rejectOldNames(item: AnimateItem): void {
-  if ("animation" in item) throw runtimeError("L2045");
-  if ("active" in item) throw runtimeError("L2046");
-  if ("ease" in item) throw runtimeError("L2005");
-  if ("curve" in item || "transition" in item) throw runtimeError("L2006");
-  if ("alternate" in item) throw runtimeError("L2007");
-}
-
 /** A scroll-linked item follows the page position, and a glide plays once per change, so neither loops. */
-function rejectLoop(item: AnimateItem, when: When | Source): void {
+function rejectLoop(item: AnimateItem, on: On | Source): void {
   if (!item.loop) return;
-  if (when === WHEN.SCROLL) throw runtimeError("L2009");
-  if (isLayoutWhen(when)) throw runtimeError("L2051");
+  if (on === ON.SCROLL) throw runtimeError("L2009");
+  if (isLayoutOn(on)) throw runtimeError("L2051");
 }
 
 /** Runs after the old names are rejected, so any key left that is not an item key is a typo. */
@@ -115,10 +102,6 @@ function rejectUnknownKeys(item: AnimateItem): void {
       throw runtimeError("L2055", unknownKeyValues(key, ITEM_KEYS, SPELLING_HINT), key);
     }
   }
-}
-
-function rejectMovedReverse(item: AnimateItem): void {
-  if ("reverse" in item) throw runtimeError("L2008");
 }
 
 /** `loop: true` repeats forever; a number repeats that many times. Zero or missing means no loop. */

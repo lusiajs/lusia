@@ -1,7 +1,7 @@
 import { runtimeError } from "../../errors.ts";
 import { animateConfig } from "./config-store.ts";
 
-export interface ViewMore {
+export interface ViewOptions {
   margin?: number | string;
   amount?: number;
   reverse?: boolean;
@@ -33,14 +33,14 @@ export function viewDefault(): ViewDefault {
   };
 }
 
-export function readViewMore(more: ViewMore): { view: ViewSettings; reverse: boolean } {
+export function readViewOptions(options: ViewOptions): { view: ViewSettings; reverse: boolean } {
   const base = viewDefault();
   return {
     view: {
-      rootMargin: readMargin(more.margin ?? base.margin),
-      amount: readAmount(more.amount ?? base.amount),
+      rootMargin: readMargin(options.margin ?? base.margin),
+      amount: readAmount(options.amount ?? base.amount),
     },
-    reverse: readReverse(more.reverse ?? base.reverse),
+    reverse: readReverse(options.reverse ?? base.reverse),
   };
 }
 

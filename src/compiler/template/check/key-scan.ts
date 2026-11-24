@@ -5,8 +5,8 @@ import {
   ITEM_KEYS,
   KEYFRAMES_HINT,
   KEYFRAMES_NAME,
-  MORE_KEYS_BY_WHEN,
   OLD_ITEM_KEYS,
+  OPTION_KEYS_BY_ON,
   SPELLING_HINT,
   unknownKeyValues,
 } from "#runtime/animate/options/keys.ts";
@@ -17,12 +17,12 @@ import type { ScriptRange } from "./script-range.ts";
 export interface UnknownKey {
   offset: number;
   key: string;
-  code: "L2054" | "L2055" | "L2012";
+  code: "L2054" | "L2055" | "L2012" | "L2083";
   values: Values;
 }
 
 const IDENTIFIER = /[A-Za-z_$][\w$]*/y;
-const WHEN_MEMBER = /WHEN\.([A-Za-z_]+)/y;
+const ON_MEMBER = /\bON\.([A-Za-z_]+)/y;
 const MAX_DEPTH = 8;
 
 export class KeyScan {
@@ -70,6 +70,10 @@ export class KeyScan {
   private checkKeyframeEntries(entries: Entry[]): void {
     for (const entry of entries) {
       if (isKeyframesKey(entry.key)) continue;
+      if (entry.key === "default") {
+        this.add(entry, "L2083", {});
+        continue;
+      }
       const values = unknownKeyValues(entry.key, [KEYFRAMES_NAME], KEYFRAMES_HINT);
       this.add(entry, "L2054", values);
     }
@@ -81,18 +85,22 @@ export class KeyScan {
       if (OLD_ITEM_KEYS.includes(entry.key)) continue;
       if (!ITEM_KEYS.includes(entry.key)) {
         this.add(entry, "L2055", unknownKeyValues(entry.key, ITEM_KEYS, SPELLING_HINT));
-      } else if (entry.key === "style" && entry.valueOffset !== undefined) {
+      } else if (entry.key === "play" && entry.valueOffset !== undefined) {
         this.visitKeyframes(entry.valueOffset, depth + 1);
-      } else if (entry.key === "more" && entry.valueOffset !== undefined && trigger !== undefined) {
-        this.checkMore(entry.valueOffset, trigger);
+      } else if (
+        entry.key === "options" &&
+        entry.valueOffset !== undefined &&
+        trigger !== undefined
+      ) {
+        this.checkOptions(entry.valueOffset, trigger);
       }
     }
   }
 
-  private checkMore(start: number, trigger: string): void {
+  private checkOptions(start: number, trigger: string): void {
     const at = skipSpace(this.source, start);
     if (this.source.charAt(at) !== "{") return;
-    const allowed = MORE_KEYS_BY_WHEN[trigger] ?? [];
+    const allowed = OPTION_KEYS_BY_ON[trigger] ?? [];
     for (const entry of objectEntries(this.source, at)) {
       if (!allowed.includes(entry.key)) {
         this.add(entry, "L2012", unknownKeyValues(entry.key, allowed, SPELLING_HINT));
@@ -125,10 +133,10 @@ export class KeyScan {
   }
 }
 
-/** The WHEN member name of the item's `when` value, such as "VIEW". */
+/** The ON member name of the item's `on` value, such as "VIEW". */
 function triggerOf(source: string, entries: Entry[]): string | undefined {
-  const when = entries.find((entry) => entry.key === "when");
-  if (when?.valueOffset === undefined) return undefined;
-  WHEN_MEMBER.lastIndex = when.valueOffset;
-  return WHEN_MEMBER.exec(source)?.[1];
+  const on = entries.find((entry) => entry.key === "on");
+  if (on?.valueOffset === undefined) return undefined;
+  ON_MEMBER.lastIndex = on.valueOffset;
+  return ON_MEMBER.exec(source)?.[1];
 }

@@ -46,11 +46,11 @@ describe("mergeConfig", () => {
 
   test("nested objects merge per inner key", () => {
     const merged = mergeConfig(
-      { animate: { attach: { animateSpace: true }, midway: { play: MIDWAY.SKIP } } },
-      { animate: { attach: { animateSpace: false }, midway: { turnDuration: 90 } } },
+      { animate: { attach: { animateSpace: true }, midway: { mode: MIDWAY.JUMP_TO_END } } },
+      { animate: { attach: { animateSpace: false }, midway: { duration: 90 } } },
     );
     expect(merged.animate?.attach).toEqual({ animateSpace: false });
-    expect(merged.animate?.midway).toEqual({ play: MIDWAY.SKIP, turnDuration: 90 });
+    expect(merged.animate?.midway).toEqual({ mode: MIDWAY.JUMP_TO_END, duration: 90 });
   });
 
   test("lazy merges per key", () => {

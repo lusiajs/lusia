@@ -1,11 +1,11 @@
 import { runtimeError } from "../../errors.ts";
-import { readMidway, MIDWAY_KEYS, type AnimateMidway } from "./midway-options.ts";
+import { readMidway, type AnimateMidway } from "./midway-options.ts";
 import { readMs } from "./read-ms.ts";
-import { WHEN } from "../modes/trigger.ts";
-import { readScroll, type ScrollMore } from "./scroll-options.ts";
-import { readSpace, type SpaceMore } from "./space-options.ts";
+import { ON } from "../modes/trigger.ts";
+import { readScroll, type ScrollOptions } from "./scroll-options.ts";
+import { readSpace, type SpaceOptions } from "./space-options.ts";
 import { SPACE_KEYS, SPELLING_HINT, unknownKeyValues, VIEW_KEYS } from "./keys.ts";
-import { readViewMore, type ViewMore } from "./view-options.ts";
+import { readViewOptions, type ViewOptions } from "./view-options.ts";
 
 const HOVER_CONFIG_KEYS = ["inDelay", "outDelay", "outDuration"];
 const SCROLL_CONFIG_KEYS = ["start", "end", "part"];
@@ -30,15 +30,13 @@ export function readObject(
 // Each section check reuses the reader the items use, so a bad value fails the same way.
 
 export function checkMidway(value: unknown): void {
-  const midway = readObject(value, "midway", MIDWAY_KEYS);
-  if (typeof midway.turn === "function") {
-    throw runtimeError("L2026", { value: String(midway.turn) });
-  }
-  readMidway(midway as AnimateMidway);
+  const mode = (value as AnimateMidway | undefined)?.mode;
+  if (typeof mode === "function") throw runtimeError("L2026");
+  readMidway(value as AnimateMidway);
 }
 
 export function checkView(value: unknown): void {
-  readViewMore(readObject(value, "view", VIEW_KEYS) as ViewMore);
+  readViewOptions(readObject(value, "view", VIEW_KEYS) as ViewOptions);
 }
 
 export function checkHover(value: unknown): void {
@@ -49,13 +47,13 @@ export function checkHover(value: unknown): void {
 }
 
 export function checkScroll(value: unknown): void {
-  readScroll(readObject(value, "scroll", SCROLL_CONFIG_KEYS) as ScrollMore);
+  readScroll(readObject(value, "scroll", SCROLL_CONFIG_KEYS) as ScrollOptions);
 }
 
 export function checkAttach(value: unknown): void {
-  readSpace(readObject(value, "attach", SPACE_KEYS) as SpaceMore, WHEN.ATTACH);
+  readSpace(readObject(value, "attach", SPACE_KEYS) as SpaceOptions, ON.ATTACH);
 }
 
 export function checkDetach(value: unknown): void {
-  readSpace(readObject(value, "detach", SPACE_KEYS) as SpaceMore, WHEN.DETACH);
+  readSpace(readObject(value, "detach", SPACE_KEYS) as SpaceOptions, ON.DETACH);
 }

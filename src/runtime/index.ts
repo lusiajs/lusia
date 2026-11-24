@@ -8,7 +8,13 @@ export { listen } from "./listen/listen.ts";
 export type { EventOf } from "./listen/listen.ts";
 export { keepRunning } from "./listen/keep-running.ts";
 export { EVENT } from "./listen/events.ts";
-export type { LusiaEvent, ClickOutsideEvent, ScrollEvent, SizeEvent, ViewEvent } from "./listen/events.ts";
+export type {
+  LusiaEvent,
+  ClickOutsideEvent,
+  ScrollEvent,
+  SizeEvent,
+  ViewEvent,
+} from "./listen/events.ts";
 export type { ListenOptions, Stop } from "./listen/sources.ts";
 export { props } from "./dom/component/props.ts";
 export type { Prop, PropVariables } from "./dom/component/props.ts";
@@ -17,10 +23,10 @@ export { lazy } from "./dom/lazy/lazy.ts";
 export type { EaseStyle } from "./animate/modes/easing.ts";
 export { EASE } from "./animate/modes/modes.ts";
 export type { Ease } from "./animate/modes/modes.ts";
-export { WHEN } from "./animate/modes/trigger.ts";
-export type { When } from "./animate/modes/trigger.ts";
-export { MIDWAY, TURN } from "./animate/modes/midway-modes.ts";
-export type { MidwayMode, TurnMode } from "./animate/modes/midway-modes.ts";
+export { ON } from "./animate/modes/trigger.ts";
+export type { On } from "./animate/modes/trigger.ts";
+export { MIDWAY } from "./animate/modes/midway-modes.ts";
+export type { MidwayMode } from "./animate/modes/midway-modes.ts";
 export { EDGE } from "./animate/modes/edge.ts";
 export { HOVER_AREA } from "./animate/modes/hover-modes.ts";
 export type { HoverArea } from "./animate/modes/hover-modes.ts";

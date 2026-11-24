@@ -49,7 +49,7 @@ const BLOCK_ATTRIBUTES: ReadonlyMap<string, ReadonlySet<string>> = new Map([
   ["EACH", new Set(["as", "index", "key"])],
   ["FOR", new Set(["from", "to", "step"])],
 ]);
-const ENUM_NAMES = ["EVENT", "WHEN", "SCREEN", "EASE", "EDGE", "PRESET"];
+const ENUM_NAMES = ["EVENT", "ON", "SCREEN", "EASE", "EDGE", "PRESET"];
 const ENUM_ACCESS = new RegExp(`\\b(${ENUM_NAMES.join("|")})((?:\\.[A-Za-z_$][\\w$]*)+)`, "g");
 const TAG = /<(\/?)([A-Za-z][\w.-]*)/g;
 const EVENT_ATTRIBUTE = /^(on:?)([a-z][\w.-]*)$/;

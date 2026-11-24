@@ -57,7 +57,7 @@ async function sampleResize(page: Page): Promise<Sample[]> {
   return await page.evaluate(async () => {
     const panel = document.getElementById("panel")!;
     const child = document.getElementById("child")!;
-    const value = { when: (window as any).lusiaWhen.RESIZE, duration: 400 };
+    const value = { on: (window as any).lusiaOn.RESIZE, duration: 400 };
     const cleanups: Array<() => void> = [];
     (window as any).lusiaAnimate(panel, () => value, cleanups, []);
 
@@ -103,7 +103,7 @@ const CENTERED = `
 async function sampleCentered(page: Page): Promise<CenteredSample[]> {
   return await page.evaluate(async () => {
     const box = document.getElementById("box")!;
-    const value = { when: (window as any).lusiaWhen.MOVE_OR_RESIZE, duration: 300 };
+    const value = { on: (window as any).lusiaOn.MOVE_OR_RESIZE, duration: 300 };
     const cleanups: Array<() => void> = [];
     (window as any).lusiaAnimate(box, () => value, cleanups, []);
 

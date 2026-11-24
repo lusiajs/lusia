@@ -42,7 +42,7 @@ describe("buildDev", () => {
     expect(text).toContain(
       'Greeting.lusia:2:10 - error L3001: "ACTIVE" is not exported by "lusiajs"',
     );
-    expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
+    expect(text).toContain("hint: ACTIVE was renamed to ON.");
     expect(text).toContain("Build failed: 1 error");
   });
 });

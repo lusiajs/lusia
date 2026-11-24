@@ -4,7 +4,7 @@ import type { Animate, AnimateItem } from "#runtime/animate/animation.ts";
 import { PRESET } from "#runtime/animate/options/presets.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 import { HOVER_AREA } from "#runtime/animate/modes/hover-modes.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
 import { advance, onReset, pendingFrames, setReducedMotion, useFakeClock } from "./clock.ts";
@@ -35,9 +35,9 @@ function run(value: Animate) {
 }
 
 /** An item that runs for 100 ms unless the test says otherwise. */
-const timed = (style: Keyframes, extra: Record<string, unknown> = {}): AnimateItem =>
+const timed = (play: Keyframes, extra: Record<string, unknown> = {}): AnimateItem =>
   ({
-    style,
+    play,
     duration: 100,
     ...extra,
   }) as AnimateItem;
@@ -82,9 +82,9 @@ describe("enter on attach", () => {
   });
 });
 
-describe("WHEN.DETACH", () => {
+describe("ON.DETACH", () => {
   test("nothing plays on attach; the item's own keyframes play on detach", async () => {
-    const { leaves, opacity } = run(timed(fade(1, 0), { when: WHEN.DETACH }));
+    const { leaves, opacity } = run(timed(fade(1, 0), { on: ON.DETACH }));
     expect(opacity()).toBe(1);
     advance(100);
     expect(opacity()).toBe(1);
@@ -98,10 +98,7 @@ describe("WHEN.DETACH", () => {
   });
 
   test("an ATTACH and a DETACH item on one element use their own keyframes", async () => {
-    const { el, leaves } = run([
-      timed(fade(0, 1)),
-      timed(width("0px", "10px"), { when: WHEN.DETACH }),
-    ]);
+    const { el, leaves } = run([timed(fade(0, 1)), timed(width("0px", "10px"), { on: ON.DETACH })]);
     advance(100);
     expect(Number(el.style.opacity)).toBe(1);
     expect(el.style.width).toBe("0px");
@@ -114,7 +111,7 @@ describe("WHEN.DETACH", () => {
   test("detach waits for the longest DETACH item", async () => {
     const { leaves } = run([
       timed(fade(1, 0)),
-      timed(fade(1, 0), { duration: 300, when: WHEN.DETACH }),
+      timed(fade(1, 0), { duration: 300, on: ON.DETACH }),
     ]);
     let done = false;
     const leaving = leaves[0]!().then(() => (done = true));
@@ -128,10 +125,7 @@ describe("WHEN.DETACH", () => {
 
 describe("a list of animations", () => {
   test("items with different durations both finish", () => {
-    const { opacity, el } = run([
-      timed(fade(0, 1)),
-      { style: width("0px", "10px"), duration: 300 },
-    ]);
+    const { opacity, el } = run([timed(fade(0, 1)), { play: width("0px", "10px"), duration: 300 }]);
     advance(120);
     expect(opacity()).toBe(1);
     expect(el.style.width).not.toBe("10px");
@@ -160,10 +154,10 @@ describe("a list of animations", () => {
     const { el } = run([
       timed(fade(0, 1)),
       {
-        style: width("0px", "10px"),
-        when: WHEN.HOVER,
+        play: width("0px", "10px"),
+        on: ON.HOVER,
         duration: 100,
-        more: { area: HOVER_AREA.ELEMENT },
+        options: { area: HOVER_AREA.ELEMENT },
       },
     ]);
     advance(100);
@@ -262,7 +256,7 @@ describe("keyframes are read at every play", () => {
     const cleanups: Array<() => void> = [];
     animate(
       el,
-      () => timed(current, { when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } }),
+      () => timed(current, { on: ON.HOVER, options: { area: HOVER_AREA.ELEMENT } }),
       cleanups,
       [],
     );
@@ -301,35 +295,35 @@ describe("first frame", () => {
 });
 
 describe("validation", () => {
-  test("an item without a style is an error", () => {
-    expect(() => run({ duration: 100 } as AnimateItem)).toThrow("animate item needs a style");
+  test("an item without a play is an error", () => {
+    expect(() => run({ duration: 100 } as AnimateItem)).toThrow("animate item needs a play");
   });
 
   test("keyframes without the keys 0 and 1 are an error", () => {
-    expect(() => run({ style: { 0: [LINEAR, IN, {}] } } as AnimateItem)).toThrow(
+    expect(() => run({ play: { 0: [LINEAR, IN, {}] } } as AnimateItem)).toThrow(
       "animate keyframes must include the keys 0 and 1",
     );
   });
 
-  test("an unknown when is an error", () => {
-    expect(() => run({ style: fade(0, 1), when: "view" as never })).toThrow(
-      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a variable",
+  test("an unknown on is an error", () => {
+    expect(() => run({ play: fade(0, 1), on: "view" as never })).toThrow(
+      "animate on must be ON.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a variable",
     );
   });
 
-  test("the old IN and OUT names point to the new ones", () => {
-    expect(() => run({ style: fade(0, 1), when: "IN" as never })).toThrow(
-      "ACTIVE.IN and ACTIVE.OUT were renamed",
+  test("the removed ON.IN name throws L2044", () => {
+    expect(() => run({ play: fade(0, 1), on: undefined } as never)).toThrow(
+      "ON.IN and ON.OUT were renamed to ON.ATTACH and ON.DETACH",
     );
   });
 
-  test("animation is renamed to style", () => {
-    expect(() => run({ animation: fade(0, 1) } as never)).toThrow("animation was renamed to style");
+  test("animation is renamed to play", () => {
+    expect(() => run({ animation: fade(0, 1) } as never)).toThrow("animation was renamed to play");
   });
 
-  test("active is renamed to when", () => {
-    expect(() => run({ style: fade(0, 1), active: WHEN.VIEW } as never)).toThrow(
-      "active was renamed to when",
+  test("active is renamed to on", () => {
+    expect(() => run({ play: fade(0, 1), active: ON.VIEW } as never)).toThrow(
+      "active was renamed to on",
     );
   });
 
@@ -348,9 +342,9 @@ describe("item style and key forms", () => {
     expect(opacity()).toBeCloseTo(0.5, 3);
   });
 
-  test("the keyframes default replaces the engine default for every key", () => {
+  test("the keyframes ease replaces the engine default for every key", () => {
     const { opacity } = run(
-      timed({ default: [EASE.STYLE.QUAD, EASE.IN], 0: { opacity: 0 }, 1: { opacity: 1 } }),
+      timed({ ease: [EASE.STYLE.QUAD, EASE.IN], 0: { opacity: 0 }, 1: { opacity: 1 } }),
     );
     advance(50);
     // IN of QUAD at the middle is 0.25.

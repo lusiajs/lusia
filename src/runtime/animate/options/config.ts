@@ -1,7 +1,5 @@
-import { readDefault, type DefaultEasing } from "./keyform.ts";
-import type { EaseStyle } from "../modes/easing.ts";
-import type { Ease } from "../modes/modes.ts";
-import type { MidwayMode, TurnMode } from "../modes/midway-modes.ts";
+import { readEase, type EaseValue } from "./keyform.ts";
+import type { MidwayChoice } from "./midway-options.ts";
 import type { ScrollPoint } from "../scroll/scroll-touch.ts";
 import type { Part } from "./scroll-options.ts";
 import type { Keyframes } from "./keyframes.ts";
@@ -18,16 +16,14 @@ import {
   checkView,
   readObject,
 } from "./config-sections.ts";
-import type { SpaceMore } from "./space-options.ts";
+import type { SpaceOptions } from "./space-options.ts";
 
 export type PresetName = keyof typeof PRESET;
 
 export interface MidwayConfig {
-  play?: MidwayMode;
-  turn?: TurnMode;
-  turnDuration?: number;
-  turnStyle?: EaseStyle;
-  turnEase?: Ease;
+  mode?: MidwayChoice;
+  duration?: number;
+  ease?: EaseValue;
 }
 
 export interface ViewConfig {
@@ -52,14 +48,14 @@ export interface ScrollConfig {
 export interface AnimateConfig {
   duration?: number;
   delay?: number;
-  ease?: DefaultEasing;
+  ease?: EaseValue;
   keep?: boolean;
   midway?: MidwayConfig;
   view?: ViewConfig;
   hover?: HoverConfig;
   scroll?: ScrollConfig;
-  attach?: SpaceMore;
-  detach?: SpaceMore;
+  attach?: SpaceOptions;
+  detach?: SpaceOptions;
   in?: PresetName | Keyframes;
   out?: PresetName | Keyframes;
 }
@@ -84,7 +80,7 @@ type Check = (value: unknown) => void;
 const CONFIG_CHECKS: ReadonlyMap<string, Check> = new Map<string, Check>([
   ["duration", (value) => void readMs(value as number, 0, "duration")],
   ["delay", (value) => void readMs(value as number, 0, "delay")],
-  ["ease", (value) => void readDefault(value as DefaultEasing)],
+  ["ease", (value) => void readEase(value as EaseValue)],
   ["keep", (value) => checkBoolean("keep", value)],
   ["midway", checkMidway],
   ["view", checkView],
@@ -128,7 +124,5 @@ function isPresetName(value: unknown): boolean {
 }
 
 function isKeyframes(value: unknown): boolean {
-  return (
-    typeof value === "object" && value !== null && 0 in value && 1 in value
-  );
+  return typeof value === "object" && value !== null && 0 in value && 1 in value;
 }

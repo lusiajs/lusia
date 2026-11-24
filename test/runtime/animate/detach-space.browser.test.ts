@@ -41,10 +41,10 @@ async function sampleLeave(
       const after = document.getElementById("after")!;
       const more = moreText === "" ? undefined : JSON.parse(moreText);
       const value = {
-        style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-        when: (window as any).lusiaWhen.DETACH,
+        play: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+        on: (window as any).lusiaOn.DETACH,
         duration: 400,
-        ...(more ? { more } : {}),
+        ...(more ? { options: more } : {}),
       };
       const cleanups: Array<() => void> = [];
       const leaves: Array<() => Promise<void>> = [];
@@ -154,7 +154,7 @@ const GAP_LIST = `
 async function frameSamples(
   page: Page,
   edge: "top" | "left",
-  extra = { more: { animateSpace: true } },
+  extra = { options: { animateSpace: true } },
 ): Promise<number[]> {
   return await page.evaluate(
     async ([extraText, edgeName]) => {
@@ -162,8 +162,8 @@ async function frameSamples(
       const after = document.getElementById("after")!;
       const leaves: Array<() => Promise<void>> = [];
       const value = {
-        style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-        when: (window as any).lusiaWhen.DETACH,
+        play: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+        on: (window as any).lusiaOn.DETACH,
         duration: 400,
         ...JSON.parse(extraText),
       };
@@ -193,7 +193,7 @@ suite("DETACH lifts the element out of flow", () => {
   test("a sibling in a gapped flex column moves every frame with no final jump", async () => {
     const page = await openPage(GAP_LIST);
     try {
-      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
+      const tops = await frameSamples(page, "top", { options: { animateSpace: true } });
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);
@@ -213,7 +213,7 @@ suite("DETACH lifts the element out of flow", () => {
         <div id="after" style="height:40px"></div>
       </div>`);
     try {
-      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
+      const tops = await frameSamples(page, "top", { options: { animateSpace: true } });
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);
@@ -234,10 +234,10 @@ suite("DETACH lifts the element out of flow", () => {
         (window as any).lusiaAnimate(
           gone,
           () => ({
-            style: { 0: { rotate: "0deg" }, 1: { rotate: "180deg" } },
-            when: (window as any).lusiaWhen.DETACH,
+            play: { 0: { rotate: "0deg" }, 1: { rotate: "180deg" } },
+            on: (window as any).lusiaOn.DETACH,
             duration: 400,
-            more: { animateSpace: true },
+            options: { animateSpace: true },
           }),
           [],
           leaves,
@@ -300,10 +300,10 @@ suite("DETACH lifts the element out of flow", () => {
         (window as any).lusiaAnimate(
           gone,
           () => ({
-            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-            when: (window as any).lusiaWhen.DETACH,
+            play: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            on: (window as any).lusiaOn.DETACH,
             duration: 400,
-            more: { animateSpace: true },
+            options: { animateSpace: true },
           }),
           cleanups,
           leaves,
@@ -348,10 +348,10 @@ suite("DETACH lifts the element out of flow", () => {
         (window as any).lusiaAnimate(
           gone,
           () => ({
-            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-            when: (window as any).lusiaWhen.DETACH,
+            play: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            on: (window as any).lusiaOn.DETACH,
             duration: 400,
-            more: { animateSpace: true },
+            options: { animateSpace: true },
           }),
           [],
           leaves,
@@ -381,10 +381,10 @@ suite("DETACH lifts the element out of flow", () => {
         (window as any).lusiaAnimate(
           gone,
           () => ({
-            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-            when: (window as any).lusiaWhen.DETACH,
+            play: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            on: (window as any).lusiaOn.DETACH,
             duration: 400,
-            more: { animateSpace: true },
+            options: { animateSpace: true },
           }),
           [],
           leaves,

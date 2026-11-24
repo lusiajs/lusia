@@ -1,6 +1,7 @@
-import { describe, expect, test } from "bun:test";
-import { readDefault, readKey, type PartialEasing } from "#runtime/animate/options/keyform.ts";
+import { afterEach, describe, expect, test } from "bun:test";
+import { readEase, readKey, type PartialEasing } from "#runtime/animate/options/keyform.ts";
 import { prepareTimeline, type Keyframes } from "#runtime/animate/options/keyframes.ts";
+import { setAnimateConfig } from "#runtime/animate/options/config.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
 import { writeProgress } from "#runtime/animate/play/timeline.ts";
 
@@ -8,21 +9,21 @@ const { QUAD, CUBIC, LINEAR, QUART } = EASE.STYLE;
 const ENGINE = { easeStyle: QUART, ease: EASE.INOUT, duration: 300 };
 const NO_DEFAULT: PartialEasing = {};
 
-/** The opacity written at `progress` for keys 0 and 1, where key 1 is `end` and the keyframes default is `keyframesDefault`. */
+/** The opacity written at `progress` for keys 0 and 1, where key 1 is `end` and the keyframes ease is `keyframesEase`. */
 function opacityAt(
   end: Keyframes[number],
   progress: number,
-  keyframesDefault?: Keyframes["default"],
+  keyframesEase?: Keyframes["ease"],
 ): string {
   const style = document.createElement("div").style;
   const keyframes: Keyframes = { 0: { opacity: 0 }, 1: end };
-  if (keyframesDefault) keyframes.default = keyframesDefault;
+  if (keyframesEase) keyframes.ease = keyframesEase;
   writeProgress(style, prepareTimeline(keyframes), progress);
   return style.opacity;
 }
 
-describe("precedence per part: key, then keyframes default, then engine default", () => {
-  test("a bare style with no default uses the engine default style and ease (QUART + INOUT)", () => {
+describe("precedence per part: key, then keyframes ease, then engine default", () => {
+  test("a bare style with no ease uses the engine default style and ease (QUART + INOUT)", () => {
     // INOUT of QUART at the middle is 0.5
     expect(readKey({ opacity: 1 }, NO_DEFAULT, ENGINE)).toEqual([
       QUART,
@@ -32,7 +33,7 @@ describe("precedence per part: key, then keyframes default, then engine default"
     expect(opacityAt({ opacity: 1 }, 0.5)).toBe("0.5");
   });
 
-  test("a bare style takes both parts from the keyframes default", () => {
+  test("a bare style takes both parts from the keyframes ease", () => {
     // IN of QUAD at the middle is 0.25
     expect(readKey({ opacity: 1 }, { easeStyle: QUAD, ease: EASE.IN }, ENGINE)).toEqual([
       QUAD,
@@ -62,7 +63,7 @@ describe("precedence per part: key, then keyframes default, then engine default"
     ).toEqual([LINEAR, EASE.IN, { opacity: 1 }]);
   });
 
-  test("a default that sets only the style leaves the ease to the engine", () => {
+  test("an ease that sets only the style leaves the ease to the engine", () => {
     expect(readKey({ opacity: 1 }, { easeStyle: CUBIC }, ENGINE)).toEqual([
       CUBIC,
       EASE.INOUT,
@@ -70,34 +71,55 @@ describe("precedence per part: key, then keyframes default, then engine default"
     ]);
   });
 
-  test("a custom function works as a style in the default and in a key", () => {
+  test("a custom function works as a style in the ease and in a key", () => {
     const wave = (t: number) => t * t * 0.5;
     expect(readKey({ opacity: 1 }, { easeStyle: wave }, ENGINE)[0]).toBe(wave);
     expect(readKey([wave, { opacity: 1 }], NO_DEFAULT, ENGINE)[0]).toBe(wave);
   });
 });
 
-describe("readDefault", () => {
+describe("ease precedence: key, keyframes ease, config animate.ease, built-in", () => {
+  afterEach(() => setAnimateConfig({}));
+
+  test("the built-in QUART + INOUT applies when nothing else sets the ease", () => {
+    expect(opacityAt({ opacity: 1 }, 0.5)).toBe("0.5");
+  });
+
+  test("config animate.ease beats the built-in", () => {
+    setAnimateConfig({ ease: [QUAD, EASE.IN] });
+    expect(opacityAt({ opacity: 1 }, 0.5)).toBe("0.25");
+  });
+
+  test("keyframes ease beats config animate.ease", () => {
+    setAnimateConfig({ ease: [CUBIC, EASE.IN] });
+    expect(opacityAt({ opacity: 1 }, 0.5, [QUAD, EASE.IN])).toBe("0.25");
+  });
+
+  test("the key's own ease beats keyframes ease", () => {
+    // QUAD with the key's IN is 0.25; the keyframes OUT would be 0.75
+    expect(opacityAt([EASE.IN, { opacity: 1 }], 0.5, [QUAD, EASE.OUT])).toBe("0.25");
+  });
+});
+
+describe("readEase", () => {
   test("accepts [style, ease], [style] and [ease]", () => {
-    expect(readDefault([QUAD, EASE.IN])).toEqual({ easeStyle: QUAD, ease: EASE.IN });
-    expect(readDefault([QUAD])).toEqual({ easeStyle: QUAD });
-    expect(readDefault([EASE.OUT])).toEqual({ ease: EASE.OUT });
-    expect(readDefault(undefined)).toEqual({});
+    expect(readEase([QUAD, EASE.IN])).toEqual({ easeStyle: QUAD, ease: EASE.IN });
+    expect(readEase([QUAD])).toEqual({ easeStyle: QUAD });
+    expect(readEase([EASE.OUT])).toEqual({ ease: EASE.OUT });
+    expect(readEase(undefined)).toEqual({});
   });
 
   test("rejects an empty list, a long list and a wrong order", () => {
-    expect(() => readDefault([] as never)).toThrow("animate default must be");
-    expect(() => readDefault([QUAD, EASE.IN, EASE.OUT] as never)).toThrow(
-      "animate default must be",
-    );
-    expect(() => readDefault([EASE.IN, EASE.OUT] as never)).toThrow("animate default must be");
-    expect(() => readDefault([QUAD, QUAD] as never)).toThrow(
+    expect(() => readEase([] as never)).toThrow("animate ease must be");
+    expect(() => readEase([QUAD, EASE.IN, EASE.OUT] as never)).toThrow("animate ease must be");
+    expect(() => readEase([EASE.IN, EASE.OUT] as never)).toThrow("animate ease must be");
+    expect(() => readEase([QUAD, QUAD] as never)).toThrow(
       "animate ease must be EASE.IN, EASE.OUT or EASE.INOUT",
     );
   });
 
   test("rejects a value that is neither a style nor an ease", () => {
-    expect(() => readDefault(["quart" as never])).toThrow(
+    expect(() => readEase(["quart" as never])).toThrow(
       "animate easing style must be a function of t",
     );
   });

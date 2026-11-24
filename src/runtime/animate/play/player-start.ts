@@ -63,7 +63,7 @@ export function startQueued(state: PlayState, endedAt: number): void {
   void done.then(() => resolveWaiters(queued));
 }
 
-/** Starts the turn for a switch. STOP holds the new play until the element has come to rest. */
+/** Starts the turn for a switch. SWITCH_STOP holds the new play until the element has come to rest. */
 function turnFrom(state: PlayState, from: number, speed: number): void {
   state.turn = startTurn(state.timing.midway, from, speed);
   if (state.turn?.kind !== "stop") return;

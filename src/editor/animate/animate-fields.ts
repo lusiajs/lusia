@@ -7,18 +7,18 @@ const ANIMATE_OPEN = "animate={";
 
 const FIELD_ITEMS: CompletionItemData[] = [
   {
-    label: "style",
+    label: "play",
     kind: "property",
-    insertText: "style: $1",
+    insertText: "play: $1",
     snippet: true,
     detail: "Keyframes to play",
   },
   {
-    label: "when",
+    label: "on",
     kind: "property",
-    insertText: "when: $1",
+    insertText: "on: $1",
     snippet: true,
-    detail: "Trigger: WHEN member or a variable (default WHEN.ATTACH)",
+    detail: "Trigger: ON member or a variable (default ON.ATTACH)",
   },
   {
     label: "control",
@@ -35,9 +35,9 @@ const FIELD_ITEMS: CompletionItemData[] = [
     detail: "Play forward only once",
   },
   {
-    label: "more",
+    label: "options",
     kind: "property",
-    insertText: "more: { $1 }",
+    insertText: "options: { $1 }",
     snippet: true,
     detail:
       "Trigger options: VIEW margin, amount, reverse; HOVER inDelay, outDelay, out, outDuration, area; SCROLL start, end, follow, part; DETACH and ATTACH animateSpace",
@@ -45,10 +45,9 @@ const FIELD_ITEMS: CompletionItemData[] = [
   {
     label: "midway",
     kind: "property",
-    insertText: "midway: $1",
+    insertText: "midway: { $1 }",
     snippet: true,
-    detail:
-      "What a new play does while one runs: MIDWAY member, or { play, turn, turnDuration, turnStyle, turnEase }",
+    detail: "What a new play does while one runs: { mode, duration, ease }",
   },
   {
     label: "keep",
@@ -95,8 +94,8 @@ const ANIMATE_SPACE_FIELD: CompletionItemData = {
   detail: "Siblings slide into the space taken or freed, instead of jumping. Default false",
 };
 
-/** The keys of `more` for each trigger. Each trigger takes only its own. */
-const MORE_FIELDS: Record<string, CompletionItemData[]> = {
+/** The keys of `options` for each trigger. Each trigger takes only its own. */
+const OPTION_FIELDS: Record<string, CompletionItemData[]> = {
   VIEW: [
     {
       label: "margin",
@@ -154,7 +153,8 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
       kind: "property",
       insertText: "area: $1",
       snippet: true,
-      detail: "Where the hover is checked: HOVER_AREA.FINAL (resting box, default) or HOVER_AREA.ELEMENT",
+      detail:
+        "Where the hover is checked: HOVER_AREA.FINAL (resting box, default) or HOVER_AREA.ELEMENT",
     },
   ],
   DETACH: [ANIMATE_SPACE_FIELD],
@@ -196,39 +196,27 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
 
 const MIDWAY_FIELDS: CompletionItemData[] = [
   {
-    label: "play",
+    label: "mode",
     kind: "property",
-    insertText: "play: $1",
+    insertText: "mode: $1",
     snippet: true,
-    detail: "MIDWAY member: what a new play does while one runs (default MIDWAY.TURN)",
+    detail:
+      "MIDWAY member or a function: what a new play does while one runs (default MIDWAY.SWITCH)",
   },
   {
-    label: "turn",
+    label: "duration",
     kind: "property",
-    insertText: "turn: $1",
-    snippet: true,
-    detail: "TURN member or a function: how the motion changes direction (default TURN.SUDDEN)",
-  },
-  {
-    label: "turnDuration",
-    kind: "property",
-    insertText: "turnDuration: $1",
+    insertText: "duration: $1",
     snippet: true,
     detail: "Length of the change in ms (default 200)",
   },
   {
-    label: "turnStyle",
+    label: "ease",
     kind: "property",
-    insertText: "turnStyle: $1",
+    insertText: "ease: [$1]",
     snippet: true,
-    detail: "EASE.STYLE member for the blend (default EASE.STYLE.CUBIC)",
-  },
-  {
-    label: "turnEase",
-    kind: "property",
-    insertText: "turnEase: $1",
-    snippet: true,
-    detail: "EASE member for the blend (default EASE.INOUT)",
+    detail:
+      "Easing of the change: [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y] (default [EASE.STYLE.CUBIC, EASE.INOUT])",
   },
 ];
 
@@ -244,9 +232,9 @@ const CSS_NAMES: ReadonlySet<string> = new Set(CSS_PROPERTIES);
 
 const KEYFRAMES_FIELDS: CompletionItemData[] = [
   {
-    label: "default",
+    label: "ease",
     kind: "property",
-    insertText: "default: [$1]",
+    insertText: "ease: [$1]",
     snippet: true,
     detail:
       "Easing for keys that do not set their own: [EASE.STYLE.x, EASE.y], [EASE.STYLE.x] or [EASE.y]",
@@ -258,12 +246,11 @@ export function animateFieldsAt(text: string, offset: number): ScriptItem[] | un
   const open = animateExpressionOpen(text, offset);
   if (open === -1) return undefined;
   const typed = text.slice(open, offset);
-  if (WHEN_VALUE.test(typed)) return enumNameItem("WHEN");
+  if (ON_VALUE.test(typed)) return enumNameItem("ON");
   if (MIDWAY_VALUE.test(typed)) return enumNameItem("MIDWAY");
-  if (TURN_VALUE.test(typed)) return enumNameItem("TURN");
-  if (isObjectKeyPosition(typed, MORE_OPEN)) return moreFieldsFor(typed);
+  if (isObjectKeyPosition(typed, OPTIONS_OPEN)) return optionFieldsFor(typed);
   if (isObjectKeyPosition(typed, MIDWAY_OPEN)) return MIDWAY_FIELDS;
-  if (isObjectKeyPosition(typed, STYLE_OPEN)) return KEYFRAMES_FIELDS;
+  if (isObjectKeyPosition(typed, PLAY_OPEN)) return KEYFRAMES_FIELDS;
   if (isCssKeyPosition(typed)) return CSS_FIELDS;
   return isItemKeyPosition(typed) ? FIELD_ITEMS : undefined;
 }
@@ -296,16 +283,15 @@ function isCssKeyPosition(typed: string): boolean {
   return CSS_OPEN.test(before) && KEY_POSITION.test(typed);
 }
 
-const WHEN_VALUE = /\bwhen\s*:\s*[\w$]*$/;
+const ON_VALUE = /\bon\s*:\s*[\w$]*$/;
 const MIDWAY_VALUE = /\bmidway\s*:\s*[\w$]*$/;
-const TURN_VALUE = /\bturn\s*:\s*[\w$]*$/;
-const MORE_OPEN = /\bmore\s*:\s*$/;
+const OPTIONS_OPEN = /\boptions\s*:\s*$/;
 const MIDWAY_OPEN = /\bmidway\s*:\s*$/;
-const STYLE_OPEN = /\bstyle\s*:\s*$/;
+const PLAY_OPEN = /\bplay\s*:\s*$/;
 const KEY_POSITION = /[{,]\s*[\w$]*$/;
-const WHEN_NAMES = /\bwhen\s*:\s*WHEN\.([A-Z_]+)/g;
+const ON_NAMES = /\bon\s*:\s*ON\.([A-Z_]+)/g;
 
-/** True at a key of an object that follows `opener`, such as `more: {...}`. */
+/** True at a key of an object that follows `opener`, such as `options: {...}`. */
 function isObjectKeyPosition(typed: string, opener: RegExp): boolean {
   const stack = openersOf(typed);
   if (stack[stack.length - 1] !== "{") return false;
@@ -313,11 +299,11 @@ function isObjectKeyPosition(typed: string, opener: RegExp): boolean {
   return opener.test(before) && KEY_POSITION.test(typed);
 }
 
-/** The `more` keys for the last `when: WHEN.X` before the cursor. Undefined when no trigger is set yet. */
-function moreFieldsFor(typed: string): CompletionItemData[] | undefined {
-  const names = [...typed.matchAll(WHEN_NAMES)];
+/** The `options` keys for the last `on: ON.X` before the cursor. Undefined when no trigger is set yet. */
+function optionFieldsFor(typed: string): CompletionItemData[] | undefined {
+  const names = [...typed.matchAll(ON_NAMES)];
   const trigger = names[names.length - 1]?.[1];
-  return trigger === undefined ? undefined : MORE_FIELDS[trigger];
+  return trigger === undefined ? undefined : OPTION_FIELDS[trigger];
 }
 
 function animateExpressionOpen(text: string, offset: number): number {

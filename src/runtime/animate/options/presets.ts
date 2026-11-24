@@ -6,11 +6,11 @@ import type { Keyframes, Style } from "./keyframes.ts";
 const RESTED: Style = { translate: "0px 0px", opacity: 1 };
 
 function inPreset(from: Style, to: Style): Keyframes {
-  return { default: [EASE.STYLE.CUBIC, EASE.OUT], 0: from, 1: to };
+  return { ease: [EASE.STYLE.CUBIC, EASE.OUT], 0: from, 1: to };
 }
 
 function outPreset(from: Style, to: Style): Keyframes {
-  return { default: [EASE.STYLE.CUBIC, EASE.IN], 0: from, 1: to };
+  return { ease: [EASE.STYLE.CUBIC, EASE.IN], 0: from, 1: to };
 }
 
 function slide(start: string): Keyframes {
@@ -35,10 +35,13 @@ const FLIP_IN = inPreset({ rotate: "y -90deg", opacity: 0 }, { rotate: "y 0deg",
 const FLIP_OUT = outPreset({ rotate: "y 0deg", opacity: 1 }, { rotate: "y 90deg", opacity: 0 });
 
 const BLUR_IN = inPreset({ filter: "blur(8px)", opacity: 0 }, { filter: "blur(0px)", opacity: 1 });
-const BLUR_OUT = outPreset({ filter: "blur(0px)", opacity: 1 }, { filter: "blur(8px)", opacity: 0 });
+const BLUR_OUT = outPreset(
+  { filter: "blur(0px)", opacity: 1 },
+  { filter: "blur(8px)", opacity: 0 },
+);
 
 const DROP_IN: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { translate: "0px -40px", opacity: 0 },
   0.6: { translate: "0px 6px", opacity: 1 },
   0.8: { translate: "0px -2px" },
@@ -46,7 +49,7 @@ const DROP_IN: Keyframes = {
 };
 
 const BOUNCE_IN: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { scale: "0.3", opacity: 0 },
   0.5: { scale: "1.1", opacity: 1 },
   0.75: { scale: "0.95" },
@@ -54,7 +57,7 @@ const BOUNCE_IN: Keyframes = {
 };
 
 const SHAKE: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { translate: "0px 0px" },
   0.2: { translate: "-10px 0px" },
   0.4: { translate: "10px 0px" },
@@ -64,20 +67,20 @@ const SHAKE: Keyframes = {
 };
 
 const PULSE: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { scale: "1" },
   0.5: { scale: "1.1" },
   1: { scale: "1" },
 };
 
 const SPIN: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { rotate: "0deg" },
   1: { rotate: "360deg" },
 };
 
 const WOBBLE: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { rotate: "0deg" },
   0.15: { rotate: "-5deg" },
   0.3: { rotate: "3deg" },
@@ -88,7 +91,7 @@ const WOBBLE: Keyframes = {
 };
 
 const HEARTBEAT: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { scale: "1" },
   0.14: { scale: "1.2" },
   0.28: { scale: "1" },
@@ -98,7 +101,7 @@ const HEARTBEAT: Keyframes = {
 };
 
 const TADA: Keyframes = {
-  default: [EASE.STYLE.CUBIC, EASE.OUT],
+  ease: [EASE.STYLE.CUBIC, EASE.OUT],
   0: { scale: "1", rotate: "0deg" },
   0.1: { scale: "0.9", rotate: "-3deg" },
   0.3: { scale: "1.1", rotate: "3deg" },

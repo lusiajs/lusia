@@ -16,7 +16,7 @@ const APP_SOURCE = `<script>
 const label = "app";
 </script>
 
-<p animate={{ style: { 0: { opacity: 0 }, 1: { opacity: 1 } } }}>{label}</p>
+<p animate={{ play: { 0: { opacity: 0 }, 1: { opacity: 1 } } }}>{label}</p>
 `;
 
 const GOOD_CONFIG = `import { defineConfig } from "${DEFINE_CONFIG}";

@@ -1,6 +1,6 @@
 <script>
-import { EASE, WHEN } from "lusiajs";
+import { EASE, ON } from "lusiajs";
 const enter = { 0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }], 1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }] };
 const leave = { 0: [EASE.STYLE.LINEAR, EASE.IN, { transform: "translateX(0px)" }], 1: [EASE.STYLE.LINEAR, EASE.IN, { transform: "translateX(10px)" }] };
 </script>
-<p class="box" animate={[{ style: enter, duration: 100 }, { style: leave, when: WHEN.DETACH, duration: 100 }]}>Hi</p>
+<p class="box" animate={[{ play: enter, duration: 100 }, { play: leave, on: ON.DETACH, duration: 100 }]}>Hi</p>

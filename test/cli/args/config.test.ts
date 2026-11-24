@@ -55,10 +55,10 @@ describe("readConfig", () => {
 
   test("a JSON file with animate names loads the values", async () => {
     const config = await readConfig(
-      appWith(JSON.stringify({ animate: { duration: 500, midway: { turn: "SMOOTH" } } })),
+      appWith(JSON.stringify({ animate: { duration: 500, midway: { mode: "WAIT" } } })),
     );
     expect(config.animate).toEqual(
-      animateConfigFromNames({ duration: 500, midway: { turn: "SMOOTH" } }),
+      animateConfigFromNames({ duration: 500, midway: { mode: "WAIT" } }),
     );
   });
 

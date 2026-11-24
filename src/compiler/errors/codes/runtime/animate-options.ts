@@ -6,24 +6,24 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
     hint: "Keep the number of animate items fixed. Only their values can change.",
   },
   L2044: {
-    message: "ACTIVE.IN and ACTIVE.OUT were renamed to ACTIVE.ATTACH and ACTIVE.DETACH",
+    message: "ON.IN and ON.OUT were renamed to ON.ATTACH and ON.DETACH",
     hint: "Replace IN with ATTACH and OUT with DETACH.",
   },
   L2045: {
-    message: "animation was renamed to style",
-    hint: "Write style: keyframes instead of animation: keyframes.",
+    message: "animation was renamed to play",
+    hint: "Write play: keyframes instead of animation: keyframes.",
   },
   L2046: {
-    message: "active was renamed to when",
-    hint: "Write when: instead of active:.",
+    message: "active was renamed to on",
+    hint: "Write on: instead of active:.",
   },
   L2051: {
-    message: "loop does not work with WHEN.MOVE, RESIZE or MOVE_OR_RESIZE",
+    message: "loop does not work with ON.MOVE, RESIZE or MOVE_OR_RESIZE",
     hint: "Remove loop. A glide plays once for each change.",
   },
   L2052: {
-    message: "$name is set by the glide and cannot be in style",
-    hint: "Remove $name from style. Use transform for other moves.",
+    message: "$name is set by the glide and cannot be in play",
+    hint: "Remove $name from play. Use transform for other moves.",
   },
   L2065: {
     message: "animate $name must be an object, got $value",
@@ -35,7 +35,7 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
   },
   L2067: {
     message: "animate $name has an unknown name $value",
-    hint: "Check the spelling. Use a member name such as CUBIC, INOUT, TURN or ENTER.",
+    hint: "Check the spelling. Use a member name such as CUBIC, INOUT or WAIT.",
   },
   L2068: {
     message: "animate $name must be a preset name or a keyframes object, got $value",
@@ -44,5 +44,25 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
   L2069: {
     message: "animate $name must be true or false, got $value",
     hint: "Use true or false.",
+  },
+  L2081: {
+    message: "midway is an object now. Write midway: { mode: MIDWAY.X }.",
+    hint: "Put the MIDWAY member in mode, such as midway: { mode: MIDWAY.WAIT }.",
+  },
+  L2082: {
+    message: "midway $key was renamed to $to",
+    hint: "Write midway: { $to: ... } instead.",
+  },
+  L2084: {
+    message: "style was renamed to play",
+    hint: "Write play: keyframes instead of style: keyframes.",
+  },
+  L2085: {
+    message: "when was renamed to on",
+    hint: "Write on: instead of when:.",
+  },
+  L2086: {
+    message: "more was renamed to options",
+    hint: "Write options: { ... } instead of more: { ... }.",
   },
 } as const satisfies Record<string, ErrorCode>;

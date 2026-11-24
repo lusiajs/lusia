@@ -2,10 +2,10 @@ import { closestName } from "./closest.ts";
 import type { Values } from "../../../compiler/errors/create.ts";
 
 export const ITEM_KEYS: readonly string[] = [
-  "style",
-  "when",
+  "play",
+  "on",
   "once",
-  "more",
+  "options",
   "midway",
   "keep",
   "control",
@@ -19,7 +19,9 @@ export const ITEM_KEYS: readonly string[] = [
 export const OLD_ITEM_KEYS: readonly string[] = [
   "animation",
   "active",
-  "ease",
+  "style",
+  "when",
+  "more",
   "curve",
   "transition",
   "reverse",
@@ -27,9 +29,9 @@ export const OLD_ITEM_KEYS: readonly string[] = [
 ];
 
 /** The one word key of keyframes. The other keys are numbers from 0 to 1. */
-export const KEYFRAMES_NAME = "default";
+export const KEYFRAMES_NAME = "ease";
 
-export const KEYFRAMES_HINT = "Use a number from 0 to 1, or 'default'.";
+export const KEYFRAMES_HINT = "Use a number from 0 to 1, or 'ease'.";
 export const SPELLING_HINT = "Check the spelling of the key.";
 
 export const VIEW_KEYS: readonly string[] = ["margin", "amount", "reverse"];
@@ -37,7 +39,7 @@ export const HOVER_KEYS: readonly string[] = ["area", "inDelay", "outDelay", "ou
 export const SCROLL_KEYS: readonly string[] = ["start", "end", "follow", "part"];
 export const SPACE_KEYS: readonly string[] = ["animateSpace"];
 
-export const MORE_KEYS_BY_WHEN: Readonly<Record<string, readonly string[]>> = {
+export const OPTION_KEYS_BY_ON: Readonly<Record<string, readonly string[]>> = {
   VIEW: VIEW_KEYS,
   HOVER: HOVER_KEYS,
   SCROLL: SCROLL_KEYS,

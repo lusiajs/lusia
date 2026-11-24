@@ -25,8 +25,8 @@ export function markupHover(
 }
 
 function animateMoreHover(text: string, offset: number): HoverResult | undefined {
-  if (wordAt(text, offset) !== "more" || !isInAnimate(text, offset)) return undefined;
-  return apiResult("animate-more");
+  if (wordAt(text, offset) !== "options" || !isInAnimate(text, offset)) return undefined;
+  return apiResult("animate-options");
 }
 
 const FLOW_TAG_IDS: Record<string, string> = {

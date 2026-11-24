@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { readItem } from "#runtime/animate/options/options.ts";
-import { readMore } from "#runtime/animate/options/trigger-options.ts";
+import { readOptions } from "#runtime/animate/options/trigger-options.ts";
 import { readScroll } from "#runtime/animate/options/scroll-options.ts";
+import type { AnimateMidway } from "#runtime/animate/options/midway-options.ts";
 import { readAnimateConfig, setAnimateConfig } from "#runtime/animate/options/config.ts";
 import { animateDefault } from "#runtime/animate/options/defaults.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { MIDWAY, TURN } from "#runtime/animate/modes/midway-modes.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { MIDWAY } from "#runtime/animate/modes/midway-modes.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 
 const fade = { 0: { opacity: 0 }, 1: { opacity: 1 } };
 const base = { duration: 300 };
@@ -27,14 +28,14 @@ function thrown(read: () => unknown): { code?: string; message: string; hint?: s
 describe("config sets the defaults", () => {
   test("duration and delay", () => {
     setAnimateConfig({ duration: 500, delay: 40 });
-    const timing = readItem({ style: fade }).timing;
+    const timing = readItem({ play: fade }).timing;
     expect(timing.duration).toBe(500);
     expect(timing.delay).toBe(40);
   });
 
   test("keep", () => {
     setAnimateConfig({ keep: false });
-    expect(readItem({ style: fade }).timing.keep).toBe(false);
+    expect(readItem({ play: fade }).timing.keep).toBe(false);
   });
 
   test("ease, in parts", () => {
@@ -45,17 +46,20 @@ describe("config sets the defaults", () => {
 
   test("view amount and margin", () => {
     setAnimateConfig({ view: { amount: 0.5, margin: 80 } });
-    expect(readMore(WHEN.VIEW, undefined, base).view).toEqual({ rootMargin: "-80px", amount: 0.5 });
+    expect(readOptions(ON.VIEW, undefined, base).view).toEqual({
+      rootMargin: "-80px",
+      amount: 0.5,
+    });
   });
 
   test("view reverse", () => {
     setAnimateConfig({ view: { reverse: true } });
-    expect(readMore(WHEN.VIEW, undefined, base).reverse).toBe(true);
+    expect(readOptions(ON.VIEW, undefined, base).reverse).toBe(true);
   });
 
   test("hover delays and outDuration", () => {
     setAnimateConfig({ hover: { inDelay: 10, outDelay: 20, outDuration: 90 } });
-    const hover = readMore(WHEN.HOVER, undefined, base).hover;
+    const hover = readOptions(ON.HOVER, undefined, base).hover;
     expect(hover.inDelay).toBe(10);
     expect(hover.outDelay).toBe(20);
     expect(hover.out).toBeUndefined();
@@ -64,8 +68,8 @@ describe("config sets the defaults", () => {
   test("hover outDuration applies to an out play, and the item's outDuration wins", () => {
     setAnimateConfig({ hover: { outDuration: 90 } });
     const out = { 0: { opacity: 1 }, 1: { opacity: 0 } };
-    expect(readMore(WHEN.HOVER, { out }, base).hover.out?.duration).toBe(90);
-    expect(readMore(WHEN.HOVER, { out, outDuration: 50 }, base).hover.out?.duration).toBe(50);
+    expect(readOptions(ON.HOVER, { out }, base).hover.out?.duration).toBe(90);
+    expect(readOptions(ON.HOVER, { out, outDuration: 50 }, base).hover.out?.duration).toBe(50);
   });
 
   test("scroll start, end and part", () => {
@@ -78,57 +82,60 @@ describe("config sets the defaults", () => {
   });
 
   test("attach default animateSpace is false", () => {
-    expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeUndefined();
+    expect(readItem({ play: fade, on: ON.ATTACH }).space).toBeUndefined();
   });
 
   test("detach default animateSpace is false", () => {
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+    expect(readItem({ play: fade, on: ON.DETACH }).space).toBeUndefined();
   });
 
   test("attach animateSpace true turns attach space on", () => {
     setAnimateConfig({ attach: { animateSpace: true } });
-    expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeDefined();
+    expect(readItem({ play: fade, on: ON.ATTACH }).space).toBeDefined();
   });
 
   test("detach animateSpace true turns detach space on", () => {
     setAnimateConfig({ detach: { animateSpace: true } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+    expect(readItem({ play: fade, on: ON.DETACH }).space).toBeDefined();
   });
 
   test("attach config does not change detach", () => {
     setAnimateConfig({ attach: { animateSpace: true } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+    expect(readItem({ play: fade, on: ON.DETACH }).space).toBeUndefined();
     setAnimateConfig({ attach: { animateSpace: false }, detach: { animateSpace: true } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+    expect(readItem({ play: fade, on: ON.DETACH }).space).toBeDefined();
     setAnimateConfig({ attach: { animateSpace: true } });
-    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+    expect(readItem({ play: fade, on: ON.DETACH }).space).toBeUndefined();
   });
 
-  test("item more animateSpace overrides the attach config", () => {
+  test("item options animateSpace overrides the attach config", () => {
     setAnimateConfig({ attach: { animateSpace: false } });
-    const attach = (more: unknown) => ({ style: fade, when: WHEN.ATTACH, more }) as never;
+    const attach = (options: unknown) => ({ play: fade, on: ON.ATTACH, options }) as never;
     expect(readItem(attach({ animateSpace: true })).space).toBeDefined();
     setAnimateConfig({ attach: { animateSpace: true } });
     expect(readItem(attach({ animateSpace: false })).space).toBeUndefined();
   });
 
-  test("midway play and turn", () => {
-    setAnimateConfig({ midway: { play: MIDWAY.FINISH, turn: TURN.SMOOTH } });
-    const midway = readItem({ style: fade }).timing.midway;
-    expect(midway.play).toBe(MIDWAY.FINISH);
-    expect(midway.turn).toBe(TURN.SMOOTH);
+  test("midway mode, duration and ease", () => {
+    setAnimateConfig({ midway: { mode: MIDWAY.WAIT, duration: 120, ease: [EASE.STYLE.QUAD] } });
+    const midway = readItem({ play: fade }).timing.midway;
+    expect(midway.mode).toBe(MIDWAY.WAIT);
+    expect(midway.duration).toBe(120);
+    expect(midway.easeStyle).toBe(EASE.STYLE.QUAD);
+    expect(midway.ease).toBe(EASE.INOUT);
   });
 });
 
 describe("precedence", () => {
   test("an item value beats the config", () => {
     setAnimateConfig({ duration: 500 });
-    expect(readItem({ style: fade, duration: 200 }).timing.duration).toBe(200);
+    expect(readItem({ play: fade, duration: 200 }).timing.duration).toBe(200);
   });
 
   test("an item midway beats the config midway", () => {
-    setAnimateConfig({ midway: { play: MIDWAY.FINISH } });
-    expect(readItem({ style: fade, midway: MIDWAY.SKIP }).timing.midway.play).toBe(MIDWAY.SKIP);
+    setAnimateConfig({ midway: { mode: MIDWAY.WAIT } });
+    const midway: AnimateMidway = { mode: MIDWAY.JUMP_TO_END };
+    expect(readItem({ play: fade, midway }).timing.midway.mode).toBe(MIDWAY.JUMP_TO_END);
   });
 
   test("animateDefault reads the config over the library default", () => {
@@ -141,7 +148,7 @@ describe("precedence", () => {
   test("setAnimateConfig again with the same value changes nothing", () => {
     setAnimateConfig({ duration: 500 });
     setAnimateConfig({ duration: 500 });
-    expect(readItem({ style: fade }).timing.duration).toBe(500);
+    expect(readItem({ play: fade }).timing.duration).toBe(500);
   });
 });
 
@@ -180,8 +187,18 @@ describe("config validation", () => {
     expect(error.message).toBe("animate keep must be true or false, got yes");
   });
 
-  test("a midway turn function is not allowed in config", () => {
-    expect(thrown(() => readAnimateConfig({ midway: { turn: () => 0 } })).code).toBe("L2026");
+  test("a midway mode function is not allowed in config", () => {
+    expect(thrown(() => readAnimateConfig({ midway: { mode: () => 0 } })).code).toBe("L2026");
+  });
+
+  test("a midway member as the whole midway fails in config", () => {
+    expect(thrown(() => readAnimateConfig({ midway: MIDWAY.WAIT })).code).toBe("L2081");
+  });
+
+  test("an old midway key fails in config with the new name", () => {
+    expect(thrown(() => readAnimateConfig({ midway: { play: MIDWAY.WAIT } })).message).toBe(
+      "midway play was renamed to mode",
+    );
   });
 
   test("a bad view amount fails at config time", () => {
@@ -196,9 +213,7 @@ describe("config validation", () => {
 
   test("a start equal to the end fails at config time", () => {
     expect(
-      thrown(() =>
-        readAnimateConfig({ scroll: { start: [0.5, 0.5], end: [0.5, 0.5] } }),
-      ).code,
+      thrown(() => readAnimateConfig({ scroll: { start: [0.5, 0.5], end: [0.5, 0.5] } })).code,
     ).toBe("L2018");
   });
 

@@ -1,11 +1,11 @@
 import { runtimeError } from "../../errors.ts";
-import { WHEN, isWhen, type When, type Source } from "../modes/trigger.ts";
-import { readSpace, type SpaceMore, type SpaceRead } from "./space-options.ts";
+import { ON, isOn, type On, type Source } from "../modes/trigger.ts";
+import { readSpace, type SpaceOptions, type SpaceRead } from "./space-options.ts";
 import {
   hoverDefault,
   readHover,
   sameHover,
-  type HoverMore,
+  type HoverOptions,
   type HoverRead,
 } from "./hover-options.ts";
 import {
@@ -17,18 +17,18 @@ import {
   unknownKeyValues,
   VIEW_KEYS,
 } from "./keys.ts";
-import { readViewMore, sameView, type ViewMore, type ViewSettings } from "./view-options.ts";
-import { readScroll, sameScroll, type ScrollMore, type ScrollRead } from "./scroll-options.ts";
+import { readViewOptions, sameView, type ViewOptions, type ViewSettings } from "./view-options.ts";
+import { readScroll, sameScroll, type ScrollOptions, type ScrollRead } from "./scroll-options.ts";
 
-export type More = ViewMore | HoverMore | ScrollMore | SpaceMore;
+export type TriggerOptions = ViewOptions | HoverOptions | ScrollOptions | SpaceOptions;
 
-/** The item's own timing, used as the defaults for `more`. */
-export interface MoreBase {
+/** The item's own timing, used as the defaults for `options`. */
+export interface OptionsBase {
   duration: number;
 }
 
 // Fields a trigger does not use keep their defaults.
-export interface ReadMore {
+export interface ReadOptions {
   view: ViewSettings;
   reverse: boolean;
   hover: HoverRead;
@@ -36,37 +36,47 @@ export interface ReadMore {
   space: SpaceRead;
 }
 
-/** The `more` of an item that sets none. Every field takes its config value, then its library default. */
-function defaultMore(when: When | Source): ReadMore {
+/** The `options` of an item that sets none. Every field takes its config value, then its library default. */
+function defaultOptions(on: On | Source): ReadOptions {
   return {
-    ...readViewMore({}),
+    ...readViewOptions({}),
     hover: hoverDefault(),
     scroll: readScroll({}),
-    space: readSpace({}, when),
+    space: readSpace({}, on),
   };
 }
 
-export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
-  if (more === undefined) return defaultMore(when);
-  if (when === WHEN.VIEW)
-    return { ...defaultMore(when), ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
-  if (when === WHEN.HOVER)
+export function readOptions(
+  on: On | Source,
+  options: TriggerOptions | undefined,
+  base: OptionsBase,
+): ReadOptions {
+  if (options === undefined) return defaultOptions(on);
+  if (on === ON.VIEW)
     return {
-      ...defaultMore(when),
-      hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base),
+      ...defaultOptions(on),
+      ...readViewOptions(checkKeys<ViewOptions>(options, VIEW_KEYS)),
     };
-  if (when === WHEN.SCROLL)
-    return { ...defaultMore(when), scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
-  if (when === WHEN.ATTACH || when === WHEN.DETACH)
+  if (on === ON.HOVER)
     return {
-      ...defaultMore(when),
-      space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS), when),
+      ...defaultOptions(on),
+      hover: readHover(checkKeys<HoverOptions>(options, HOVER_KEYS), base),
     };
-  throw runtimeError("L2010", { when: whenName(when) });
+  if (on === ON.SCROLL)
+    return {
+      ...defaultOptions(on),
+      scroll: readScroll(checkKeys<ScrollOptions>(options, SCROLL_KEYS)),
+    };
+  if (on === ON.ATTACH || on === ON.DETACH)
+    return {
+      ...defaultOptions(on),
+      space: readSpace(checkKeys<SpaceOptions>(options, SPACE_KEYS), on),
+    };
+  throw runtimeError("L2010", { on: onName(on) });
 }
 
 /** True when two items can share one trigger: the same settings for every field their trigger reads. */
-export function sameMore(a: ReadMore, b: ReadMore): boolean {
+export function sameOptions(a: ReadOptions, b: ReadOptions): boolean {
   return (
     sameView(a.view, b.view) &&
     a.reverse === b.reverse &&
@@ -76,19 +86,19 @@ export function sameMore(a: ReadMore, b: ReadMore): boolean {
   );
 }
 
-function whenName(when: When | Source): string {
-  return isWhen(when) ? `WHEN.${String(when.description)}` : "a variable";
+function onName(on: On | Source): string {
+  return isOn(on) ? `ON.${String(on.description)}` : "a variable";
 }
 
-function checkKeys<T extends object>(more: More, allowed: readonly string[]): T {
-  if (typeof more !== "object" || more === null) {
-    throw runtimeError("L2011", { keys: keyList(allowed), value: String(more) });
+function checkKeys<T extends object>(options: TriggerOptions, allowed: readonly string[]): T {
+  if (typeof options !== "object" || options === null) {
+    throw runtimeError("L2011", { keys: keyList(allowed), value: String(options) });
   }
-  for (const key of Object.keys(more)) {
+  for (const key of Object.keys(options)) {
     if (!allowed.includes(key)) {
       const values = unknownKeyValues(key, allowed, SPELLING_HINT);
       throw runtimeError("L2012", values, key);
     }
   }
-  return more as T;
+  return options as T;
 }

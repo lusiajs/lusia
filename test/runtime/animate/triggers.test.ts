@@ -3,7 +3,7 @@ import { animate } from "#runtime/animate/bind.ts";
 import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
-import { WHEN } from "#runtime/animate/modes/trigger.ts";
+import { ON } from "#runtime/animate/modes/trigger.ts";
 import { HOVER_AREA } from "#runtime/animate/modes/hover-modes.ts";
 import { variable } from "#runtime/variable/variable.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
@@ -62,11 +62,11 @@ afterAll(() => {
   globalThis.IntersectionObserver = realIntersectionObserver;
 });
 
-function mount(item: Omit<AnimateItem, "style"> = {}) {
+function mount(item: Omit<AnimateItem, "play"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ style: fade, duration: 100, ...item }) as AnimateItem, cleanups, leaves);
+  animate(el, () => ({ play: fade, duration: 100, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, cleanups, leaves, opacity: () => Number(el.style.opacity) };
 }
@@ -75,9 +75,9 @@ function observer(): FakeIntersectionObserver {
   return FakeIntersectionObserver.current!;
 }
 
-describe("WHEN.VIEW", () => {
+describe("ON.VIEW", () => {
   test("starts at key 0 and plays forward when it scrolls into view", () => {
-    const { el, opacity } = mount({ when: WHEN.VIEW });
+    const { el, opacity } = mount({ on: ON.VIEW });
     expect(opacity()).toBe(0);
     observer().report(el, 0.5);
     advance(100);
@@ -85,7 +85,7 @@ describe("WHEN.VIEW", () => {
   });
 
   test("plays once by default: leaving view does not play back", () => {
-    const { el, opacity } = mount({ when: WHEN.VIEW });
+    const { el, opacity } = mount({ on: ON.VIEW });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -94,7 +94,7 @@ describe("WHEN.VIEW", () => {
   });
 
   test("reverse plays back when it leaves view and again on re-entry", () => {
-    const { el, opacity } = mount({ when: WHEN.VIEW, more: { reverse: true } });
+    const { el, opacity } = mount({ on: ON.VIEW, options: { reverse: true } });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -106,14 +106,14 @@ describe("WHEN.VIEW", () => {
   });
 
   test("ratios below the threshold do not count as in view", () => {
-    const { el, opacity } = mount({ when: WHEN.VIEW });
+    const { el, opacity } = mount({ on: ON.VIEW });
     observer().report(el, 0.1);
     advance(100);
     expect(opacity()).toBe(0);
   });
 
   test("once: false with reverse off still plays back on leave", () => {
-    const { el, opacity } = mount({ when: WHEN.VIEW, once: false });
+    const { el, opacity } = mount({ on: ON.VIEW, once: false });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -122,26 +122,26 @@ describe("WHEN.VIEW", () => {
   });
 
   test("once stops observing after the first play", () => {
-    const { el } = mount({ when: WHEN.VIEW });
+    const { el } = mount({ on: ON.VIEW });
     observer().report(el, 0.5);
     expect(FakeIntersectionObserver.unobserved).toContain(el);
   });
 
   test("does not add a leave, so detach does not wait for it", () => {
-    const { leaves } = mount({ when: WHEN.VIEW, more: { reverse: true } });
+    const { leaves } = mount({ on: ON.VIEW, options: { reverse: true } });
     expect(leaves).toEqual([]);
   });
 
   test("cleanup stops observing", () => {
-    const { el, cleanups } = mount({ when: WHEN.VIEW, more: { reverse: true } });
+    const { el, cleanups } = mount({ on: ON.VIEW, options: { reverse: true } });
     for (const cleanup of cleanups) cleanup();
     expect(observer().targets.has(el)).toBe(false);
   });
 });
 
-describe("WHEN.HOVER", () => {
+describe("ON.HOVER", () => {
   test("pointer enter plays forward and pointer leave reverses", () => {
-    const { el, opacity } = mount({ when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } });
+    const { el, opacity } = mount({ on: ON.HOVER, options: { area: HOVER_AREA.ELEMENT } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     expect(opacity()).toBe(1);
@@ -152,9 +152,9 @@ describe("WHEN.HOVER", () => {
 
   test("once ignores the pointer after the first forward play", () => {
     const { el, opacity } = mount({
-      when: WHEN.HOVER,
+      on: ON.HOVER,
       once: true,
-      more: { area: HOVER_AREA.ELEMENT },
+      options: { area: HOVER_AREA.ELEMENT },
     });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
@@ -167,7 +167,7 @@ describe("WHEN.HOVER", () => {
   });
 
   test("cleanup removes the listeners", () => {
-    const { el, cleanups, opacity } = mount({ when: WHEN.HOVER });
+    const { el, cleanups, opacity } = mount({ on: ON.HOVER });
     for (const cleanup of cleanups) cleanup();
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
@@ -175,12 +175,12 @@ describe("WHEN.HOVER", () => {
   });
 
   test("does not add a leave, so detach does not wait for it", () => {
-    const { leaves } = mount({ when: WHEN.HOVER });
+    const { leaves } = mount({ on: ON.HOVER });
     expect(leaves).toEqual([]);
   });
 });
 
-describe("WHEN.ATTACH", () => {
+describe("ON.ATTACH", () => {
   test("is the default: plays on attach and adds no leave", () => {
     const { leaves, opacity } = mount();
     advance(100);
@@ -199,8 +199,8 @@ describe("an ATTACH item and a DETACH item on the same property", () => {
     const cleanups: Array<() => void> = [];
     const leaves: Leave[] = [];
     const items = [
-      { style: fade, when: WHEN.ATTACH, duration: 100 },
-      { style: fadeOut, when: WHEN.DETACH, duration: 100 },
+      { play: fade, on: ON.ATTACH, duration: 100 },
+      { play: fadeOut, on: ON.DETACH, duration: 100 },
     ] as AnimateItem[];
     animate(el, () => items, cleanups, leaves);
     onReset(() => cleanups.forEach((cleanup) => cleanup()));
@@ -210,9 +210,9 @@ describe("an ATTACH item and a DETACH item on the same property", () => {
   });
 });
 
-describe("WHEN.MANUAL", () => {
+describe("ON.MANUAL", () => {
   test("does not play by itself and adds no leave", () => {
-    const { leaves, opacity } = mount({ when: WHEN.MANUAL });
+    const { leaves, opacity } = mount({ on: ON.MANUAL });
     advance(200);
     expect(opacity()).toBe(0);
     expect(leaves).toEqual([]);
@@ -222,13 +222,13 @@ describe("WHEN.MANUAL", () => {
 describe("a variable or variable.compute value as when", () => {
   test("the first value is applied without animating", () => {
     const on = variable(true);
-    const { opacity } = mount({ when: on });
+    const { opacity } = mount({ on: on });
     expect(opacity()).toBe(1);
   });
 
   test("a later truthy value plays forward and a falsy value plays back from the current progress", () => {
     const on = variable(false);
-    const { opacity } = mount({ when: on });
+    const { opacity } = mount({ on: on });
     expect(opacity()).toBe(0);
     on.value = true;
     advance(50);
@@ -241,7 +241,7 @@ describe("a variable or variable.compute value as when", () => {
   test("a variable.compute value works the same way", () => {
     const count = variable(0);
     const big = variable.compute(() => count.value > 5);
-    const { opacity } = mount({ when: big });
+    const { opacity } = mount({ on: big });
     count.value = 9;
     advance(100);
     expect(opacity()).toBe(1);
@@ -249,7 +249,7 @@ describe("a variable or variable.compute value as when", () => {
 
   test("once plays forward only the first time a truthy value arrives", () => {
     const on = variable(false);
-    const { opacity } = mount({ when: on, once: true });
+    const { opacity } = mount({ on: on, once: true });
     on.value = true;
     advance(100);
     on.value = false;

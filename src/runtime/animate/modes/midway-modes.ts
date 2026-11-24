@@ -1,30 +1,32 @@
 /** What happens when a new play is asked for while one is still running. */
-const MIDWAY_TURN: unique symbol = Symbol("TURN");
-const FINISH: unique symbol = Symbol("FINISH");
+const SWITCH: unique symbol = Symbol("SWITCH");
+const SWITCH_SMOOTH: unique symbol = Symbol("SWITCH_SMOOTH");
+const SWITCH_STOP: unique symbol = Symbol("SWITCH_STOP");
+const WAIT: unique symbol = Symbol("WAIT");
 const RESTART: unique symbol = Symbol("RESTART");
-const SKIP: unique symbol = Symbol("SKIP");
-const IGNORE: unique symbol = Symbol("IGNORE");
+const JUMP_TO_END: unique symbol = Symbol("JUMP_TO_END");
+const KEEP_CURRENT: unique symbol = Symbol("KEEP_CURRENT");
 
-export const MIDWAY = Object.freeze({ TURN: MIDWAY_TURN, FINISH, RESTART, SKIP, IGNORE } as const);
+export const MIDWAY = Object.freeze({
+  SWITCH,
+  SWITCH_SMOOTH,
+  SWITCH_STOP,
+  WAIT,
+  RESTART,
+  JUMP_TO_END,
+  KEEP_CURRENT,
+} as const);
 
 export type MidwayMode = (typeof MIDWAY)[keyof typeof MIDWAY];
 
-/** How the motion changes direction when a running play is turned around (MIDWAY.TURN and switches). */
-const SUDDEN: unique symbol = Symbol("SUDDEN");
-const SMOOTH: unique symbol = Symbol("SMOOTH");
-const STOP: unique symbol = Symbol("STOP");
-
-export const TURN = Object.freeze({ SUDDEN, SMOOTH, STOP } as const);
-
-export type TurnMode = (typeof TURN)[keyof typeof TURN];
-
 const MIDWAYS: ReadonlySet<unknown> = new Set<unknown>(Object.values(MIDWAY));
-const TURNS: ReadonlySet<unknown> = new Set<unknown>(Object.values(TURN));
+const SWITCHES: ReadonlySet<unknown> = new Set<unknown>([SWITCH, SWITCH_SMOOTH, SWITCH_STOP]);
 
 export function isMidwayMode(value: unknown): value is MidwayMode {
   return MIDWAYS.has(value);
 }
 
-export function isTurnMode(value: unknown): value is TurnMode {
-  return TURNS.has(value);
+/** The modes that turn the motion around: SWITCH and its _SMOOTH and _STOP forms. */
+export function isSwitchMode(value: unknown): boolean {
+  return SWITCHES.has(value);
 }

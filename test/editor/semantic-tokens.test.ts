@@ -10,8 +10,8 @@ const CONSTRUCTS = `<script>
   import Badge from "./badge.lusia";
   const value = EVENT.X;
 </script>
-<IF cond={WHEN.VIEW}>
-  <Badge onclick={go} on:click={go} bind-value={v} animate={{ when: WHEN.VIEW }} />
+<IF cond={ON.VIEW}>
+  <Badge onclick={go} on:click={go} bind-value={v} animate={{ on: ON.VIEW }} />
   <EACH items as=item index=i key={item.id}>
     <p>{EASE.STYLE.CUBIC} {SCREEN.WIDTH} {EDGE.TOP} {PRESET.X}</p>
   </EACH>

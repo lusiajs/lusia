@@ -53,10 +53,9 @@ describe("hover", () => {
     expect(apiId(hoverAt(text, text.indexOf("animate") + 1, noProps))).toBe("animate");
   });
 
-  test("shows the more entry on the more key inside animate", () => {
-    const text =
-      "<div animate={{ animation: fade, active: ACTIVE.VIEW, more: { reverse: true } }}>x</div>";
-    expect(apiId(hoverAt(text, text.indexOf("more") + 1, noProps))).toBe("animate-more");
+  test("shows the options entry on the options key inside animate", () => {
+    const text = "<div animate={{ play: fade, on: ON.VIEW, options: { reverse: true } }}>x</div>";
+    expect(apiId(hoverAt(text, text.indexOf("options") + 1, noProps))).toBe("animate-options");
   });
 
   test("shows nothing for the word more outside animate", () => {
@@ -83,7 +82,8 @@ describe("hover", () => {
   });
 
   test("shows the enum entry for a member of a nested group in the script", () => {
-    const text = '<script>\nimport { EASE } from "lusiajs";\nconst s = EASE.STYLE.QUART;\n</script>';
+    const text =
+      '<script>\nimport { EASE } from "lusiajs";\nconst s = EASE.STYLE.QUART;\n</script>';
     expect(apiId(hoverAt(text, text.indexOf("QUART") + 2, noProps))).toBe("ease");
   });
 });

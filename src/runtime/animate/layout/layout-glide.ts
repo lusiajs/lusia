@@ -1,6 +1,6 @@
 import { animateDefault } from "../options/defaults.ts";
 import type { EaseStyle } from "../modes/easing.ts";
-import { readDefault, type DefaultEasing } from "../options/keyform.ts";
+import { readEase, type EaseValue } from "../options/keyform.ts";
 import { EASE, type Ease } from "../modes/modes.ts";
 import {
   copyBox,
@@ -22,8 +22,8 @@ export interface GlideSpec {
   mode: LayoutMode;
   duration: number;
   delay: number;
-  /** The keyframes `default`, if any. The engine default fills the rest. */
-  easing: DefaultEasing | undefined;
+  /** The keyframes `ease`, if any. The engine default fills the rest. */
+  easing: EaseValue | undefined;
 }
 
 /** One element's glide. `view` is the visual box the last frame showed. */
@@ -68,7 +68,7 @@ export function newGlide(spec: GlideSpec): Glide {
 
 // Easing is read here so engine defaults are current.
 export function startGlide(glide: Glide, el: HTMLElement, now: number): void {
-  const easing = readDefault(glide.spec.easing);
+  const easing = readEase(glide.spec.easing);
   const engine = animateDefault();
   glide.easeStyle = easing.easeStyle ?? engine.easeStyle;
   glide.ease = easing.ease ?? engine.ease;

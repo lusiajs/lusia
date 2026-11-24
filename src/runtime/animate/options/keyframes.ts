@@ -1,7 +1,7 @@
 import type { EaseStyle } from "../modes/easing.ts";
 import { animateDefault } from "./defaults.ts";
 import { interpolate } from "../value/interpolate.ts";
-import { readDefault, readKey, type DefaultEasing, type PartialEasing } from "./keyform.ts";
+import { readEase, readKey, type EaseValue, type PartialEasing } from "./keyform.ts";
 import type { Ease } from "../modes/modes.ts";
 import type { Segment, Timeline } from "../play/timeline.ts";
 import { runtimeError } from "../../errors.ts";
@@ -24,8 +24,8 @@ export type Style = {
 export type Keyframe = [EaseStyle, Ease, Style];
 /** A key is its styles, or its styles with an ease, an easing style, or both. See keyform.ts. */
 export type KeyframeValue = Style | [EaseStyle, Ease, Style] | [EaseStyle, Style] | [Ease, Style];
-/** The keys 0 and 1 are required. `default` is the easing that keys without their own use. */
-export type Keyframes = { default?: DefaultEasing; 0: KeyframeValue; 1: KeyframeValue } & Record<
+/** The keys 0 and 1 are required. `ease` is the default easing: a key with its own ease overrides it. */
+export type Keyframes = { ease?: EaseValue; 0: KeyframeValue; 1: KeyframeValue } & Record<
   number,
   KeyframeValue
 >;
@@ -39,7 +39,7 @@ interface Stop {
 
 // Runs at each play, so the engine default is current.
 export function prepareTimeline(keyframes: Keyframes, probe?: HTMLElement): Timeline {
-  const stops = readStops(keyframes, readDefault(keyframes.default));
+  const stops = readStops(keyframes, readEase(keyframes.ease));
   const props = propertyNames(stops);
   const values = stops.map((stop) => props.map((prop) => valueAt(stops, stop, prop)));
   return { props, segments: segmentsOf(stops, values, probe) };
@@ -48,7 +48,7 @@ export function prepareTimeline(keyframes: Keyframes, probe?: HTMLElement): Time
 function readStops(keyframes: Keyframes, fromKeyframes: PartialEasing): Stop[] {
   checkKeyNames(keyframes);
   const stops = Object.keys(keyframes)
-    .filter((key) => key !== "default")
+    .filter((key) => key !== KEYFRAMES_NAME)
     .map((key) => toStop(Number(key), keyframes[Number(key)]!, fromKeyframes))
     .sort((a, b) => a.at - b.at);
   checkStops(stops);
@@ -56,6 +56,7 @@ function readStops(keyframes: Keyframes, fromKeyframes: PartialEasing): Stop[] {
 }
 
 function checkKeyNames(keyframes: Keyframes): void {
+  if ("default" in keyframes) throw runtimeError("L2083");
   for (const key of Object.keys(keyframes)) {
     if (!isKeyframesKey(key)) {
       const values = unknownKeyValues(key, [KEYFRAMES_NAME], KEYFRAMES_HINT);

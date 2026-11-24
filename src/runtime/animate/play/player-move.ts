@@ -32,7 +32,7 @@ function nextPass(state: PlayState, endedAt: number): void {
   else begin(state, next.value, endedAt);
 }
 
-/** The last pass ended. A queued request (MIDWAY.FINISH) starts now, from where this play ended. */
+/** The last pass ended. A queued request (MIDWAY.WAIT) starts now, from where this play ended. */
 function endPlay(state: PlayState, endedAt: number): void {
   const finish = state.finish;
   state.passes = undefined;

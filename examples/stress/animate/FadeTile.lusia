@@ -1,5 +1,5 @@
 <script>
-  import { WHEN, EASE } from "lusiajs";
+  import { ON, EASE } from "lusiajs";
 
   const colorAndMove = {
     0: { color: "#e11d48", translate: "-12px 0px" },
@@ -20,9 +20,9 @@
 <li
   class="tile"
   animate={[
-  { style: colorAndMove, when: WHEN.ATTACH, duration: 300 },
-  { style: fade, when: WHEN.ATTACH, duration: 300 },
-  { style: fadeOut, when: WHEN.DETACH, duration: 300, more: { animateSpace: false } },
+  { play: colorAndMove, on: ON.ATTACH, duration: 300 },
+  { play: fade, on: ON.ATTACH, duration: 300 },
+  { play: fadeOut, on: ON.DETACH, duration: 300, options: { animateSpace: false } },
 ]}
 >
   <span>Tile</span>

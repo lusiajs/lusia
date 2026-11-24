@@ -95,7 +95,7 @@ describe("markup completions", () => {
 });
 
 describe("motion completions", () => {
-  test("offers the EASE and WHEN enums in the script, with an auto-import edit", () => {
+  test("offers the EASE and ON enums in the script, with an auto-import edit", () => {
     const text = "<script>\n\n</script>";
     const items = completionsAt(text, 9, noProps);
     const ease = items.find((item) => item.label === "EASE");
@@ -103,7 +103,7 @@ describe("motion completions", () => {
       kind: "variable",
       importEdit: { text: 'import { EASE } from "lusiajs";\n' },
     });
-    expect(items.find((item) => item.label === "WHEN")?.kind).toBe("variable");
+    expect(items.find((item) => item.label === "ON")?.kind).toBe("variable");
     expect(items.find((item) => item.label === "CURVE")).toBeUndefined();
   });
 
@@ -126,8 +126,8 @@ describe("motion completions", () => {
     expect(items[0]?.importEdit?.text).toBe('import { EASE } from "lusiajs";\n');
   });
 
-  test("completes the members after WHEN. in markup", () => {
-    const text = `${BADGE_SCRIPT}<div animate={{ when: WHEN.`;
+  test("completes the members after ON. in markup", () => {
+    const text = `${BADGE_SCRIPT}<div animate={{ on: ON.`;
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
       "ATTACH",
       "DETACH",
@@ -141,8 +141,8 @@ describe("motion completions", () => {
     ]);
   });
 
-  test("offers the more keys of VIEW after when: WHEN.VIEW", () => {
-    const text = "<div animate={{ when: WHEN.VIEW, more: { ";
+  test("offers the more keys of VIEW after on: ON.VIEW", () => {
+    const text = "<div animate={{ on: ON.VIEW, options: { ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
       "margin",
       "amount",
@@ -150,16 +150,16 @@ describe("motion completions", () => {
     ]);
   });
 
-  test("offers animateSpace after when: WHEN.DETACH", () => {
-    const text = "<div animate={{ when: WHEN.DETACH, more: { ";
+  test("offers animateSpace after on: ON.DETACH", () => {
+    const text = "<div animate={{ on: ON.DETACH, options: { ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
       "animateSpace",
     ]);
   });
 
-  test("offers the HOVER keys after when: WHEN.HOVER, and the SCROLL keys after WHEN.SCROLL", () => {
-    const hover = "<div animate={{ when: WHEN.HOVER, more: { ";
-    const scroll = "<div animate={{ when: WHEN.SCROLL, more: { ";
+  test("offers the HOVER keys after on: ON.HOVER, and the SCROLL keys after ON.SCROLL", () => {
+    const hover = "<div animate={{ on: ON.HOVER, options: { ";
+    const scroll = "<div animate={{ on: ON.SCROLL, options: { ";
     expect(completionsAt(hover, hover.length, noProps).map((item) => item.label)).toEqual([
       "inDelay",
       "outDelay",
@@ -205,7 +205,7 @@ describe("motion completions", () => {
   });
 
   test("offers the camelCase style properties inside a keyframe css object", () => {
-    const text = "<div animate={{ style: { 0: { ";
+    const text = "<div animate={{ play: { 0: { ";
     const labels = completionsAt(text, text.length, noProps).map((item) => item.label);
     expect(labels).toContain("opacity");
     expect(labels).toContain("backgroundColor");
@@ -214,28 +214,26 @@ describe("motion completions", () => {
   });
 
   test("offers the style properties after an ease in a key", () => {
-    const text = "<div animate={{ style: { 1: [EASE.OUT, { ";
+    const text = "<div animate={{ play: { 1: [EASE.OUT, { ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toContain(
       "translate",
     );
   });
 
-  test("offers the keyframes default key inside a style object", () => {
-    const text = "<div animate={{ style: { ";
-    expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
-      "default",
-    ]);
+  test("offers the keyframes ease key inside a play object", () => {
+    const text = "<div animate={{ play: { ";
+    expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual(["ease"]);
   });
 
   test("offers the item keys inside an animate object", () => {
     const text = "<div animate={[{ ";
     const labels = completionsAt(text, text.length, noProps).map((item) => item.label);
     expect(labels).toEqual([
-      "style",
-      "when",
+      "play",
+      "on",
       "control",
       "once",
-      "more",
+      "options",
       "midway",
       "keep",
       "duration",
@@ -245,58 +243,56 @@ describe("motion completions", () => {
     ]);
   });
 
-  test("offers the MIDWAY enum after midway:, and the TURN enum after turn: inside midway", () => {
+  test("offers the MIDWAY enum after midway.", () => {
     const after = "<div animate={{ midway: MIDWAY.";
     expect(completionsAt(after, after.length, noProps).map((item) => item.label)).toEqual([
-      "TURN",
-      "FINISH",
+      "SWITCH",
+      "SWITCH_SMOOTH",
+      "SWITCH_STOP",
+      "WAIT",
       "RESTART",
-      "SKIP",
-      "IGNORE",
+      "JUMP_TO_END",
+      "KEEP_CURRENT",
     ]);
     const value = "<div animate={{ midway: ";
     expect(completionsAt(value, value.length, noProps).map((item) => item.label)).toEqual([
       "MIDWAY",
     ]);
-    const turn = "<div animate={{ midway: { turn: ";
-    expect(completionsAt(turn, turn.length, noProps).map((item) => item.label)).toEqual(["TURN"]);
   });
 
   test("offers the midway keys inside a midway object", () => {
     const text = "<div animate={{ midway: { ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
-      "play",
-      "turn",
-      "turnDuration",
-      "turnStyle",
-      "turnEase",
+      "mode",
+      "duration",
+      "ease",
     ]);
   });
 
   test("offers the item keys right after the expression brace", () => {
-    const text = "<div animate={{ st";
-    expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toContain("style");
+    const text = "<div animate={{ pl";
+    expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toContain("play");
   });
 
   test("offers style properties, not item keys, in a keyframes object", () => {
     const text = "<div animate={{ 0: [QUART, IN, { ";
     const labels = completionsAt(text, text.length, noProps).map((item) => item.label);
     expect(labels).toContain("opacity");
-    expect(labels).not.toContain("when");
+    expect(labels).not.toContain("on");
     expect(labels).not.toContain("once");
   });
 
-  test("offers the WHEN enum after when:, with an auto-import edit", () => {
-    const text = `${BADGE_SCRIPT}<div animate={{ style: fade, when: `;
+  test("offers the ON enum after on:, with an auto-import edit", () => {
+    const text = `${BADGE_SCRIPT}<div animate={{ play: fade, on: `;
     const items = completionsAt(text, text.length, noProps);
-    expect(items.map((item) => item.label)).toEqual(["WHEN"]);
+    expect(items.map((item) => item.label)).toEqual(["ON"]);
     expect(items[0]?.importEdit).toBeDefined();
   });
 
   test("offers nothing inside an expression that is not an animate object", () => {
     const text = "<div animate={fade}>{ ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).not.toContain(
-      "style",
+      "play",
     );
   });
 });

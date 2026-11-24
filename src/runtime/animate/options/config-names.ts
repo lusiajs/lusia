@@ -1,6 +1,6 @@
-import type { DefaultEasing } from "./keyform.ts";
+import type { EaseValue } from "./keyform.ts";
 import { EASE } from "../modes/modes.ts";
-import { MIDWAY, TURN } from "../modes/midway-modes.ts";
+import { MIDWAY } from "../modes/midway-modes.ts";
 import { runtimeError } from "../../errors.ts";
 import { readAnimateConfig, type AnimateConfig } from "./config.ts";
 
@@ -15,7 +15,6 @@ const DIRECTION_NAMES: Table = new Map<string, unknown>([
 ]);
 const EASE_PART_NAMES: Table = new Map([...STYLE_NAMES, ...DIRECTION_NAMES]);
 const MIDWAY_NAMES: Table = new Map(Object.entries(MIDWAY));
-const TURN_NAMES: Table = new Map(Object.entries(TURN));
 
 function nameOf(table: Table, label: string): Convert {
   return (value) => {
@@ -38,7 +37,7 @@ function easingToNames(easing: unknown): unknown {
 
 function easingFromNames(names: unknown): unknown {
   if (!Array.isArray(names)) return names;
-  return names.map(valueOf(EASE_PART_NAMES, "ease")) as DefaultEasing;
+  return names.map(valueOf(EASE_PART_NAMES, "ease")) as EaseValue;
 }
 
 /** A preset is a PRESET name or a keyframes object whose easing functions are written as names. */
@@ -49,22 +48,13 @@ function presetToNames(preset: unknown): unknown {
 
 function presetFromNames(preset: unknown): unknown {
   if (typeof preset !== "object" || preset === null) return preset;
-  return mapKeyframes(
-    preset,
-    easingFromNames,
-    valueOf(EASE_PART_NAMES, "ease"),
-  );
+  return mapKeyframes(preset, easingFromNames, valueOf(EASE_PART_NAMES, "ease"));
 }
 
-function mapKeyframes(
-  keyframes: object,
-  mapDefault: Convert,
-  mapPart: Convert,
-): unknown {
+function mapKeyframes(keyframes: object, mapDefault: Convert, mapPart: Convert): unknown {
   const mapped: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(keyframes)) {
-    mapped[key] =
-      key === "default" ? mapDefault(value) : mapKey(value, mapPart);
+    mapped[key] = key === "ease" ? mapDefault(value) : mapKey(value, mapPart);
   }
   return mapped;
 }
@@ -72,24 +62,18 @@ function mapKeyframes(
 function mapKey(value: unknown, mapPart: Convert): unknown {
   if (!Array.isArray(value)) return value;
   return value.map((part) =>
-    typeof part === "function" || typeof part === "string"
-      ? mapPart(part)
-      : part,
+    typeof part === "function" || typeof part === "string" ? mapPart(part) : part,
   );
 }
 
 const MIDWAY_TO_NAMES = new Map<string, Convert>([
-  ["play", nameOf(MIDWAY_NAMES, "midway.play")],
-  ["turn", nameOf(TURN_NAMES, "midway.turn")],
-  ["turnStyle", nameOf(STYLE_NAMES, "midway.turnStyle")],
-  ["turnEase", nameOf(DIRECTION_NAMES, "midway.turnEase")],
+  ["mode", nameOf(MIDWAY_NAMES, "midway.mode")],
+  ["ease", easingToNames],
 ]);
 
 const MIDWAY_FROM_NAMES = new Map<string, Convert>([
-  ["play", valueOf(MIDWAY_NAMES, "midway.play")],
-  ["turn", valueOf(TURN_NAMES, "midway.turn")],
-  ["turnStyle", valueOf(STYLE_NAMES, "midway.turnStyle")],
-  ["turnEase", valueOf(DIRECTION_NAMES, "midway.turnEase")],
+  ["mode", valueOf(MIDWAY_NAMES, "midway.mode")],
+  ["ease", easingFromNames],
 ]);
 
 const TOP_TO_NAMES = new Map<string, Convert>([
@@ -107,12 +91,8 @@ const TOP_FROM_NAMES = new Map<string, Convert>([
 ]);
 
 /** Converts the fields that have a converter; the others, such as numbers and booleans, pass through. */
-function mapFields(
-  fields: unknown,
-  converters: ReadonlyMap<string, Convert>,
-): unknown {
-  if (typeof fields !== "object" || fields === null || Array.isArray(fields))
-    return fields;
+function mapFields(fields: unknown, converters: ReadonlyMap<string, Convert>): unknown {
+  if (typeof fields !== "object" || fields === null || Array.isArray(fields)) return fields;
   const mapped: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(fields)) {
     const convert = converters.get(key);
