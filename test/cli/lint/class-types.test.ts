@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, setDefaultTimeout, test } from "bun:test";
 import { join } from "node:path";
 import { childSourceLookup } from "#cli/build/component-file.ts";
 import { classTypeResolver } from "#cli/lint/class-types.ts";
@@ -6,7 +6,10 @@ import { loadClassTypes } from "#cli/lint/type-program.ts";
 import { lintLusia } from "#language/lint/lint.ts";
 
 const PAGE = join(import.meta.dir, "fixtures/class-types/page.lusia");
-const STYLE = "<style>\n.odd { color: red; }\n.even { color: blue; }\n</style>\n";
+// The first test builds a TypeScript program, which takes over 5 s on CI runners.
+setDefaultTimeout(30_000);
+
+const STYLE ="<style>\n.odd { color: red; }\n.even { color: blue; }\n</style>\n";
 
 async function lintPage(source: string) {
   const types = await loadClassTypes([{ path: PAGE, text: source }]);
