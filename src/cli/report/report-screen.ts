@@ -1,7 +1,21 @@
 import type { Stage } from "./report-model.ts";
+import { mouseAction, reportBodyHeight } from "./report-layout.ts";
 import { keyName } from "./terminal-keys.ts";
-import { handleKey, initialState, REPORT_KEYS, type ReportKey } from "./report-state.ts";
-import { renderReport, reportBodyHeight } from "./report-view.ts";
+import { handleMouse } from "./report-mouse.ts";
+import {
+  handleKey,
+  initialState,
+  REPORT_KEYS,
+  type ReportKey,
+  type ReportState,
+} from "./report-state.ts";
+import { renderReport } from "./report-view.ts";
+import {
+  MOUSE_DISABLE,
+  MOUSE_ENABLE,
+  parseMouseEvents,
+  type MouseEvent,
+} from "./terminal-mouse.ts";
 
 const ENTER_SCREEN = "\x1b[?1049h";
 const LEAVE_SCREEN = "\x1b[?1049l";
@@ -47,7 +61,7 @@ export function openReportScreen({
   onInterrupt,
 }: ReportScreenOptions): void {
   let state = initialState(stages);
-  output.write(ENTER_SCREEN + HIDE_CURSOR);
+  output.write(ENTER_SCREEN + HIDE_CURSOR + MOUSE_ENABLE);
   draw(CURSOR_HOME);
   input.on("data", onData);
   output.on("resize", onResize);
@@ -62,7 +76,13 @@ export function openReportScreen({
   }
 
   function onData(chunk: Buffer | string): void {
-    const name = keyName(String(chunk));
+    const text = String(chunk);
+    const mouseEvents = parseMouseEvents(text);
+    if (mouseEvents.length > 0) {
+      onMouse(mouseEvents);
+      return;
+    }
+    const name = keyName(text);
     if (name === INTERRUPT_KEY) {
       leave();
       onInterrupt();
@@ -79,10 +99,21 @@ export function openReportScreen({
     draw(CURSOR_HOME);
   }
 
+  function onMouse(events: MouseEvent[]): void {
+    for (const event of events) state = applyMouse(state, event);
+    draw(CURSOR_HOME);
+  }
+
+  function applyMouse(current: ReportState, event: MouseEvent): ReportState {
+    const action = mouseAction(event, columns(), rows(), stages, current);
+    if (action === undefined) return current;
+    return handleMouse(current, stages, action, reportBodyHeight(rows()));
+  }
+
   function leave(): void {
     input.off("data", onData);
     output.off("resize", onResize);
-    output.write(LEAVE_SCREEN + SHOW_CURSOR);
+    output.write(MOUSE_DISABLE + LEAVE_SCREEN + SHOW_CURSOR);
   }
 
   function columns(): number {

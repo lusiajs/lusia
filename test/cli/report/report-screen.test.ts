@@ -51,10 +51,10 @@ function open(terminal: ReturnType<typeof fakeTerminal>) {
 }
 
 describe("openReportScreen", () => {
-  test("enters the alternate screen, hides the cursor and draws the report", () => {
+  test("enters the alternate screen with mouse on and draws the report", () => {
     const terminal = fakeTerminal();
     open(terminal);
-    expect(terminal.written[0]).toBe("\x1b[?1049h\x1b[?25l");
+    expect(terminal.written[0]).toBe("\x1b[?1049h\x1b[?25l\x1b[?1000h\x1b[?1006h");
     expect(terminal.written.at(1)?.startsWith("\x1b[H")).toBe(true);
     expect(terminal.written.at(1)).toContain("lusia build report");
   });
@@ -80,11 +80,13 @@ describe("openReportScreen", () => {
     for (const line of lines) expect(line).toHaveLength(60);
   });
 
-  test("esc leaves the alternate screen, shows the cursor and calls onClose", () => {
+  test("esc turns mouse off, then leaves the alternate screen and calls onClose", () => {
     const terminal = fakeTerminal();
     const calls = open(terminal);
     terminal.press("\x1b");
-    expect(terminal.written[terminal.written.length - 1]).toBe("\x1b[?1049l\x1b[?25h");
+    expect(terminal.written[terminal.written.length - 1]).toBe(
+      "\x1b[?1000l\x1b[?1006l\x1b[?1049l\x1b[?25h",
+    );
     expect(calls).toEqual(["close"]);
     expect(terminal.listenerCount()).toBe(0);
   });
@@ -115,7 +117,7 @@ describe("openReportScreen", () => {
         ...terminal.output,
         write: (text) => {
           terminal.written.push(text);
-          calls.push(`write ${text === "\x1b[?1049l\x1b[?25h" ? "restore" : "draw"}`);
+          calls.push(`write ${text.endsWith("\x1b[?1049l\x1b[?25h") ? "restore" : "draw"}`);
         },
       },
       color: false,
@@ -125,5 +127,28 @@ describe("openReportScreen", () => {
     terminal.press("\x03");
     expect(calls.slice(-2)).toEqual(["write restore", "interrupt"]);
     expect(terminal.listenerCount()).toBe(0);
+  });
+
+  test("a left click on a stage selects it and redraws", () => {
+    const terminal = fakeTerminal();
+    open(terminal);
+    expect(terminal.written.at(-1)).toContain("▸ boot");
+    terminal.press("\x1b[<0;3;5M");
+    expect(terminal.written.at(-1)).toContain("▸ compile");
+  });
+
+  test("a mouse chunk never reaches the keys", () => {
+    const terminal = fakeTerminal();
+    const calls = open(terminal);
+    terminal.press("\x1b[<0;3;5M");
+    expect(calls).toEqual([]);
+  });
+
+  test("a right click draws nothing", () => {
+    const terminal = fakeTerminal();
+    open(terminal);
+    const before = terminal.written.length;
+    terminal.press("\x1b[<2;3;5M");
+    expect(terminal.written.length).toBe(before);
   });
 });

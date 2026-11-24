@@ -69,7 +69,7 @@ function rowStep(key: ReportKey, pageHeight: number): number | undefined {
   return undefined;
 }
 
-function moveRow(
+export function moveRow(
   state: ReportState,
   stages: Stage[],
   step: number,
@@ -96,13 +96,13 @@ function cycleSort(state: ReportState, stages: Stage[], pageHeight: number): Rep
   return clampRow({ ...state, sorts }, stages, pageHeight);
 }
 
-function clampRow(state: ReportState, stages: Stage[], pageHeight: number): ReportState {
+export function clampRow(state: ReportState, stages: Stage[], pageHeight: number): ReportState {
   const total = visibleCount(state, stages);
   const row = clamp(state.row, 0, Math.max(0, total - 1));
   return { ...state, row, scroll: followScroll(state.scroll, row, pageHeight) };
 }
 
-function toggleExpand(state: ReportState, stages: Stage[]): ReportState {
+export function toggleExpand(state: ReportState, stages: Stage[]): ReportState {
   const stage = stages[state.stage];
   const selected = stage ? visibleRows(stage, state)[state.row] : undefined;
   if (!stage || !selected || selected.depth !== 0 || !isExpandable(selected.row)) return state;

@@ -25,7 +25,7 @@ const NUMBER_FIELDS: ColumnField[] = ["ms", "bytes", "files"];
 
 /** Header, body rows and a bottom-right "selected / total" line. Always `bodyHeight + 2` lines. */
 export function renderTable(frame: TableFrame): string[] {
-  const widths = columnWidths(frame);
+  const widths = columnWidths(frame.columns, frame.rows, frame.width);
   const labels = frame.columns.map((column) => column.label);
   const header = styled(cellsLine(labels, frame, widths), ANSI.bold, frame.color);
   const body = Array.from({ length: frame.bodyHeight }, (_, index) =>
@@ -92,18 +92,30 @@ function nameMarker(item: VisibleRow): string {
   return item.expanded ? "▾ " : "▸ ";
 }
 
-function columnWidths(frame: TableFrame): number[] {
-  const { columns } = frame;
+export interface ColumnSpan {
+  start: number;
+  end: number;
+}
+
+/** Where each column's text sits on a table line, counted from the table's left edge. */
+export function columnSpans(columns: Column[], rows: VisibleRow[], width: number): ColumnSpan[] {
+  const spans: ColumnSpan[] = [];
+  let start = LEAD.length;
+  for (const columnWidth of columnWidths(columns, rows, width)) {
+    spans.push({ start, end: start + columnWidth });
+    start += columnWidth + GAP.length;
+  }
+  return spans;
+}
+
+function columnWidths(columns: Column[], rows: VisibleRow[], width: number): number[] {
   const widths = columns.map((column, index) => {
     if (index === 0) return 0;
-    return Math.max(
-      column.label.length,
-      ...frame.rows.map((item) => cellText(item, column).length),
-    );
+    return Math.max(column.label.length, ...rows.map((item) => cellText(item, column).length));
   });
   const gaps = GAP.length * (columns.length - 1);
-  const fixed = widths.reduce((total, width) => total + width, 0);
-  const nameWidth = contentWidth(frame.width) - LEAD.length - gaps - fixed;
+  const fixed = widths.reduce((total, columnWidth) => total + columnWidth, 0);
+  const nameWidth = contentWidth(width) - LEAD.length - gaps - fixed;
   widths[0] = Math.max(NAME_MIN_WIDTH, nameWidth);
   return widths;
 }

@@ -1,18 +1,16 @@
 import { ANSI } from "../log/color.ts";
 import { styled } from "../log/style.ts";
 import type { Stage, SortKey } from "./report-model.ts";
+import { reportLayout, type ReportLayout } from "./report-layout.ts";
 import { visibleRows } from "./report-rows.ts";
-import { renderStageList, stageListLayout } from "./report-stages.ts";
+import { renderStageList } from "./report-stages.ts";
 import { renderTable } from "./report-table.ts";
 import { followScroll, type ReportState } from "./report-state.ts";
 import { fitWidth, padRight } from "./report-text.ts";
 
 const TITLE = " lusia build report";
-const HELP = " ↑↓ move  ←→ / tab switch stage  s sort  enter expand package  esc close";
-const TITLE_LINES = 1;
-const FOOTER_LINES = 1;
-const BOX_CHROME_LINES = 4;
-const BOX_CHROME_COLUMNS = 3;
+const HELP_KEYS = " ↑↓ move  ←→ stage  s sort  enter expand  esc close";
+const HELP = `${HELP_KEYS}  click/wheel`;
 const SORT_ARROWS: Record<SortKey, string> = { time: "▼", size: "▼", name: "▲" };
 
 interface BoxChars {
@@ -56,7 +54,7 @@ export function renderReport(
   height: number,
   color: boolean,
 ): string[] {
-  const layout = renderLayout(stages, state, width, height);
+  const layout = reportLayout(stages, width, height);
   const box = color ? UNICODE_BOX : PLAIN_BOX;
   const stageLines = renderStageList(
     stages,
@@ -79,36 +77,10 @@ export function renderReport(
   return fitLines(lines, height, width);
 }
 
-interface Layout {
-  bodyHeight: number;
-  innerHeight: number;
-  leftWidth: number;
-  rightWidth: number;
-}
-
-/** Table rows that fit on a screen of `height` lines. */
-export function reportBodyHeight(height: number): number {
-  return Math.max(1, height - TITLE_LINES - FOOTER_LINES - BOX_CHROME_LINES);
-}
-
-function renderLayout(stages: Stage[], state: ReportState, width: number, height: number): Layout {
-  const bodyHeight = reportBodyHeight(height);
-  const leftWidth = Math.min(
-    stageListLayout(stages).width,
-    Math.max(0, width - BOX_CHROME_COLUMNS),
-  );
-  return {
-    bodyHeight,
-    innerHeight: bodyHeight + 2,
-    leftWidth,
-    rightWidth: Math.max(0, width - BOX_CHROME_COLUMNS - leftWidth),
-  };
-}
-
 function renderPanel(
   stages: Stage[],
   state: ReportState,
-  layout: Layout,
+  layout: ReportLayout,
   color: boolean,
 ): string[] {
   const stage = stages[state.stage];
@@ -127,7 +99,7 @@ function renderPanel(
 
 function horizontalLine(
   box: BoxChars,
-  layout: Layout,
+  layout: ReportLayout,
   left: string,
   join: string,
   right: string,
