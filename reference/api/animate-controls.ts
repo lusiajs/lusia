@@ -7,7 +7,7 @@ export const animateControlEntries: ApiEntry[] = [
     kind: "value",
     group: "motion",
     signature:
-      "const ON: { readonly ATTACH: On; readonly DETACH: On; readonly VIEW: On; readonly HOVER: On; readonly SCROLL: On; readonly MOVE: On; readonly RESIZE: On; readonly MOVE_OR_RESIZE: On; readonly MANUAL: On }",
+      "const ON: { readonly ATTACH: On; readonly DETACH: On; readonly VIEW: On; readonly HOVER: On; readonly SCROLL: On; readonly MOVE: On; readonly RESIZE: On; readonly MOVE_OR_RESIZE: On; readonly MANUAL: On; readonly MOUSE_MOVE: On }",
     summary: "What plays an animation item.",
     bullets: [
       "ATTACH (the default) plays 0 to 1 once when attached. DETACH plays on detach, and detach waits for it.",
@@ -54,6 +54,11 @@ export const animateControlEntries: ApiEntry[] = [
       {
         name: "MANUAL",
         summary: "No trigger. Only a controller plays it.",
+      },
+      {
+        name: "MOUSE_MOVE",
+        summary:
+          "Plays a function of the pointer position, { x, y } from 0 to 1 inside the element. On leave, it eases back to the base style.",
       },
     ],
   },

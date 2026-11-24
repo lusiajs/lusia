@@ -138,6 +138,7 @@ describe("motion completions", () => {
       "RESIZE",
       "MOVE_OR_RESIZE",
       "MANUAL",
+      "MOUSE_MOVE",
     ]);
   });
 

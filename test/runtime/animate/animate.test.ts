@@ -307,7 +307,7 @@ describe("validation", () => {
 
   test("an unknown on is an error", () => {
     expect(() => run({ play: fade(0, 1), on: "view" as never })).toThrow(
-      "animate on must be ON.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a variable",
+      "animate on must be ON.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE, MANUAL or MOUSE_MOVE, or a variable",
     );
   });
 

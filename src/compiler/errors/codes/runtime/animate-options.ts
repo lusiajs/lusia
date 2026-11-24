@@ -65,4 +65,12 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
     message: "more was renamed to options",
     hint: "Write options: { ... } instead of more: { ... }.",
   },
+  L2087: {
+    message: "play as a function works only with ON.MOUSE_MOVE, not $on",
+    hint: "Use on: ON.MOUSE_MOVE, or write play as keyframes.",
+  },
+  L2088: {
+    message: "ON.MOUSE_MOVE needs play as a function, got $value",
+    hint: "Write play: ({ x, y }) => ({ ... }), a function that returns a style object.",
+  },
 } as const satisfies Record<string, ErrorCode>;

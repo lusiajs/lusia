@@ -13,6 +13,7 @@ import type { SpaceSpec } from "../layout/space/space-closer.ts";
 import { runtimeError } from "../../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 import { readKeyframes } from "./item-style.ts";
+import { readPointerPlay, type PointerSpec } from "./pointer-item.ts";
 import { rejectOldNames } from "./old-names.ts";
 
 export interface Timing {
@@ -32,6 +33,8 @@ export interface ItemOptions {
   options: ReadOptions;
   /** Set for an ATTACH or DETACH item with `animateSpace`. It slides the siblings into the space. */
   space: SpaceSpec | undefined;
+  /** Set for ON.MOUSE_MOVE: the function play and the way back. */
+  pointer: PointerSpec | undefined;
 }
 
 export function readItem(item: AnimateItem): ItemOptions {
@@ -41,6 +44,7 @@ export function readItem(item: AnimateItem): ItemOptions {
   rejectLoop(item, on);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
   const options = readOptions(on, item.options, { duration });
+  const pointerPlay = readPointerPlay(item.play, on);
   const keyframes = readKeyframes(item, on);
   const timing = {
     duration,
@@ -53,6 +57,7 @@ export function readItem(item: AnimateItem): ItemOptions {
     keyframes,
     timing,
     space: readSpace(on, options, keyframes, timing),
+    pointer: pointerPlay === undefined ? undefined : { play: pointerPlay, duration },
     on,
     once: item.once ?? (on === ON.VIEW && !options.reverse),
     control: item.control,

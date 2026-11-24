@@ -11,10 +11,13 @@ const NO_PLAY: Keyframes = { 0: {}, 1: {} };
 /** The styles the glide writes. A layout item cannot animate them, or its keyframes would fight the glide. */
 const GLIDE_PROPS = ["translate", "scale"];
 
+/** A MOUSE_MOVE item has a function play, which runs on the pointer, so its keyframes are empty. */
 export function readKeyframes(item: AnimateItem, on: On | Source): Keyframes {
+  if (on === ON.MOUSE_MOVE) return NO_PLAY;
   if (!item.play) return keyframesWithoutPlay(on);
-  if (isLayoutOn(on)) rejectGlideStyles(item.play);
-  return item.play;
+  const keyframes = item.play as Keyframes;
+  if (isLayoutOn(on)) rejectGlideStyles(keyframes);
+  return keyframes;
 }
 
 /** An item with no play takes the config preset: `out` for DETACH, `in` for the other triggers. */

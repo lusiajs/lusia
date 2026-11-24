@@ -6,6 +6,7 @@ import type { ScrollOptions } from "./options/scroll-options.ts";
 import type { AnimateMidway } from "./options/midway-options.ts";
 import { ON, type LayoutOn, type Source } from "./modes/trigger.ts";
 import type { ViewOptions } from "./options/view-options.ts";
+import type { PointerPlay } from "./options/pointer-item.ts";
 import { hasItemKey } from "./options/keys.ts";
 
 interface ItemBase {
@@ -58,8 +59,22 @@ interface ScrollItem extends ItemBase {
   options?: ScrollOptions;
 }
 
+/** MOUSE_MOVE takes a function play, which gets the pointer position. Its timing is the way back. */
+interface MouseMoveItem extends Omit<ItemBase, "play"> {
+  play: PointerPlay;
+  on: typeof ON.MOUSE_MOVE;
+  options?: never;
+}
+
 export type AnimateItem =
-  PlainItem | AttachItem | DetachItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
+  | PlainItem
+  | AttachItem
+  | DetachItem
+  | LayoutItem
+  | ViewItem
+  | HoverItem
+  | ScrollItem
+  | MouseMoveItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 

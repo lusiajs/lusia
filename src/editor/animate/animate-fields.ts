@@ -11,7 +11,7 @@ const FIELD_ITEMS: CompletionItemData[] = [
     kind: "property",
     insertText: "play: $1",
     snippet: true,
-    detail: "Keyframes to play",
+    detail: "Keyframes to play, or a function ({ x, y }) => style with ON.MOUSE_MOVE",
   },
   {
     label: "on",

@@ -10,6 +10,7 @@ const MOVE: unique symbol = Symbol("MOVE");
 const RESIZE: unique symbol = Symbol("RESIZE");
 const MOVE_OR_RESIZE: unique symbol = Symbol("MOVE_OR_RESIZE");
 const MANUAL: unique symbol = Symbol("MANUAL");
+const MOUSE_MOVE: unique symbol = Symbol("MOUSE_MOVE");
 
 export const ON = Object.freeze({
   ATTACH,
@@ -21,6 +22,7 @@ export const ON = Object.freeze({
   RESIZE,
   MOVE_OR_RESIZE,
   MANUAL,
+  MOUSE_MOVE,
 } as const);
 
 export type On = (typeof ON)[keyof typeof ON];

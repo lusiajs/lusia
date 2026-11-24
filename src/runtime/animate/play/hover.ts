@@ -6,6 +6,7 @@ import type { HoverRead } from "../options/hover-options.ts";
 import type { Timing } from "../options/options.ts";
 import { midwayDefault } from "../options/midway-options.ts";
 import { Player } from "./player.ts";
+import { restBox } from "./rest-box.ts";
 
 interface HoverState {
   /** True between enter and leave. Touch toggles it, so it is the single source of truth. */
@@ -140,21 +141,6 @@ function bindFinalArea(
     },
     cleanups,
   );
-}
-
-const TRANSFORM_PROPERTIES = ["translate", "scale", "rotate", "transform"];
-
-/** The box the element has with no inline transform. Clearing and restoring is synchronous, so nothing paints. */
-function restBox(el: HTMLElement): DOMRect {
-  const style = el.style;
-  const saved = TRANSFORM_PROPERTIES.map((name) => style.getPropertyValue(name));
-  if (saved.every((value) => value === "")) return el.getBoundingClientRect();
-  TRANSFORM_PROPERTIES.forEach((name) => style.removeProperty(name));
-  const box = el.getBoundingClientRect();
-  TRANSFORM_PROPERTIES.forEach((name, index) => {
-    if (saved[index] !== "") style.setProperty(name, saved[index]!);
-  });
-  return box;
 }
 
 function isInBox(box: DOMRect, x: number, y: number): boolean {

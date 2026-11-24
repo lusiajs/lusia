@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lusiajs";
 import { createTarget } from "../cells.ts";
 import Tile from "./Tile.lusia";
+import Tilt from "./Tilt.lusia";
 import { attachTiles, DURATION, wait } from "./main.ts";
 
 const LEAVE_MARGIN_MS = 200;
@@ -60,5 +61,14 @@ describe("animate on many elements", () => {
     const item = target.querySelector<HTMLElement>("li")!;
     expect(item.style.opacity).toBe("1");
     expect(item.style.getPropertyValue("translate")).toBe("0px 0px");
+  });
+
+  test("a mouse-move tilt writes its transform on the next frame", async () => {
+    const target = newTarget();
+    attach(Tilt, target);
+    const card = target.querySelector<HTMLElement>(".tilt")!;
+    card.dispatchEvent(new Event("pointermove"));
+    await wait(50);
+    expect(card.style.transform).toContain("rotateX(10deg)");
   });
 });

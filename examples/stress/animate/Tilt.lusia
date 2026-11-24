@@ -1,0 +1,24 @@
+<script>
+  import { ON } from "lusiajs";
+
+  // The card tilts toward the pointer and eases back to flat when the pointer leaves.
+  const tilt = {
+    on: ON.MOUSE_MOVE,
+    duration: 300,
+    play: ({ x, y }) => ({
+      transform: `rotateX(${(0.5 - y) * 20}deg) rotateY(${(x - 0.5) * 20}deg)`,
+    }),
+  };
+</script>
+
+<div class="tilt" animate={tilt}>
+  <span>Tilt</span>
+</div>
+
+<style>
+  .tilt {
+    padding: 1rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+</style>

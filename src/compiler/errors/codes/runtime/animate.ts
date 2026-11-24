@@ -7,7 +7,7 @@ export const RUNTIME_ANIMATE_CODES = {
   },
   L2002: {
     message:
-      "animate on must be ON.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a variable",
+      "animate on must be ON.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE, MANUAL or MOUSE_MOVE, or a variable",
     hint: "Pass one of the ON values, or a variable.",
   },
   L2003: {

@@ -73,7 +73,7 @@ function toStop(at: number, value: KeyframeValue, fromKeyframes: PartialEasing):
   return { at, easeStyle, ease, style: new Map(entries) };
 }
 
-function cssName(name: string): string {
+export function cssName(name: string): string {
   if (name.startsWith("--")) return name;
   return name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 }

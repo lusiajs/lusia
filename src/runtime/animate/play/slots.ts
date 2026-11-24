@@ -8,6 +8,7 @@ import { isLayoutOn, type On, type Source } from "../modes/trigger.ts";
 import { layoutModeOf } from "../modes/layout-mode.ts";
 import type { GlideSpec } from "../layout/layout-glide.ts";
 import type { SpaceSpec } from "../layout/space/space-closer.ts";
+import type { PointerSpec } from "../options/pointer-item.ts";
 
 /** The players that share one trigger, `once`, controller and options. A group is driven together. */
 export interface Slot {
@@ -19,6 +20,8 @@ export interface Slot {
   glide: GlideSpec | undefined;
   /** Set for an item that moves its siblings with `animateSpace`. Each such item has its own slot. */
   space: SpaceSpec | undefined;
+  /** Set for ON.MOUSE_MOVE. Each such item has its own slot. */
+  pointer: PointerSpec | undefined;
   loops: boolean;
   group: Group;
 }
@@ -30,6 +33,7 @@ interface Bucket {
   options: ReadOptions;
   glide: GlideSpec | undefined;
   space: SpaceSpec | undefined;
+  pointer: PointerSpec | undefined;
   loops: boolean;
   players: Player[];
 }
@@ -37,16 +41,19 @@ interface Bucket {
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
   items.forEach((item, i) => addToBucket(buckets, item, players[i]!));
-  return buckets.map(({ on, once, control, options, glide, space, loops, players: members }) => ({
-    on,
-    once,
-    control,
-    options,
-    glide,
-    space,
-    loops,
-    group: new Group(members, refresh),
-  }));
+  return buckets.map(
+    ({ on, once, control, options, glide, space, pointer, loops, players: members }) => ({
+      on,
+      once,
+      control,
+      options,
+      glide,
+      space,
+      pointer,
+      loops,
+      group: new Group(members, refresh),
+    }),
+  );
 }
 
 function addToBucket(buckets: Bucket[], item: ItemOptions, player: Player): void {
@@ -56,20 +63,30 @@ function addToBucket(buckets: Bucket[], item: ItemOptions, player: Player): void
 }
 
 function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
-  const { on, once, control, options, space } = item;
+  const { on, once, control, options, space, pointer } = item;
   const glide = glideSpecOf(item);
-  const found =
-    glide || space
-      ? undefined
-      : buckets.find(
-          (b) =>
-            b.on === on &&
-            b.once === once &&
-            b.control === control &&
-            sameOptions(b.options, options),
-        );
+  const alone = glide || space || pointer;
+  const found = alone
+    ? undefined
+    : buckets.find(
+        (b) =>
+          b.on === on &&
+          b.once === once &&
+          b.control === control &&
+          sameOptions(b.options, options),
+      );
   if (found) return found;
-  const bucket: Bucket = { on, once, control, options, glide, space, loops: false, players: [] };
+  const bucket: Bucket = {
+    on,
+    once,
+    control,
+    options,
+    glide,
+    space,
+    pointer,
+    loops: false,
+    players: [],
+  };
   buckets.push(bucket);
   return bucket;
 }
