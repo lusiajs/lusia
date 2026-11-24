@@ -7,7 +7,13 @@ async function runServer(body: string): Promise<unknown> {
   const script = `
     import { createDevServer } from "${DEV_SERVER}";
     const readies = [];
-    const server = createDevServer({ dir: "/", port: 0, onReady: (ms) => readies.push(typeof ms) });
+    const browserErrors = [];
+    const server = createDevServer({
+      dir: "/",
+      port: 0,
+      onReady: (ms) => readies.push(typeof ms),
+      onBrowserError: (error) => browserErrors.push(error),
+    });
     const socket = new WebSocket("ws://localhost:" + server.url.port + "/__lusia/reload");
     const messages = [];
     socket.onmessage = (event) => {
@@ -18,7 +24,7 @@ async function runServer(body: string): Promise<unknown> {
     await new Promise((resolve) => (socket.onopen = resolve));
     ${body}
     await Bun.sleep(100);
-    console.log(JSON.stringify({ messages, readies }));
+    console.log(JSON.stringify({ messages, readies, browserErrors }));
     socket.close();
     server.stop();
   `;
@@ -36,6 +42,7 @@ describe("dev server publish", () => {
     expect(out).toEqual({
       messages: [{ type: "css", id: "abc", css: ".a{}" }],
       readies: ["number"],
+      browserErrors: [],
     });
   });
 
@@ -43,14 +50,14 @@ describe("dev server publish", () => {
     const out = await runServer(`
       server.publish(new Map(), { kind: "styles", styles: [] });
     `);
-    expect(out).toEqual({ messages: [], readies: [] });
+    expect(out).toEqual({ messages: [], readies: [], browserErrors: [] });
   });
 
   test("a reload update sends a reload message", async () => {
     const out = await runServer(`
       server.publish(new Map(), { kind: "reload" });
     `);
-    expect(out).toEqual({ messages: [{ type: "reload" }], readies: [] });
+    expect(out).toEqual({ messages: [{ type: "reload" }], readies: [], browserErrors: [] });
   });
 
   test("a ready report with no publish before it is ignored", async () => {
@@ -62,6 +69,38 @@ describe("dev server publish", () => {
     expect(out).toEqual({
       messages: [{ type: "css", id: "abc", css: ".a{}" }],
       readies: ["number"],
+      browserErrors: [],
     });
+  });
+});
+
+describe("dev server browser errors", () => {
+  test("a browser-error report reaches onBrowserError", async () => {
+    const out = await runServer(`
+      socket.send(JSON.stringify({ type: "browser-error", page: "/guide", message: "boom", stack: "Error: boom\\nsrc/a.lusia:1:2" }));
+      await Bun.sleep(50);
+    `);
+    expect(out).toMatchObject({
+      browserErrors: [{ page: "/guide", message: "boom", stack: "Error: boom\nsrc/a.lusia:1:2" }],
+    });
+  });
+
+  test("a stack longer than 20 lines is cut to 20", async () => {
+    const out = await runServer(`
+      const stack = Array.from({ length: 30 }, (_, index) => "line " + index).join("\\n");
+      socket.send(JSON.stringify({ type: "browser-error", page: "/", message: "boom", stack }));
+      await Bun.sleep(50);
+    `);
+    const [error] = (out as { browserErrors: { stack: string }[] }).browserErrors;
+    expect(error?.stack.split("\n")).toHaveLength(20);
+  });
+
+  test("a report with missing fields or bad JSON is ignored", async () => {
+    const out = await runServer(`
+      socket.send("not json");
+      socket.send(JSON.stringify({ type: "browser-error", page: "/" }));
+      await Bun.sleep(50);
+    `);
+    expect(out).toMatchObject({ browserErrors: [] });
   });
 });

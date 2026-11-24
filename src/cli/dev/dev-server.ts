@@ -12,11 +12,18 @@ export function isPageRoute(method: string, pathname: string): boolean {
   return method === "GET" && !/\.[^/]*$/.test(pathname);
 }
 
+export interface BrowserError {
+  page: string;
+  message: string;
+  stack: string;
+}
+
 export interface DevServerOptions {
   dir: string;
   port: number;
   /** Called with the time from a publish to the page's `ready` report. */
   onReady?: (ms: number) => void;
+  onBrowserError?: (error: BrowserError) => void;
 }
 
 export interface DevServer {
@@ -30,8 +37,9 @@ type Socket = ServerWebSocket<unknown>;
 
 // Hot modules are needed only until the page has imported them, so the oldest are dropped.
 const MAX_HOT_MODULES = 50;
+const MAX_STACK_LINES = 20;
 
-export function createDevServer({ dir, port, onReady }: DevServerOptions): DevServer {
+export function createDevServer({ dir, port, onReady, onBrowserError }: DevServerOptions): DevServer {
   let assets: Assets = new Map();
   const hotModules = new Map<string, Blob>();
   let error: string | null = null;
@@ -57,10 +65,9 @@ export function createDevServer({ dir, port, onReady }: DevServerOptions): DevSe
         sockets.delete(socket);
       },
       message(_socket, text) {
-        if (!isReadyReport(text) || publishedAt === null) return;
-        const ms = now() - publishedAt;
-        publishedAt = null;
-        onReady?.(ms);
+        const report = parseReport(text);
+        if (report?.type === "ready") reportReady();
+        else if (report?.type === "browser-error") reportBrowserError(report);
       },
     },
   });
@@ -86,6 +93,18 @@ export function createDevServer({ dir, port, onReady }: DevServerOptions): DevSe
   function keepHotModule({ url, body }: HotModule): void {
     hotModules.set(url, body);
     if (hotModules.size > MAX_HOT_MODULES) hotModules.delete(hotModules.keys().next().value!);
+  }
+
+  function reportReady(): void {
+    if (publishedAt === null) return;
+    const ms = now() - publishedAt;
+    publishedAt = null;
+    onReady?.(ms);
+  }
+
+  function reportBrowserError(report: ClientReport): void {
+    const browserError = toBrowserError(report);
+    if (browserError) onBrowserError?.(browserError);
   }
 
   function messagesFor(update: Update, modules: HotModule[]): object[] {
@@ -117,10 +136,22 @@ export function createDevServer({ dir, port, onReady }: DevServerOptions): DevSe
   };
 }
 
-function isReadyReport(text: string | Buffer): boolean {
+type ClientReport = Record<string, unknown>;
+
+function parseReport(text: string | Buffer): ClientReport | null {
   try {
-    return JSON.parse(String(text)).type === "ready";
+    const report: unknown = JSON.parse(String(text));
+    return typeof report === "object" && report !== null ? (report as ClientReport) : null;
   } catch {
-    return false;
+    return null;
   }
+}
+
+function toBrowserError({ page, message, stack }: ClientReport): BrowserError | null {
+  if (typeof page !== "string" || typeof message !== "string" || typeof stack !== "string") return null;
+  return { page, message, stack: truncateStack(stack) };
+}
+
+function truncateStack(stack: string): string {
+  return stack.split("\n").slice(0, MAX_STACK_LINES).join("\n");
 }

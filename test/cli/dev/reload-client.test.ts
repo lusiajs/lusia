@@ -16,4 +16,11 @@ describe("withReloadClient", () => {
   test("appends the client when there is no body tag", () => {
     expect(withReloadClient("<p>hi</p>").startsWith("<p>hi</p><script>")).toBe(true);
   });
+
+  test("reports browser errors and rejections to the dev server", () => {
+    const html = withReloadClient("<body></body>");
+    expect(html).toContain('addEventListener("error", reportWindowError)');
+    expect(html).toContain('addEventListener("unhandledrejection", reportRejection)');
+    expect(html).toContain('type: "browser-error"');
+  });
 });

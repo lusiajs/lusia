@@ -12,6 +12,9 @@ const CLIENT_CODE = `
   var reconnecting = false;
   var loaded = false;
   var socket = null;
+  var queuedReports = [];
+  var lastMessage = null;
+  var lastReportAt = 0;
 
   function appendLinked(node, text) {
     var parts = text.split(/(L[12]\\d{3})/);
@@ -42,6 +45,50 @@ const CLIENT_CODE = `
     if (loaded && socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "ready" }));
   }
 
+  function messageOf(value) {
+    return value && value.message ? value.message : String(value);
+  }
+
+  function stackOf(value) {
+    return value && value.stack ? value.stack : String(value);
+  }
+
+  function stackText(stack) {
+    return String(stack).split(location.origin + "/").join("");
+  }
+
+  function sendReport(text) {
+    if (socket && socket.readyState === WebSocket.OPEN) socket.send(text);
+    else if (queuedReports.length < 10) queuedReports.push(text);
+  }
+
+  function flushReports() {
+    for (var i = 0; i < queuedReports.length; i++) socket.send(queuedReports[i]);
+    queuedReports = [];
+  }
+
+  function reportError(message, stack) {
+    var now = Date.now();
+    if (String(message) === lastMessage && now - lastReportAt < 1000) return;
+    lastMessage = String(message);
+    lastReportAt = now;
+    sendReport(JSON.stringify({
+      type: "browser-error",
+      page: location.pathname,
+      message: String(message),
+      stack: stackText(stack)
+    }));
+  }
+
+  function reportWindowError(event) {
+    var stack = event.error ? stackOf(event.error) : event.message + "\\n" + event.filename + ":" + event.lineno + ":" + event.colno;
+    reportError(event.message, stack);
+  }
+
+  function reportRejection(event) {
+    reportError(messageOf(event.reason), stackOf(event.reason));
+  }
+
   function findStyle(id) {
     var styles = document.querySelectorAll("style[data-lusia]");
     for (var i = 0; i < styles.length; i++) {
@@ -67,7 +114,8 @@ const CLIENT_CODE = `
       hideError();
       sendReady();
     }).catch(function (error) {
-      showError("Hot update failed\\n\\n" + String(error && error.stack ? error.stack : error));
+      showError("Hot update failed\\n\\n" + stackOf(error));
+      reportError("Hot update failed", stackOf(error));
     });
   }
 
@@ -79,6 +127,7 @@ const CLIENT_CODE = `
   function connect() {
     socket = new WebSocket(url);
     socket.onopen = function () {
+      flushReports();
       if (reconnecting) location.reload();
       else sendReady();
     };
@@ -99,6 +148,8 @@ const CLIENT_CODE = `
     loaded = true;
     sendReady();
   });
+  window.addEventListener("error", reportWindowError);
+  window.addEventListener("unhandledrejection", reportRejection);
   connect();
 })();
 `;
