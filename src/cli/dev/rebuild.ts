@@ -43,6 +43,8 @@ interface RebuildOptions {
   screens?: Screens;
   /** Style blocks the startup warm step compiled. The startup build reports these. */
   startStyles: StyleTiming[];
+  /** Called after each successful build, once its files are published. */
+  onBuilt: () => void;
 }
 
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
@@ -51,6 +53,7 @@ export function createRebuild({
   server,
   onUpdate,
   onBuildError,
+  onBuilt,
   lazy: startLazy,
   animate: startAnimate,
   screens: startScreens,
@@ -108,6 +111,7 @@ export function createRebuild({
     }
     needsReload = false;
     server.publish(build.assets, update, modules);
+    onBuilt();
     if (!change.startup) {
       const steps: Steps = { ...build.steps, wait: change.waitMs, total: now() - started };
       onUpdate({ time: new Date(), kind: blockKind(update), files: change.files, steps });

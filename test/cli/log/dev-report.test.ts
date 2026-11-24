@@ -10,8 +10,8 @@ const REPORT: BuildReport = {
     { file: "/app/src/Nav.lusia", index: 0, cached: false, ms: 12.4 },
   ],
   compiles: [
-    { file: "/app/src/Card.lusia", ms: 3, bytes: 800 },
-    { file: "/app/src/Nav.lusia", ms: 9, bytes: 2400 },
+    { file: "/app/src/Card.lusia", ms: 3, bytes: 800, cached: false },
+    { file: "/app/src/Nav.lusia", ms: 9, bytes: 2400, cached: false },
   ],
   modules: [
     { path: "/app/node_modules/@codemirror/view/index.js", bytes: 600_000 },

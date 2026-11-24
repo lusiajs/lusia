@@ -48,8 +48,12 @@ export function lusia({
       build.onLoad({ filter: /\.lusia$/ }, async ({ path }) => {
         const source = await Bun.file(path).text();
         const key = compileKey(lazyKeyFor(path, source, lazy), animateKey, screenKey);
+        const bytes = Buffer.byteLength(source);
         const cached = cachedModule(path, source, dev, key);
-        if (cached) return { contents: cached.code, loader: "ts" };
+        if (cached) {
+          if (report) recordCompile(report, { file: path, ms: 0, bytes, cached: true }, []);
+          return { contents: cached.code, loader: "ts" };
+        }
 
         const start = now();
         const result = compileFile(source, path, dev, lazy && lazyOptionsFor(path, lazy), screens);
@@ -60,7 +64,8 @@ export function lusia({
         addStep(steps, "sass", result.sassMs);
         addStep(steps, "compile", compileMs);
         if (report) {
-          recordCompile(report, path, compileMs, Buffer.byteLength(source), result.styleBlocks);
+          const timing = { file: path, ms: compileMs, bytes, cached: false };
+          recordCompile(report, timing, result.styleBlocks);
         }
         return { contents: next.code, loader: "ts" };
       });

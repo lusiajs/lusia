@@ -83,7 +83,7 @@ export type StartupDetails = Partial<Record<TimingName, string[]>>;
  * Zero parts are hidden. With no parts, only the total row shows.
  */
 export function startupRows(steps: Steps, color: boolean, details: StartupDetails = {}): string[] {
-  const parts = startupParts(steps);
+  const parts = startupParts(steps, details);
   const totalRow = startupRow("total", Math.round(steps.total ?? 0), ANSI.bold, color);
   if (parts.length === 0) return [totalRow];
   const partRows = parts.flatMap((part) => [
@@ -101,10 +101,15 @@ function detailRows(lines: string[], color: boolean): string[] {
   });
 }
 
-function startupParts(steps: Steps): TimingPart[] {
+function startupParts(steps: Steps, details: StartupDetails): TimingPart[] {
   return STARTUP_PARTS.map(([name, step]) => ({ name, ms: Math.round(steps[step] ?? 0) })).filter(
-    (part) => part.ms > 0,
+    (part) => part.ms > 0 || hasDetails(details[part.name]),
   );
+}
+
+// A part with nothing to time still shows its detail, such as a compile that was all cached.
+function hasDetails(lines: string[] | undefined): boolean {
+  return lines !== undefined && lines.length > 0;
 }
 
 function startupRow(label: string, ms: number, code: string, color: boolean): string {

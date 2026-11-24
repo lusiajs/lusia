@@ -12,6 +12,8 @@ import { emptyReport } from "../build/build-report.ts";
 import { startupDetails } from "../log/dev-detail.ts";
 import { prepareStyles } from "../build/sass-warm.ts";
 import { saveStyleCache } from "../build/sass-disk-cache.ts";
+import { loadCompileCache } from "../build/compile-disk-cache.ts";
+import { createCompileCacheSaver } from "./compile-cache-saver.ts";
 import { DEFAULT_SCREENS } from "#runtime/screen/screens.ts";
 import { createDevServer } from "./dev-server.ts";
 import { startShortcuts } from "./key-actions.ts";
@@ -69,7 +71,9 @@ export async function startDev({
     onBrowserError: (error) =>
       printer.print(formatBrowserError({ time: new Date(), ...error }, color)),
   });
+  await loadCompileCache(root);
   const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
+  const compileCache = createCompileCacheSaver(root);
   const rebuild = createRebuild({
     root,
     server,
@@ -80,6 +84,7 @@ export async function startDev({
     onUpdate: (update) => printer.show(update),
     onBuildError: (messages) =>
       printer.print(formatBuildError(new Date(), relativeTo(root, messages), color)),
+    onBuilt: () => compileCache.schedule(),
   });
   const firstBuild = (await rebuild.startup()) ?? {
     steps: {},
@@ -113,6 +118,7 @@ export async function startDev({
   });
 
   const keys = startShortcuts({
+    quiet,
     urls,
     localUrl: server.url.href,
     startup,

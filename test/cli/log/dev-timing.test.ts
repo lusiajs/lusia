@@ -47,6 +47,18 @@ describe("startupRows", () => {
     expect(rows.some((row) => row.startsWith("server"))).toBe(false);
   });
 
+  test("a part with no time still shows its detail, such as a compile that was all cached", () => {
+    const rows = startupRows({ total: 9, compile: 0 }, false, {
+      compile: ["2 files: 2 cached, 0 compiled"],
+    });
+    expect(rows).toEqual([
+      "compile       0 ms",
+      "| ` 2 files: 2 cached, 0 compiled",
+      "-".repeat(18),
+      "total         9 ms",
+    ]);
+  });
+
   test("shows only the total when no part has time", () => {
     expect(startupRows({ total: 12 }, false)).toEqual(["total        12 ms"]);
   });

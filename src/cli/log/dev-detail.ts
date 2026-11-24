@@ -30,9 +30,19 @@ function styleLines(styles: StyleTiming[]): string[] {
 
 function compileLines(compiles: CompileTiming[]): string[] {
   if (compiles.length === 0) return [];
-  const slowest = compiles.reduce((next, compile) => (compile.ms > next.ms ? compile : next));
-  const name = basename(slowest.file);
-  return [`${plural(compiles.length, "file")}, slowest ${name} ${Math.round(slowest.ms)} ms`];
+  const cached = compiles.filter((compile) => compile.cached).length;
+  const compiled = compiles.length - cached;
+  const counts = `${plural(compiles.length, "file")}: ${cached} cached, ${compiled} compiled`;
+  const slowest = slowestCompile(compiles.filter((compile) => !compile.cached));
+  if (!slowest) return [counts];
+  return [`${counts}, slowest ${basename(slowest.file)} ${Math.round(slowest.ms)} ms`];
+}
+
+function slowestCompile(compiles: CompileTiming[]): CompileTiming | undefined {
+  return compiles.reduce<CompileTiming | undefined>(
+    (slowest, compile) => (!slowest || compile.ms > slowest.ms ? compile : slowest),
+    undefined,
+  );
 }
 
 function bundleLines(report: BuildReport): string[] {

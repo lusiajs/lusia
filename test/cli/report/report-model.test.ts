@@ -40,7 +40,12 @@ describe("buildStages", () => {
   });
 
   test("compile rows carry time and size, relative to the root", () => {
-    expect(stages[2]?.rows[0]).toEqual({ name: "src/A.lusia", ms: 3.1, bytes: 1200 });
+    expect(stages[2]?.rows[0]).toEqual({
+      name: "src/A.lusia",
+      state: "compiled",
+      ms: 3.1,
+      bytes: 1200,
+    });
   });
 
   test("bundle has one row per package with its files as children, then the app files", () => {

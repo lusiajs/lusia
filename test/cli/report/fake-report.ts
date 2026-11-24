@@ -8,8 +8,8 @@ export const fakeReport: BuildReport = {
     { file: "/app/src/B.lusia", index: 0, cached: false, ms: 9.5 },
   ],
   compiles: [
-    { file: "/app/src/A.lusia", ms: 3.1, bytes: 1200 },
-    { file: "/app/src/B.lusia", ms: 12, bytes: 800 },
+    { file: "/app/src/A.lusia", ms: 3.1, bytes: 1200, cached: false },
+    { file: "/app/src/B.lusia", ms: 12, bytes: 800, cached: false },
   ],
   modules: [
     { path: "/app/node_modules/lib/index.js", bytes: 5000 },

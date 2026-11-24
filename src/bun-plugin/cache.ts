@@ -63,6 +63,15 @@ export function storeModule(path: string, entry: CachedModule): CachedModule | u
   return previous;
 }
 
+/** Loads an entry saved by an earlier run. The caller checks that it is still current. */
+export function primeModule(path: string, entry: CachedModule): void {
+  modules.set(path, entry);
+}
+
+export function cachedModuleEntries(): { path: string; entry: CachedModule }[] {
+  return [...modules].map(([path, entry]) => ({ path, entry }));
+}
+
 export function pruneModules(): void {
   for (const path of modules.keys()) {
     if (existsSync(path)) continue;

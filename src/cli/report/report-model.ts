@@ -76,6 +76,7 @@ function stylesStage(report: BuildReport): Stage {
 function compileStage(report: BuildReport): Stage {
   const rows = report.compiles.map((compile) => ({
     name: relative(report.root, compile.file),
+    state: compile.cached ? "cached" : "compiled",
     ms: compile.ms,
     bytes: compile.bytes,
   }));
@@ -84,6 +85,7 @@ function compileStage(report: BuildReport): Stage {
     ms: sum(rows.map((row) => row.ms)),
     columns: [
       { label: "file", field: "name" },
+      { label: "state", field: "state" },
       { label: "time", field: "ms" },
       { label: "size", field: "bytes" },
     ],

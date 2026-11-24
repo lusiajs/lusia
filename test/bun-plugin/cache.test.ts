@@ -7,6 +7,7 @@ import type { ModuleUpdate } from "#bun-plugin/update.ts";
 import { lusia } from "#bun-plugin/index.ts";
 import { compile, hash } from "#compiler/index.ts";
 import type { Steps } from "#cli/build/timings.ts";
+import { emptyReport } from "#cli/build/build-report.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
@@ -95,6 +96,20 @@ describe("lusia plugin cache", () => {
     await build({ duration: 500 });
     expect((await build({ duration: 500 })).steps.compile).toBeUndefined();
     expect((await build({ duration: 400 })).steps.compile).toBeDefined();
+  });
+
+  test("a cache hit is recorded in the report as a cached compile with no time", async () => {
+    await build();
+    const report = emptyReport(dir);
+    const result = await Bun.build({
+      entrypoints: [join(dir, "entry.ts")],
+      plugins: [lusia({ dev: true, report })],
+      throw: false,
+    });
+    expect(result.success).toBe(true);
+    expect(report.compiles).toEqual([
+      { file: card, ms: 0, bytes: Buffer.byteLength(cardSource()), cached: true },
+    ]);
   });
 
   test("a deleted file is pruned from the cache", async () => {

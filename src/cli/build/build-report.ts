@@ -9,6 +9,8 @@ export interface CompileTiming {
   file: string;
   ms: number;
   bytes: number;
+  /** True when the file came from the compile cache and was not compiled. */
+  cached: boolean;
 }
 
 export interface SizedPath {
@@ -30,13 +32,11 @@ export function emptyReport(root: string): BuildReport {
 
 export function recordCompile(
   report: BuildReport,
-  file: string,
-  ms: number,
-  bytes: number,
+  compile: CompileTiming,
   styleBlocks: StyleBlockTiming[],
 ): void {
-  report.compiles.push({ file, ms, bytes });
-  for (const block of styleBlocks) report.styles.push({ ...block, file });
+  report.compiles.push(compile);
+  for (const block of styleBlocks) report.styles.push({ ...block, file: compile.file });
 }
 
 /** Bun reports module paths relative to the working folder, so they are made absolute here. */

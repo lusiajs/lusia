@@ -58,12 +58,12 @@ describe("style disk cache", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  test("a cache from another lusia version is ignored", async () => {
+  test("a cache from another compiler stamp is ignored", async () => {
     const { dir, file, style } = await makeApp();
     compileStyleResult(style, file, ID, 0, DEFAULT_SCREENS);
     await saveStyleCache(dir);
     const saved = JSON.parse(await readFile(styleCachePath(dir), "utf8"));
-    saved.version = "0.0.0-old";
+    saved.stamp = "0.0.0-old";
     await writeFile(styleCachePath(dir), JSON.stringify(saved));
     forgetStyles(file);
     await loadStyleCache(dir);

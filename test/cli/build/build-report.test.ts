@@ -4,8 +4,9 @@ import { emptyReport, recordBundle, recordCompile } from "#cli/build/build-repor
 describe("recordCompile", () => {
   test("adds the file's compile time and each Sass block with its file", () => {
     const report = emptyReport("/app");
-    recordCompile(report, "/app/Card.lusia", 4, 120, [{ index: 0, cached: true, ms: 0 }]);
-    expect(report.compiles).toEqual([{ file: "/app/Card.lusia", ms: 4, bytes: 120 }]);
+    const timing = { file: "/app/Card.lusia", ms: 4, bytes: 120, cached: false };
+    recordCompile(report, timing, [{ index: 0, cached: true, ms: 0 }]);
+    expect(report.compiles).toEqual([timing]);
     expect(report.styles).toEqual([{ file: "/app/Card.lusia", index: 0, cached: true, ms: 0 }]);
   });
 });

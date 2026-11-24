@@ -14,6 +14,7 @@ import { fileRows, formatReport } from "./report.ts";
 import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./timings.ts";
 import { prepareStyles } from "./sass-warm.ts";
 import { saveStyleCache } from "./sass-disk-cache.ts";
+import { loadCompileCache, saveCompileCache } from "./compile-disk-cache.ts";
 
 export interface BuildOptions {
   dir: string;
@@ -48,6 +49,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const bundleStart = now();
   const styles = await prepareStyles(dir, options.screens ?? DEFAULT_SCREENS);
   addStep(steps, "sass", styles.ms);
+  await loadCompileCache(dir);
   const result = await bundleApp({
     dir,
     minify: options.minify,
@@ -63,6 +65,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     return 1;
   }
   await saveStyleCache(dir);
+  await saveCompileCache(dir);
 
   const writeStart = now();
   await writeOutputs(outdir, result.outputs);
