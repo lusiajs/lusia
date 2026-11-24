@@ -3,6 +3,7 @@ import type { ScrollRange, ScrollTouch } from "./scroll-touch.ts";
 import { unwrap } from "../../variable/reactive.ts";
 import type { ComputedVariable } from "../../variable/compute.ts";
 import { watch } from "../../variable/graph.ts";
+import { holdSize, releaseSize, startSizes, stopSizes } from "./scroll-sizes.ts";
 
 interface Tracked {
   el: Element;
@@ -34,24 +35,37 @@ export function watchScroll(
     last: NaN,
     next: NaN,
   };
-  if (scroll.follow) target.stopFollow = followVariable(target, scroll.follow);
   tracked.add(target);
   if (tracked.size === 1) startListening();
+  if (scroll.follow) target.stopFollow = followVariable(target, scroll.follow);
+  else holdSize(el);
   schedule();
   return () => unwatch(target);
 }
 
 function followVariable(target: Tracked, follow: ComputedVariable<Element | null>): () => void {
   return watch(() => {
-    target.followed = unwrap(follow) as Element | null;
+    setFollowed(target, unwrap(follow) as Element | null);
     schedule();
   });
+}
+
+function setFollowed(target: Tracked, next: Element | null): void {
+  if (next === target.followed) return;
+  releaseSize(target.followed);
+  holdSize(next);
+  target.followed = next;
 }
 
 function unwatch(target: Tracked): void {
   tracked.delete(target);
   target.stopFollow?.();
+  releaseSize(measuredElement(target));
   if (tracked.size === 0) stopListening();
+}
+
+function measuredElement(target: Tracked): Element | null {
+  return target.scroll.follow ? target.followed : target.el;
 }
 
 /** Capture on the document catches scrolling in any container, not only the window. */
@@ -60,11 +74,13 @@ const LISTEN_OPTIONS = { passive: true, capture: true };
 function startListening(): void {
   document.addEventListener("scroll", schedule, LISTEN_OPTIONS);
   window.addEventListener("resize", schedule, LISTEN_OPTIONS);
+  startSizes(schedule);
 }
 
 function stopListening(): void {
   document.removeEventListener("scroll", schedule, LISTEN_OPTIONS);
   window.removeEventListener("resize", schedule, LISTEN_OPTIONS);
+  stopSizes();
 }
 
 function schedule(): void {
@@ -92,7 +108,7 @@ function update(): void {
 }
 
 function isMeasurable(target: Tracked): boolean {
-  const el = target.scroll.follow ? target.followed : target.el;
+  const el = measuredElement(target);
   return el === null || el.isConnected;
 }
 

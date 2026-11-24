@@ -372,6 +372,51 @@ describe("ON.SCROLL part errors", () => {
   });
 });
 
+describe("ON.SCROLL size changes", () => {
+  test("a size change re-measures the followed element without a scroll", () => {
+    const sizes = stubResizeObserver();
+    const short = box(1100, 300);
+    const { follow, opacity } = mountFollow({
+      start: [EDGE.TOP, EDGE.BOTTOM],
+      end: [EDGE.TOP, 0.33],
+    });
+    follow.value = short.el;
+    advance(16);
+    expect(sizes.observed.has(short.el)).toBe(true);
+    expect(opacity()).toBe(0);
+    short.state.top = 665;
+    sizes.fire();
+    advance(16);
+    expect(opacity()).toBeCloseTo(0.5);
+  });
+});
+
+/** Replaces ResizeObserver so a test can fire its callback by hand. */
+function stubResizeObserver() {
+  const observed = new Set<Element>();
+  let callback: (() => void) | undefined;
+  class FakeResizeObserver {
+    constructor(onResize: () => void) {
+      callback = onResize;
+    }
+    observe(el: Element) {
+      observed.add(el);
+    }
+    unobserve(el: Element) {
+      observed.delete(el);
+    }
+    disconnect() {
+      observed.clear();
+    }
+  }
+  const original = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = FakeResizeObserver as unknown as typeof ResizeObserver;
+  onReset(() => {
+    globalThis.ResizeObserver = original;
+  });
+  return { observed, fire: () => callback?.() };
+}
+
 /** Real scroll items sit in the page; detached ones wait for the next frame instead of being measured. */
 function pageElement(): HTMLDivElement {
   const el = document.body.appendChild(document.createElement("div"));
