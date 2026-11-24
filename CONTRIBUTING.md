@@ -4,27 +4,27 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
 ## Repo layout
 
-| Path | What it holds |
-| ---- | ------------- |
-| `src/runtime` | The `lusiajs` package: variables, DOM helpers, animate |
-| `src/compiler` | Turns `.lusia` files into TypeScript modules |
-| `src/language` | Parse, format and lint for `.lusia` files |
-| `src/integrations` | Add-ons for other tools: `vscode-support` (editor logic), `prettier-plugin` |
-| `src/bun-plugin` | The Bun loader for `.lusia` files |
-| `src/cli` | The `lusia` command |
-| `test/` | Tests. One folder per area, mirroring `src/` |
-| `examples/stress` | Scenarios that push the limits |
-| `reference/api.ts` | The API table, read by the extension and the docs site |
-| `packages/prettier-plugin` | `@lusiajs/prettier-plugin`, the Prettier plugin for `.lusia` files |
-| `scripts/` | `check.ts` for `bun run check` |
+| Path                       | What it holds                                                               |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `src/runtime`              | The `lusiajs` package: variables, DOM helpers, animate                      |
+| `src/compiler`             | Turns `.lusia` files into TypeScript modules                                |
+| `src/language`             | Parse, format and lint for `.lusia` files                                   |
+| `src/integrations`         | Add-ons for other tools: `vscode-support` (editor logic), `prettier-plugin` |
+| `src/bun-plugin`           | The Bun loader for `.lusia` files                                           |
+| `src/cli`                  | The `lusia` command                                                         |
+| `test/`                    | Tests. One folder per area, mirroring `src/`                                |
+| `examples/stress`          | Scenarios that push the limits                                              |
+| `reference/api.ts`         | The API table, read by the extension and the docs site                      |
+| `packages/prettier-plugin` | `@lusiajs/prettier-plugin`, the Prettier plugin for `.lusia` files          |
+| `scripts/`                 | `check.ts` for `bun run check`                                              |
 
 ## Other repos
 
-| Repo | Uses `lusiajs` for |
-| ---- | ------------------ |
-| [lusiajs/create](https://github.com/lusiajs/create) | The starter app |
-| [lusiajs/vsix](https://github.com/lusiajs/vsix) | The VS Code extension |
-| [lusiajs/docs](https://github.com/lusiajs/docs) | The docs site |
+| Repo                                                | Uses `lusiajs` for    |
+| --------------------------------------------------- | --------------------- |
+| [lusiajs/create](https://github.com/lusiajs/create) | The starter app       |
+| [lusiajs/vsix](https://github.com/lusiajs/vsix)     | The VS Code extension |
+| [lusiajs/docs](https://github.com/lusiajs/docs)     | The docs site         |
 
 ## Rules
 
@@ -49,10 +49,10 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
 2. Check your change:
 
-   | Command | What it does |
-   | ------- | ------------ |
-   | `bun run check` | Typecheck and tests, with timings |
-   | `bun run format` | Format all files |
+   | Command              | What it does                        |
+   | -------------------- | ----------------------------------- |
+   | `bun run check`      | Typecheck and tests, with timings   |
+   | `bun run format`     | Format all files                    |
    | `bun run dev:stress` | Run the stress example on port 3000 |
 
 > [!TIP]
@@ -62,8 +62,8 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
 `@lusiajs/vscode-support` is a separate package in `packages/vscode-support`. It holds the built logic that editors load: completion, hover, lint and format.
 
-| Entry | File | Used by |
-| ----- | ---- | ------- |
+| Entry                            | File             | Used by               |
+| -------------------------------- | ---------------- | --------------------- |
 | `@lusiajs/vscode-support/vscode` | `dist/vscode.js` | The VS Code extension |
 
 - Source: `src/integrations/vscode-support/host.ts`. Build: `bun scripts/build-vscode-support.ts` (the host test runs it once, so `bun run check` covers it).

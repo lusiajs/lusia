@@ -67,7 +67,8 @@
     "format": "bun fmt",
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
-    "check": "bun scripts/check.ts"  },
+    "check": "bun scripts/check.ts"
+  },
   "dependencies": {
     "sass": "^1.80.0",
     "sucrase": "3.35.1"

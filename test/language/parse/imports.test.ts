@@ -24,7 +24,9 @@ describe("auto import", () => {
   test("creates an import when the script has none", () => {
     const script = "\nconst x = 1;\n";
     const edit = planLusiaImport(script, "variable");
-    expect(edit && apply(script, edit)).toBe('import { variable } from "lusiajs";\n\nconst x = 1;\n');
+    expect(edit && apply(script, edit)).toBe(
+      'import { variable } from "lusiajs";\n\nconst x = 1;\n',
+    );
   });
 
   test("adds the name to an existing lusia import", () => {

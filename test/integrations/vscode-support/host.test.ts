@@ -34,13 +34,22 @@ export type Hover = ReturnType<typeof hover.hoverAt>;
 
 async function writeConsumer(consumerDir: string): Promise<void> {
   await mkdir(join(consumerDir, "node_modules/@lusiajs"), { recursive: true });
-  await symlink(join(ROOT, SUPPORT_DIR), join(consumerDir, "node_modules/@lusiajs/vscode-support"), "dir");
-  await writeFile(join(consumerDir, "package.json"), JSON.stringify({ name: "consumer", private: true, type: "module" }));
+  await symlink(
+    join(ROOT, SUPPORT_DIR),
+    join(consumerDir, "node_modules/@lusiajs/vscode-support"),
+    "dir",
+  );
+  await writeFile(
+    join(consumerDir, "package.json"),
+    JSON.stringify({ name: "consumer", private: true, type: "module" }),
+  );
   await writeFile(join(consumerDir, "tsconfig.json"), JSON.stringify(CONSUMER_TSCONFIG));
   await writeFile(join(consumerDir, "index.ts"), CONSUMER_INDEX);
 }
 
-async function typecheckConsumer(consumerDir: string): Promise<{ code: number; output: string } | typeof TIMED_OUT> {
+async function typecheckConsumer(
+  consumerDir: string,
+): Promise<{ code: number; output: string } | typeof TIMED_OUT> {
   const tsc = join(ROOT, "node_modules/typescript/bin/tsc");
   const proc = Bun.spawn([process.execPath, tsc, "-p", join(consumerDir, "tsconfig.json")], {
     stdout: "pipe",
@@ -51,7 +60,8 @@ async function typecheckConsumer(consumerDir: string): Promise<{ code: number; o
     proc.kill();
     return TIMED_OUT;
   }
-  const output = (await Bun.readableStreamToText(proc.stdout)) + (await Bun.readableStreamToText(proc.stderr));
+  const output =
+    (await Bun.readableStreamToText(proc.stdout)) + (await Bun.readableStreamToText(proc.stderr));
   return { code: outcome, output };
 }
 
@@ -132,7 +142,9 @@ test(
       await writeConsumer(consumerDir);
       const result = await typecheckConsumer(consumerDir);
       if (result === TIMED_OUT) {
-        console.warn(`Skipped consumer type check: it took over ${CONSUMER_CHECK_LIMIT_MS / 1000}s.`);
+        console.warn(
+          `Skipped consumer type check: it took over ${CONSUMER_CHECK_LIMIT_MS / 1000}s.`,
+        );
         return;
       }
       expect(result.output).toBe("");

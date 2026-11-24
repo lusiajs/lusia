@@ -2,15 +2,12 @@
 import type { ScreenObject } from "#runtime/index.ts";
 import type { ScreenFlags, ScreenNamesFrom } from "#runtime/screen/screen-names.ts";
 
-type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
-  ? true
-  : false;
+type Equal<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 // Default: no project screens, so the three default names and REDUCED_MOTION.
-const defaultKeys: Equal<
-  keyof ScreenObject,
-  "PHONE" | "TABLET" | "DESKTOP" | "REDUCED_MOTION"
-> = true;
+const defaultKeys: Equal<keyof ScreenObject, "PHONE" | "TABLET" | "DESKTOP" | "REDUCED_MOTION"> =
+  true;
 // @ts-expect-error: MOBILE is not a default screen
 const defaultMobile = (null as unknown as ScreenObject).MOBILE;
 

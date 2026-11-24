@@ -48,13 +48,7 @@ export function lusia({
         if (cached) return { contents: cached.code, loader: "ts" };
 
         const start = now();
-        const result = compileFile(
-          source,
-          path,
-          dev,
-          lazy && lazyOptionsFor(path, lazy),
-          screens,
-        );
+        const result = compileFile(source, path, dev, lazy && lazyOptionsFor(path, lazy), screens);
         const next = toCachedModule(source, dev, { ...result, code: prelude + result.code }, key);
         const update = moduleUpdate(path, storeModule(path, next), next);
         if (update) onUpdate?.(update);

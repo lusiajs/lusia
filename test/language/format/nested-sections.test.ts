@@ -22,8 +22,12 @@ const source = `<div class="tile">
 describe("<style> inside a flow block", () => {
   test("is formatted inside its branch at the branch indent", async () => {
     const formatted = await formatLusia(source, parts);
-    expect(formatted).toContain("  <IF {SCREEN.PHONE}>\n    <style>\n      .tile {\n        padding: 8px;\n      }\n    </style>\n  <ELSE>");
-    expect(formatted).toContain("    <style>\n      .tile {\n        padding: 24px;\n      }\n    </style>\n  </IF>\n</div>");
+    expect(formatted).toContain(
+      "  <IF {SCREEN.PHONE}>\n    <style>\n      .tile {\n        padding: 8px;\n      }\n    </style>\n  <ELSE>",
+    );
+    expect(formatted).toContain(
+      "    <style>\n      .tile {\n        padding: 24px;\n      }\n    </style>\n  </IF>\n</div>",
+    );
   });
 
   test("a top-level style stays its own block", async () => {

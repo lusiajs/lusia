@@ -99,7 +99,10 @@ for (const name of names) namesByFile.get(groupFor(name).file)?.push(name);
 
 mkdirSync(OUT_DIR, { recursive: true });
 for (const group of GROUPS) {
-  writeFileSync(join(OUT_DIR, `${group.file}.ts`), groupModule(group, namesByFile.get(group.file) ?? []));
+  writeFileSync(
+    join(OUT_DIR, `${group.file}.ts`),
+    groupModule(group, namesByFile.get(group.file) ?? []),
+  );
 }
 writeFileSync(join(OUT_DIR, "css-properties.ts"), reExportModule());
 console.log(`wrote ${names.length} css properties to ${GROUPS.length + 1} files`);

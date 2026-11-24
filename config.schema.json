@@ -67,7 +67,10 @@
             "animate-keyframes": { "enum": ["off", "warn", "error"] },
             "animate-key": { "enum": ["off", "warn", "error"] },
             "scroll-old-form": { "enum": ["off", "warn", "error"] },
-            "scroll-numeric-line": { "enum": ["off", "warn", "error"], "description": "Old name of scroll-old-form. Still works." },
+            "scroll-numeric-line": {
+              "enum": ["off", "warn", "error"],
+              "description": "Old name of scroll-old-form. Still works."
+            },
             "flow-chain": { "enum": ["off", "warn", "error"] },
             "bind-target": { "enum": ["off", "warn", "error"] },
             "unused-class": { "enum": ["off", "warn", "error"] },

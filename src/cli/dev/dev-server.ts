@@ -39,7 +39,12 @@ type Socket = ServerWebSocket<unknown>;
 const MAX_HOT_MODULES = 50;
 const MAX_STACK_LINES = 20;
 
-export function createDevServer({ dir, port, onReady, onBrowserError }: DevServerOptions): DevServer {
+export function createDevServer({
+  dir,
+  port,
+  onReady,
+  onBrowserError,
+}: DevServerOptions): DevServer {
   let assets: Assets = new Map();
   const hotModules = new Map<string, Blob>();
   let error: string | null = null;
@@ -148,7 +153,8 @@ function parseReport(text: string | Buffer): ClientReport | null {
 }
 
 function toBrowserError({ page, message, stack }: ClientReport): BrowserError | null {
-  if (typeof page !== "string" || typeof message !== "string" || typeof stack !== "string") return null;
+  if (typeof page !== "string" || typeof message !== "string" || typeof stack !== "string")
+    return null;
   return { page, message, stack: truncateStack(stack) };
 }
 

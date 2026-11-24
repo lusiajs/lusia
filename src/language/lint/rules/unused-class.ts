@@ -1,6 +1,10 @@
 import { parse, type Section } from "#compiler/parse/sections.ts";
 import { markupClasses, styleClasses, type StyleClass } from "#compiler/style/classes.ts";
-import { compileLintScss, lintStyleCurrent, type CompiledStyle } from "#language/lint/style-compile";
+import {
+  compileLintScss,
+  lintStyleCurrent,
+  type CompiledStyle,
+} from "#language/lint/style-compile";
 import { styleMode } from "#compiler/style/modes.ts";
 import { parseLusiaImports } from "../../parse/imports.ts";
 import { scriptSection } from "../../parse/sections.ts";

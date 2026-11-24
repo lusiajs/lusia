@@ -19,6 +19,6 @@ export const RUNTIME_COMPONENT_CODES = {
   },
   L2079: {
     message: "listen() got an unknown event: $value",
-    hint: "Use an EVENT value, like EVENT.VIEW, or a DOM event name, like \"click\".",
+    hint: 'Use an EVENT value, like EVENT.VIEW, or a DOM event name, like "click".',
   },
 } as const satisfies Record<string, ErrorCode>;

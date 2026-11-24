@@ -9,7 +9,10 @@ export interface CompiledStyle {
   deps: StyleDep[];
 }
 
-export function compileLintScss(content: string, file: string | undefined): CompiledStyle | undefined {
+export function compileLintScss(
+  content: string,
+  file: string | undefined,
+): CompiledStyle | undefined {
   try {
     const result = sass.compileString(content, {
       loadPaths: file ? [dirname(file)] : [],

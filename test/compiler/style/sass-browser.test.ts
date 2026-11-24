@@ -9,7 +9,9 @@ const themeImporter: Importer = {
 
 describe("compileScssText", () => {
   test("compiles with only the caller's importers, because the screen module is built in", () => {
-    const css = compileScssText('@use "theme";\n.a { color: theme.$pink; }', "theme.scss", [themeImporter]);
+    const css = compileScssText('@use "theme";\n.a { color: theme.$pink; }', "theme.scss", [
+      themeImporter,
+    ]);
     expect(css).toContain("color: #f0a");
   });
 

@@ -30,9 +30,7 @@ describe("<style> inside <IF {SCREEN.X}>", () => {
   });
 
   test("nested IFs narrow the range", () => {
-    const css = cssOf(
-      `<IF {SCREEN.REDUCED_MOTION}><IF {SCREEN.PHONE}>${style(1)}</IF></IF>`,
-    );
+    const css = cssOf(`<IF {SCREEN.REDUCED_MOTION}><IF {SCREEN.PHONE}>${style(1)}</IF></IF>`);
     expect(css).toContain("@media (max-width: 599.98px) and (prefers-reduced-motion: reduce) {");
   });
 

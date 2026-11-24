@@ -61,7 +61,9 @@ async function prepareReportPath(): Promise<void> {
 }
 
 async function readTestReport(): Promise<string> {
-  return Bun.file(TEST_REPORT).text().catch(() => "");
+  return Bun.file(TEST_REPORT)
+    .text()
+    .catch(() => "");
 }
 
 async function printSlowest(): Promise<void> {

@@ -6,9 +6,9 @@ Back to the [Lusia README](../../README.md).
 
 ## Install
 
-| Step | Command |
-| ---- | ------- |
-| Add Prettier | `bun add -d prettier` |
+| Step           | Command                               |
+| -------------- | ------------------------------------- |
+| Add Prettier   | `bun add -d prettier`                 |
 | Add the plugin | `bun add -d @lusiajs/prettier-plugin` |
 
 ## Config
@@ -29,9 +29,9 @@ bunx prettier --write "src/**/*.lusia"
 
 ## Options
 
-| Option | Default | Effect |
-| ------ | ------- | ------ |
-| `lusiaIndentScriptAndStyle` | `true` | Indent the code inside `<script>` and `<style>` by one level. Set `false` to keep it flush-left. |
+| Option                      | Default | Effect                                                                                           |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `lusiaIndentScriptAndStyle` | `true`  | Indent the code inside `<script>` and `<style>` by one level. Set `false` to keep it flush-left. |
 
 ```json
 {

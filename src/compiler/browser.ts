@@ -71,6 +71,8 @@ function browserStyle(
   screens: Screens,
 ): StyleResult {
   const css =
-    style.attrs.lang === "css" ? style.content : compileSectionScss(style, file, importers, screens);
+    style.attrs.lang === "css"
+      ? style.content
+      : compileSectionScss(style, file, importers, screens);
   return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
 }

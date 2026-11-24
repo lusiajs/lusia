@@ -5,9 +5,7 @@ import { join } from "node:path";
 import { readIndentSetting } from "#language/format/indent-setting.ts";
 
 const folders: string[] = [];
-afterAll(() =>
-  folders.forEach((folder) => rmSync(folder, { recursive: true })),
-);
+afterAll(() => folders.forEach((folder) => rmSync(folder, { recursive: true })));
 
 function folderWith(file: string, text: string): string {
   const folder = mkdtempSync(join(tmpdir(), "lusia-indent-"));
@@ -20,16 +18,12 @@ describe("readIndentSetting", () => {
   test("defaults to indenting", () => {
     expect(readIndentSetting(folderWith("", ""))).toBe(true);
     expect(readIndentSetting(folderWith("lusia.config.json", "{}"))).toBe(true);
-    expect(readIndentSetting(folderWith("lusia.config.json", "not json"))).toBe(
-      true,
-    );
+    expect(readIndentSetting(folderWith("lusia.config.json", "not json"))).toBe(true);
   });
 
   test("reads false from the JSON config", () => {
     const text = JSON.stringify({ format: { indentScriptAndStyle: false } });
-    expect(readIndentSetting(folderWith("lusia.config.json", text))).toBe(
-      false,
-    );
+    expect(readIndentSetting(folderWith("lusia.config.json", text))).toBe(false);
   });
 
   test("reads the setting from the TypeScript config", () => {

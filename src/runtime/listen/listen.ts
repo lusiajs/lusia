@@ -52,7 +52,9 @@ export function listen(
   return listenOne(target, what, fn, options);
 }
 
-function isTargetList(target: EventTarget | readonly EventTarget[]): target is readonly EventTarget[] {
+function isTargetList(
+  target: EventTarget | readonly EventTarget[],
+): target is readonly EventTarget[] {
   return Array.isArray(target);
 }
 

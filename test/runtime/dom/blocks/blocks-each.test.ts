@@ -187,7 +187,12 @@ describe("EACH runtime", () => {
       parent.append(marker);
       const list = variable(["a", "b", "c"]);
       const cleanups: Array<() => void> = [];
-      bindEach(marker, { read: () => list.value, render: pendingLeaveRow, indexed: false }, cleanups, []);
+      bindEach(
+        marker,
+        { read: () => list.value, render: pendingLeaveRow, indexed: false },
+        cleanups,
+        [],
+      );
       const [first, second, third] = parent.querySelectorAll("li");
 
       list.value = ["a", "c"];
@@ -205,7 +210,12 @@ describe("EACH runtime", () => {
       parent.append(marker);
       const list = variable(["a", "b", "c"]);
       const cleanups: Array<() => void> = [];
-      bindEach(marker, { read: () => list.value, render: pendingLeaveRow, indexed: false }, cleanups, []);
+      bindEach(
+        marker,
+        { read: () => list.value, render: pendingLeaveRow, indexed: false },
+        cleanups,
+        [],
+      );
       list.value = ["a", "c"];
 
       list.value = ["a", "c", "d"];

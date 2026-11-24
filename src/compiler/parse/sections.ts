@@ -100,7 +100,9 @@ function toSection(source: string, section: SectionMatch): Section {
 }
 
 function branchesOfStyles(source: string, sections: SectionMatch[], file: string): StyleBranch[][] {
-  const starts = sections.filter((section) => section.kind === "style").map((section) => section.start);
+  const starts = sections
+    .filter((section) => section.kind === "style")
+    .map((section) => section.start);
   const skip = sections.map((section) => ({ start: section.start, end: section.end }));
   return styleBranches(source, starts, skip, file);
 }

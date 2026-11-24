@@ -15,11 +15,7 @@ function childFile(documentPath: string, text: string, name: string): string | u
 }
 
 /** The props a component declares, or undefined when its file cannot be read. */
-function declaredProps(
-  documentPath: string,
-  text: string,
-  name: string,
-): PropDef[] | undefined {
+function declaredProps(documentPath: string, text: string, name: string): PropDef[] | undefined {
   const path = childFile(documentPath, text, name);
   return path ? parsePropDefs(readFileSync(path, "utf8")) : undefined;
 }

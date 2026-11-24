@@ -86,7 +86,11 @@ export function styleBranches(
   for (const start of styleStarts) {
     pos = walk(source, pos, start, skip, stack);
     if (stack.some((frame) => frame.kind === "loop")) {
-      throw lusiaError("L1047", {}, { file, line: lineAt(source, start), column: columnAt(source, start) });
+      throw lusiaError(
+        "L1047",
+        {},
+        { file, line: lineAt(source, start), column: columnAt(source, start) },
+      );
     }
     result.push(stack.map((frame) => ({ earlier: [...frame.tests], test: frame.current })));
   }

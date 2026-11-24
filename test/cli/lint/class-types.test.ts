@@ -9,7 +9,7 @@ const PAGE = join(import.meta.dir, "fixtures/class-types/page.lusia");
 // The first test builds a TypeScript program, which takes over 5 s on CI runners.
 setDefaultTimeout(30_000);
 
-const STYLE ="<style>\n.odd { color: red; }\n.even { color: blue; }\n</style>\n";
+const STYLE = "<style>\n.odd { color: red; }\n.even { color: blue; }\n</style>\n";
 
 async function lintPage(source: string) {
   const types = await loadClassTypes([{ path: PAGE, text: source }]);

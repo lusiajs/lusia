@@ -78,7 +78,8 @@ function update(): void {
   measured.clear();
   let waiting = false;
   for (const target of tracked) {
-    if (isMeasurable(target)) target.next = partProgress(targetProgress(target), target.scroll.part);
+    if (isMeasurable(target))
+      target.next = partProgress(targetProgress(target), target.scroll.part);
     else waiting = true;
   }
   for (const target of tracked) {
