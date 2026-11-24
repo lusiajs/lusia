@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseCommand, UsageError } from "#cli/args/args.ts";
+import { cacheOf } from "#cli/args/settings.ts";
 import { runBuild } from "#cli/build/build.ts";
 import { isPageRoute } from "#cli/dev/dev-server.ts";
 
@@ -41,6 +42,7 @@ describe("--routes", () => {
         dir: FIXTURE,
         outdir,
         minify: true,
+        cache: cacheOf({}, false),
         routes: ["/guide", "/reference/api"],
         lazy: { mode: "smart", prefetch: "idle" },
       }),

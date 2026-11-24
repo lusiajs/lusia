@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cp, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { cacheOf } from "#cli/args/settings.ts";
 import { runBuild } from "#cli/build/build.ts";
 
 const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
@@ -30,6 +31,7 @@ describe("runBuild", () => {
         outdir,
         minify: true,
         lazy: { mode: "smart", prefetch: "idle" },
+        cache: { styles: true, modules: true, packages: true },
       }),
     ).toBe(0);
 
@@ -65,6 +67,7 @@ describe("runBuild", () => {
         outdir: join(workRoot, "broken-dist"),
         minify: true,
         lazy: { mode: "smart", prefetch: "idle" },
+        cache: { styles: true, modules: true, packages: true },
       }),
     ).toBe(1);
   });
@@ -76,6 +79,7 @@ describe("runBuild", () => {
         outdir: FIXTURE,
         minify: true,
         lazy: { mode: "smart", prefetch: "idle" },
+        cache: cacheOf({}, false),
       }),
     ).toBe(1);
   });
@@ -87,6 +91,7 @@ describe("runBuild", () => {
         outdir: join(FIXTURE, ".."),
         minify: true,
         lazy: { mode: "smart", prefetch: "idle" },
+        cache: cacheOf({}, false),
       }),
     ).toBe(1);
   });

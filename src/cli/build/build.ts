@@ -13,8 +13,8 @@ import { writeScreenTypes } from "../types/screen-types.ts";
 import { fileRows, formatReport } from "./report.ts";
 import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./timings.ts";
 import { prepareStyles } from "./sass-warm.ts";
-import { saveStyleCache } from "./sass-disk-cache.ts";
-import { loadCompileCache, saveCompileCache } from "./compile-disk-cache.ts";
+import { openBuildCache } from "./build-cache.ts";
+import type { CacheSettings } from "../args/settings.ts";
 
 export interface BuildOptions {
   dir: string;
@@ -26,6 +26,7 @@ export interface BuildOptions {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  cache: CacheSettings;
 }
 
 export async function runBuild(options: BuildOptions): Promise<number> {
@@ -47,11 +48,12 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const started = now();
   await rm(outdir, { recursive: true, force: true });
   const bundleStart = now();
+  const cache = await openBuildCache(dir, "production", options.cache);
   const styles = await prepareStyles(dir, options.screens ?? DEFAULT_SCREENS);
   addStep(steps, "sass", styles.ms);
-  await loadCompileCache(dir);
   const result = await bundleApp({
     dir,
+    cache,
     minify: options.minify,
     dev: false,
     steps,
@@ -64,8 +66,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     process.stderr.write(`${formatBuildFailure(result.logs, colorEnabled(), dir)}\n`);
     return 1;
   }
-  await saveStyleCache(dir);
-  await saveCompileCache(dir);
+  await cache.save();
 
   const writeStart = now();
   await writeOutputs(outdir, result.outputs);

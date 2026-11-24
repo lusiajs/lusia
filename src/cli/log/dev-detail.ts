@@ -1,5 +1,11 @@
 import { basename } from "node:path";
-import type { BuildReport, CompileTiming, SizedPath, StyleTiming } from "../build/build-report.ts";
+import type {
+  BuildReport,
+  CompileTiming,
+  PackageReport,
+  SizedPath,
+  StyleTiming,
+} from "../build/build-report.ts";
 import { packageName } from "../build/package-groups.ts";
 import type { StartupSteps } from "../build/timings.ts";
 import type { StartupDetails } from "./dev-timing.ts";
@@ -51,7 +57,13 @@ function bundleLines(report: BuildReport): string[] {
     (module) => packageName(module.path, report.root) !== undefined,
   ).length;
   const size = formatSize(shippedBytes(report.outputs));
-  return [`${plural(report.modules.length, "module")} (${fromPackages} from packages), ${size}`];
+  const modules = `${plural(report.modules.length, "module")} (${fromPackages} from packages), ${size}`;
+  return report.packages ? [modules, packageLine(report.packages)] : [modules];
+}
+
+function packageLine(packages: PackageReport): string {
+  const state = packages.status === "cached" ? "packages cached" : "packages bundled";
+  return `${state} (${packages.count})`;
 }
 
 function shippedBytes(outputs: SizedPath[]): number {

@@ -2,10 +2,13 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { openBuildCache } from "#cli/build/build-cache.ts";
+import { cacheOf } from "#cli/args/settings.ts";
 import { buildDev } from "#cli/build/dev-build.ts";
 import { chooseUpdate, RELOAD } from "#cli/dev/update.ts";
 
 const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
+const LAZY = { mode: "smart", prefetch: "idle" } as const;
 const REPO = new URL("../../../", import.meta.url).pathname;
 const BROKEN_GREETING = [
   "<script>",
@@ -37,7 +40,8 @@ afterAll(async () => {
 
 describe("buildDev", () => {
   test("a failed build gives one formatted message with the location, code, hint and summary", async () => {
-    const result = await buildDev(broken, { mode: "smart", prefetch: "idle" });
+    const cache = await openBuildCache(broken, "development", cacheOf({}, false));
+    const result = await buildDev(broken, cache, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.messages).toHaveLength(1);
@@ -70,9 +74,11 @@ describe("buildDev changes", () => {
   });
 
   test("a style-only edit is a css update, and the build reports its steps", async () => {
-    expect((await buildDev(app, { mode: "smart", prefetch: "idle" })).ok).toBe(true);
+    const first = await openBuildCache(app, "development", cacheOf({}, false));
+    expect((await buildDev(app, first, LAZY)).ok).toBe(true);
     await writeFile(join(app, "src/Greeting.lusia"), GREETING.replace("rebeccapurple", "tomato"));
-    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
+    const second = await openBuildCache(app, "development", cacheOf({}, false));
+    const result = await buildDev(app, second, LAZY);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.changes).toEqual([
@@ -88,7 +94,8 @@ describe("buildDev changes", () => {
       join(app, "src/Greeting.lusia"),
       GREETING.replace("Hello from the fixture", "Changed text"),
     );
-    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
+    const cache = await openBuildCache(app, "development", cacheOf({}, false));
+    const result = await buildDev(app, cache, LAZY);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.changes).toEqual([expect.objectContaining({ kind: "code" })]);

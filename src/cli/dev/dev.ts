@@ -11,9 +11,9 @@ import { now } from "../build/timings.ts";
 import { emptyReport } from "../build/build-report.ts";
 import { startupDetails } from "../log/dev-detail.ts";
 import { prepareStyles } from "../build/sass-warm.ts";
-import { saveStyleCache } from "../build/sass-disk-cache.ts";
-import { loadCompileCache } from "../build/compile-disk-cache.ts";
-import { createCompileCacheSaver } from "./compile-cache-saver.ts";
+import { openBuildCache } from "../build/build-cache.ts";
+import type { CacheSettings } from "../args/settings.ts";
+import { createCacheSaver } from "./cache-saver.ts";
 import { DEFAULT_SCREENS } from "#runtime/screen/screens.ts";
 import { createDevServer } from "./dev-server.ts";
 import { startShortcuts } from "./key-actions.ts";
@@ -36,6 +36,7 @@ export interface DevOptions {
   screens?: Screens;
   /** Time spent reading lusia.config, shown under the boot step. */
   configMs?: number;
+  cache: CacheSettings;
 }
 
 export interface DevHandle {
@@ -51,6 +52,7 @@ export async function startDev({
   animate,
   screens,
   configMs,
+  cache: cacheSettings,
 }: DevOptions): Promise<DevHandle> {
   const started = now();
   const root = resolve(dir);
@@ -71,11 +73,12 @@ export async function startDev({
     onBrowserError: (error) =>
       printer.print(formatBrowserError({ time: new Date(), ...error }, color)),
   });
-  await loadCompileCache(root);
+  const cache = await openBuildCache(root, "development", cacheSettings);
   const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
-  const compileCache = createCompileCacheSaver(root);
+  const cacheSaver = createCacheSaver(cache);
   const rebuild = createRebuild({
     root,
+    cache,
     server,
     lazy,
     animate,
@@ -84,7 +87,7 @@ export async function startDev({
     onUpdate: (update) => printer.show(update),
     onBuildError: (messages) =>
       printer.print(formatBuildError(new Date(), relativeTo(root, messages), color)),
-    onBuilt: () => compileCache.schedule(),
+    onBuilt: () => cacheSaver.schedule(),
   });
   const firstBuild = (await rebuild.startup()) ?? {
     steps: {},
@@ -98,7 +101,7 @@ export async function startDev({
     total: now(),
     configMs,
   });
-  void saveStyleCache(root);
+  void cache.save();
 
   const urls = serverUrls(server.url);
   printer.print(

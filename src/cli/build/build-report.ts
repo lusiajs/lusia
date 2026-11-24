@@ -18,16 +18,35 @@ export interface SizedPath {
   bytes: number;
 }
 
+export type PackageStatus = "cached" | "bundled";
+
+export interface PackageReport {
+  status: PackageStatus;
+  count: number;
+}
+
 export interface BuildReport {
   root: string;
   styles: StyleTiming[];
   compiles: CompileTiming[];
   modules: SizedPath[];
   outputs: SizedPath[];
+  /** Set in dev when the packages are served from their own bundle. */
+  packages?: PackageReport;
 }
 
 export function emptyReport(root: string): BuildReport {
   return { root, styles: [], compiles: [], modules: [], outputs: [] };
+}
+
+/** Adds the packages served from their bundle, which the app bundle no longer contains. */
+export function recordPackages(
+  report: BuildReport,
+  packages: { modules: SizedPath[]; files: SizedPath[]; report: PackageReport },
+): void {
+  report.modules.push(...packages.modules);
+  report.outputs.push(...packages.files);
+  report.packages = packages.report;
 }
 
 export function recordCompile(

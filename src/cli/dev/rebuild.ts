@@ -3,6 +3,7 @@ import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import type { Screens } from "#runtime/screen/screens.ts";
 import { stripAnsi } from "../log/color.ts";
 import { buildDev } from "../build/dev-build.ts";
+import type { BuildCache } from "../build/build-cache.ts";
 import type { DevServer } from "./dev-server.ts";
 import { createHotBuilder, type HotBuilder, type HotModule } from "../build/hot-build.ts";
 import type { UpdateBlock } from "../log/dev-block.ts";
@@ -35,6 +36,7 @@ export interface Rebuild {
 
 interface RebuildOptions {
   root: string;
+  cache: BuildCache;
   server: DevServer;
   onUpdate: (update: UpdateBlock) => void;
   onBuildError: (messages: string[]) => void;
@@ -50,6 +52,7 @@ interface RebuildOptions {
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
 export function createRebuild({
   root,
+  cache,
   server,
   onUpdate,
   onBuildError,
@@ -95,11 +98,12 @@ export function createRebuild({
       applyConfig(config.config);
       await writeScreenTypes(root, config.config.screens);
     }
-    const build = await buildDev(root, lazy, animate, screens);
+    const build = await buildDev(root, cache, lazy, animate, screens);
     if (!build.ok) return report(build.messages);
     const buildReport = reportFor(change, build.report);
     latestReport = buildReport;
-    const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
+    const planned: Update =
+      needsReload || build.packagesBundled ? RELOAD : chooseUpdate(change.files, build.changes);
     let update = planned;
     let modules: HotModule[] = [];
     if (planned.kind === "hot") {

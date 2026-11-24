@@ -4,6 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { bundleApp } from "#cli/build/bundle.ts";
 import { runBuild } from "#cli/build/build.ts";
+import { openBuildCache } from "#cli/build/build-cache.ts";
+import { cacheOf } from "#cli/args/settings.ts";
 import { buildDev } from "#cli/build/dev-build.ts";
 
 const REPO = new URL("../../../", import.meta.url).pathname;
@@ -56,7 +58,8 @@ describe("lazy chunks", () => {
       `export const hi = (name: string) => "${SHARED_MARKER}" + name;\n`,
     );
 
-    const result = await bundleApp({ dir: shared, minify: false, dev: false });
+    const cache = await openBuildCache(shared, "production", cacheOf({}, false));
+    const result = await bundleApp({ dir: shared, cache, minify: false, dev: false });
     expect(result.success).toBe(true);
     const texts = await Promise.all(
       result.outputs.filter((output) => SCRIPT.test(output.path)).map((output) => output.text()),
@@ -70,7 +73,8 @@ describe("lazy chunks", () => {
 
 describe("splitting", () => {
   test("a dynamic import becomes a separate chunk file", async () => {
-    const result = await bundleApp({ dir: app, minify: false, dev: false });
+    const cache = await openBuildCache(app, "production", cacheOf({}, false));
+    const result = await bundleApp({ dir: app, cache, minify: false, dev: false });
     expect(result.success).toBe(true);
     const scripts = result.outputs.filter((output) => SCRIPT.test(output.path));
     expect(scripts).toHaveLength(2);
@@ -87,6 +91,7 @@ describe("splitting", () => {
         dir: app,
         outdir,
         minify: true,
+        cache: cacheOf({}, false),
         quiet: true,
         lazy: { mode: "smart", prefetch: "idle" },
       }),
@@ -100,7 +105,8 @@ describe("splitting", () => {
   });
 
   test("dev builds serve the lazy chunk as its own asset", async () => {
-    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
+    const cache = await openBuildCache(app, "development", cacheOf({}, false));
+    const result = await buildDev(app, cache, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const scripts = [...result.assets.entries()].filter(

@@ -12,7 +12,6 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AsyncCompiler } from "sass-embedded";
 import type { StyleTiming } from "./build-report.ts";
-import { loadStyleCache } from "./sass-disk-cache.ts";
 
 const SKIPPED_FOLDERS = new Set(["node_modules", "dist"]);
 
@@ -25,10 +24,9 @@ export interface StylePreparation {
   blocks: StyleTiming[];
 }
 
-/** Loads the saved Sass cache, then compiles every uncached style in parallel. */
+/** Compiles every style that is not in the Sass cache yet, in parallel. */
 export async function prepareStyles(root: string, screens: Screens): Promise<StylePreparation> {
   const start = performance.now();
-  await loadStyleCache(root);
   const blocks = await warmStyles(root, screens);
   return { ms: performance.now() - start, blocks };
 }
