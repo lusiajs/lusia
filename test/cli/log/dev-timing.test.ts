@@ -41,6 +41,14 @@ describe("startupRows", () => {
     ]);
   });
 
+  test("shows the cache row after types", () => {
+    expect(startupRows({ ...STEPS, cache: 12 }, false).slice(0, 3)).toEqual([
+      "boot        180 ms",
+      "types         5 ms",
+      "cache        12 ms",
+    ]);
+  });
+
   test("hides parts that round to zero", () => {
     const rows = startupRows({ ...STEPS, types: 0.4, server: 0 }, false);
     expect(rows.some((row) => row.startsWith("types"))).toBe(false);

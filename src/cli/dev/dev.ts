@@ -73,7 +73,9 @@ export async function startDev({
     onBrowserError: (error) =>
       printer.print(formatBrowserError({ time: new Date(), ...error }, color)),
   });
+  const cacheStart = now();
   const cache = await openBuildCache(root, "development", cacheSettings);
+  const cacheMs = now() - cacheStart;
   const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
   const cacheSaver = createCacheSaver(cache);
   const rebuild = createRebuild({
@@ -96,6 +98,7 @@ export async function startDev({
   const startup = startupSteps({
     started,
     types,
+    cache: cacheMs,
     styles: styles.ms,
     build: firstBuild.steps,
     total: now(),

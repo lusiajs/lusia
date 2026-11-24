@@ -119,6 +119,7 @@ function serverStage(startup: StartupSteps): Stage {
       { label: "time", field: "ms" },
     ],
     rows: [
+      { name: "cache", ms: startup.cache ?? 0 },
       { name: "server", ms: startup.server ?? 0 },
       { name: "total", ms: startup.total ?? 0 },
     ],

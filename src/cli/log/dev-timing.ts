@@ -4,7 +4,7 @@ import { styled } from "./style.ts";
 import { treeChars } from "./dev-tree.ts";
 
 export type TimingName =
-  "boot" | "types" | "wait" | "styles" | "compile" | "bundle" | "server" | "browser";
+  "boot" | "types" | "cache" | "wait" | "styles" | "compile" | "bundle" | "server" | "browser";
 
 export interface TimingPart {
   name: TimingName;
@@ -16,6 +16,7 @@ const WAIT_MIN_MS = 50;
 const PART_CODES: Record<TimingName, string> = {
   boot: ANSI.dim,
   types: ANSI.dim,
+  cache: ANSI.dim,
   wait: ANSI.dim,
   styles: ANSI.magenta,
   compile: ANSI.blue,
@@ -27,6 +28,7 @@ const PART_CODES: Record<TimingName, string> = {
 const STARTUP_PARTS: [TimingName, Step][] = [
   ["boot", "boot"],
   ["types", "types"],
+  ["cache", "cache"],
   ["styles", "sass"],
   ["compile", "compile"],
   ["bundle", "bundle"],

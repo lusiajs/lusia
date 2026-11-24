@@ -3,6 +3,7 @@ import { now, type StartupSteps, type Steps } from "../build/timings.ts";
 export interface StartupTimes {
   started: number;
   types: number;
+  cache: number;
   styles: number;
   build: Steps;
   total: number;
@@ -13,6 +14,7 @@ export interface StartupTimes {
 export function startupSteps({
   started,
   types,
+  cache,
   styles,
   build,
   total,
@@ -20,10 +22,11 @@ export function startupSteps({
 }: StartupTimes): StartupSteps {
   const sass = styles + (build.sass ?? 0);
   const buildMs = sass + (build.compile ?? 0) + (build.bundle ?? 0);
-  const server = total - started - types - buildMs;
+  const server = total - started - types - cache - buildMs;
   return {
     boot: started,
     types,
+    cache,
     sass,
     compile: build.compile,
     bundle: build.bundle,
