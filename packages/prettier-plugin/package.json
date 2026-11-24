@@ -1,6 +1,6 @@
 {
   "name": "@lusiajs/prettier-plugin",
-  "version": "0.1.4-beta",
+  "version": "0.1.5-beta",
   "description": "Prettier plugin that formats Lusia .lusia files",
   "license": "MIT",
   "type": "module",
