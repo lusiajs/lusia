@@ -70,7 +70,7 @@ export function compileParts(
   const scopes = scopeClassesOf(css, id);
   const { statements, body, components } = splitImports(parsed.script, file);
   const deps = styles.flatMap((style) => style.deps);
-  const sassMs = styles.reduce((sum, style) => sum + style.sassMs, 0);
+  const sassMs = styles.reduce((sum, style) => sum + style.ms, 0);
   const styleBlocks = parsed.styles.flatMap((section, index) =>
     section.attrs.lang === "css" ? [] : [styleBlockTiming(index, styles[index]!)],
   );
@@ -105,5 +105,5 @@ export function compileParts(
 }
 
 function styleBlockTiming(index: number, style: StyleResult): StyleBlockTiming {
-  return { index, cached: style.cached, ms: style.sassMs };
+  return { index, cached: style.cached ?? false, ms: style.ms };
 }

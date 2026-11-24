@@ -1,5 +1,6 @@
 import type { SizedPath } from "./build-report.ts";
 import { cacheStamp } from "./cache-stamp.ts";
+import { stampFile } from "#compiler/utils/file-stamp.ts";
 import { CACHE_FOLDER } from "./cache-file.ts";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -43,7 +44,7 @@ export function missingPackages(
 export async function packageKey(root: string): Promise<string | undefined> {
   const lockfile = await firstLockfile(root);
   if (lockfile === undefined) return undefined;
-  const hash = Bun.hash(await Bun.file(lockfile).bytes()).toString(16);
+  const hash = stampFile(lockfile).hash;
   return `${hash}:${await cacheStamp()}`;
 }
 

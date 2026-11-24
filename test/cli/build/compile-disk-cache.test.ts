@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { statSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -64,7 +65,8 @@ afterEach(async () => {
 
 async function saveCard(source: string): Promise<void> {
   await writeFile(card, source);
-  storeModule(card, toCachedModule(source, true, compile(source, card), KEY));
+  const read = { path: card, lastModified: statSync(card).mtimeMs, source, dev: true, key: KEY };
+  storeModule(card, toCachedModule(read, compile(source, card)));
   await saveCompileCache(dir);
 }
 

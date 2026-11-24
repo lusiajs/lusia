@@ -5,10 +5,10 @@ import {
   primeStyle,
   sassOptions,
   scssSource,
-  type StyleDep,
 } from "#compiler/style/sass.ts";
+import { stampFile } from "#compiler/utils/file-stamp.ts";
 import type { Screens } from "#runtime/screen/screens.ts";
-import { readdir, readFile, stat } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AsyncCompiler } from "sass-embedded";
 import { isIgnoredPath, readIgnore, type IgnoreRules } from "../utils/ignore.ts";
@@ -99,21 +99,11 @@ async function compileBlock(
       scssSource(block.style),
       sassOptions(block.file, screens),
     );
-    const deps = await readDeps(loadedFilePaths(result.loadedUrls));
+    const deps = loadedFilePaths(result.loadedUrls).map((path) => stampFile(path));
     primeStyle(block.file, block.index, block.style, screens, result.css, deps);
   } catch {
     // The sync compile reports this error with its position.
   } finally {
     block.ms = performance.now() - start;
   }
-}
-
-async function readDeps(paths: string[]): Promise<StyleDep[]> {
-  return Promise.all(
-    paths.map(async (path) => {
-      // Stat before reading: a write in between must look stale, not current.
-      const { mtimeMs } = await stat(path);
-      return { path, text: await readFile(path, "utf8"), mtimeMs };
-    }),
-  );
 }

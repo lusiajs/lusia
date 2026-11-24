@@ -37,7 +37,7 @@ describe("warmStyles", () => {
     await warmStyles(dir, DEFAULT_SCREENS);
     const style = parse(STYLE_SOURCE, file).styles[0]!;
     const result = compileStyleResult(style, file, ID, 0);
-    expect(result.sassMs).toBe(0);
+    expect(result.ms).toBe(0);
     expect(result.css).toContain("color: red;");
     expect(result.deps.map((dep) => dep.path)).toEqual([join(dir, "_tokens.scss")]);
     forgetStyles(file);

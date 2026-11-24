@@ -7,6 +7,7 @@ import { setupFallback } from "./fallback.ts";
 import { now, addStep, type Steps } from "#cli/build/timings.ts";
 import { recordCompile, type BuildReport } from "#cli/build/build-report.ts";
 import type { BunPlugin } from "bun";
+import { statSync } from "node:fs";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
@@ -46,6 +47,8 @@ export function lusia({
       const animateKey = animateNamesJson(animate);
       const screenKey = screensKey(screens);
       build.onLoad({ filter: /\.lusia$/ }, async ({ path }) => {
+        // Stat before reading: a write in between must look stale, not current.
+        const lastModified = statSync(path).mtimeMs;
         const source = await Bun.file(path).text();
         const key = compileKey(lazyKeyFor(path, source, lazy), animateKey, screenKey);
         const bytes = Buffer.byteLength(source);
@@ -57,7 +60,8 @@ export function lusia({
 
         const start = now();
         const result = compileFile(source, path, dev, lazy && lazyOptionsFor(path, lazy), screens);
-        const next = toCachedModule(source, dev, { ...result, code: prelude + result.code }, key);
+        const read = { path, lastModified, source, dev, key };
+        const next = toCachedModule(read, { ...result, code: prelude + result.code });
         const update = moduleUpdate(path, storeModule(path, next), next);
         if (update) onUpdate?.(update);
         const compileMs = now() - start - result.sassMs;

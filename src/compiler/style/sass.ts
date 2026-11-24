@@ -1,5 +1,4 @@
 import type * as sass from "sass";
-import { readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,26 +7,22 @@ import type { Section } from "../parse/sections.ts";
 import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 import { scopeCss, styleMode } from "./modes.ts";
 import { SCREEN_USE, screenImporter, styleColumn } from "./screen-mixin.ts";
+import { isFileUnchanged, stampFile, type FileStamp } from "../utils/file-stamp.ts";
 
-/** A file a Sass style imported, with the text it had when the style was compiled. */
-export interface StyleDep {
-  path: string;
-  text: string;
-  mtimeMs: number;
-}
+export type StyleDep = FileStamp;
 
 export interface StyleResult {
   css: string;
   deps: StyleDep[];
   /** Time spent in the Sass compiler. Zero on a cache hit. */
-  sassMs: number;
-  cached: boolean;
+  ms: number;
+  cached?: boolean;
 }
 
 interface SassOutput {
   css: string;
   deps: StyleDep[];
-  sassMs: number;
+  ms: number;
   cached: boolean;
 }
 
@@ -59,37 +54,14 @@ export function compileStyleResult(
 ): StyleResult {
   const isPlainCss = style.attrs.lang === "css";
   const sassOutput = isPlainCss
-    ? { css: style.content, deps: [], sassMs: 0, cached: false }
+    ? { css: style.content, deps: [], ms: 0, cached: false }
     : compileScss(style, file, index, screens);
   const css = scopeCss(sassOutput.css, id, styleMode(style)).trim();
-  return { css, deps: sassOutput.deps, sassMs: sassOutput.sassMs, cached: sassOutput.cached };
+  return { css, deps: sassOutput.deps, ms: sassOutput.ms, cached: sassOutput.cached };
 }
 
 export function depsCurrent(deps: StyleDep[]): boolean {
-  return deps.every(depCurrent);
-}
-
-function depCurrent(dep: StyleDep): boolean {
-  const mtimeMs = currentMtime(dep.path);
-  if (mtimeMs === undefined) return false;
-  if (mtimeMs === dep.mtimeMs) return true;
-  return currentText(dep.path) === dep.text;
-}
-
-function currentMtime(path: string): number | undefined {
-  try {
-    return statSync(path).mtimeMs;
-  } catch {
-    return undefined;
-  }
-}
-
-function currentText(path: string): string | undefined {
-  try {
-    return readFileSync(path, "utf8");
-  } catch {
-    return undefined;
-  }
+  return deps.every((dep) => isFileUnchanged(dep));
 }
 
 /** Drops every cached style of a file, for example when the file was deleted. */
@@ -147,17 +119,13 @@ type StyleSource = Pick<Section, "content">;
 
 function compileScss(style: Section, file: string, index: number, screens: Screens): SassOutput {
   const hit = cachedEntry(file, index, style, screens);
-  if (hit) return { css: hit.css, deps: hit.deps, sassMs: 0, cached: true };
+  if (hit) return { css: hit.css, deps: hit.deps, ms: 0, cached: true };
   const start = performance.now();
   const result = runSass(style, file, screens);
-  const sassMs = performance.now() - start;
-  const deps = loadedFilePaths(result.loadedUrls).map((path) => {
-    // Stat before reading: a write in between must look stale, not current.
-    const mtimeMs = statSync(path).mtimeMs;
-    return { path, text: readFileSync(path, "utf8"), mtimeMs };
-  });
+  const ms = performance.now() - start;
+  const deps = loadedFilePaths(result.loadedUrls).map((path) => stampFile(path));
   primeStyle(file, index, style, screens, result.css, deps);
-  return { css: result.css, deps, sassMs, cached: false };
+  return { css: result.css, deps, ms, cached: false };
 }
 
 // The screen sizes are part of the key, because the screen() mixin is built from them.

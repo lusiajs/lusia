@@ -6,6 +6,7 @@ import { storeModule, pruneModules, type CachedModule } from "#bun-plugin/cache.
 import type { ModuleUpdate } from "#bun-plugin/update.ts";
 import { lusia } from "#bun-plugin/index.ts";
 import { compile, hash } from "#compiler/index.ts";
+import { stampFile } from "#compiler/utils/file-stamp.ts";
 import type { Steps } from "#cli/build/timings.ts";
 import { emptyReport } from "#cli/build/build-report.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
@@ -118,7 +119,7 @@ describe("lusia plugin cache", () => {
     await writeFile(gone, source);
     const compiled = compile(source, gone);
     const entry: CachedModule = {
-      source,
+      stamp: stampFile(gone),
       dev: true,
       key: "",
       deps: compiled.deps,

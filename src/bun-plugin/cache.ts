@@ -1,8 +1,9 @@
 import { depsCurrent, forgetStyles, type CompileResult, type StyleDep } from "#compiler/index.ts";
+import { hashText, type FileStamp } from "#compiler/utils/file-stamp.ts";
 import { existsSync } from "node:fs";
 
 export interface CachedModule {
-  source: string;
+  stamp: FileStamp;
   dev: boolean;
   key: string;
   deps: StyleDep[];
@@ -10,6 +11,14 @@ export interface CachedModule {
   css: string;
   id: string;
   scriptAndMarkup: string;
+}
+
+export interface ModuleRead {
+  path: string;
+  lastModified: number;
+  source: string;
+  dev: boolean;
+  key: string;
 }
 
 // Module scope: Bun.build makes a new plugin per build, so a cache inside setup() would never hit.
@@ -20,16 +29,11 @@ export function compileKey(lazyKey: string, animateKey: string, screensKey: stri
   return JSON.stringify([lazyKey, animateKey, screensKey]);
 }
 
-export function toCachedModule(
-  source: string,
-  dev: boolean,
-  result: CompileResult,
-  key: string,
-): CachedModule {
+export function toCachedModule(read: ModuleRead, result: CompileResult): CachedModule {
   return {
-    source,
-    dev,
-    key,
+    stamp: { path: read.path, lastModified: read.lastModified, hash: hashText(read.source) },
+    dev: read.dev,
+    key: read.key,
     deps: result.deps,
     code: result.code,
     css: result.css,
@@ -47,7 +51,7 @@ export function cachedModule(
   const entry = modules.get(path);
   if (
     entry &&
-    entry.source === source &&
+    entry.stamp.hash === hashText(source) &&
     entry.dev === dev &&
     entry.key === key &&
     depsCurrent(entry.deps)

@@ -31,7 +31,7 @@ describe("style disk cache", () => {
     forgetStyles(file);
     await loadStyleCache(dir);
     const result = compileStyleResult(style, file, ID, 0, DEFAULT_SCREENS);
-    expect(result.sassMs).toBe(0);
+    expect(result.ms).toBe(0);
     expect(result.css).toContain("color: red;");
     forgetStyles(file);
     await rm(dir, { recursive: true, force: true });
@@ -68,7 +68,7 @@ describe("style disk cache", () => {
     await writeFile(styleCachePath(dir), JSON.stringify(saved));
     forgetStyles(file);
     await loadStyleCache(dir);
-    expect(compileStyleResult(style, file, ID, 0, DEFAULT_SCREENS).sassMs).not.toBe(0);
+    expect(compileStyleResult(style, file, ID, 0, DEFAULT_SCREENS).ms).not.toBe(0);
     forgetStyles(file);
     await rm(dir, { recursive: true, force: true });
   });
