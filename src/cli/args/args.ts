@@ -17,9 +17,27 @@ export async function parseCommand(
   if (!name || name === "help" || name === "--help" || name === "-h") return { name: "help" };
   if (name === "build") return parseBuild(rest);
   if (name === "dev") return parseDev(rest, env);
+  if (name === "clean") return parseClean(rest);
   if (name === "format") return parseFormat(rest);
   if (name === "lint") return parseLint(rest);
   throw new UsageError(`unknown command "${name}"`);
+}
+
+function parseClean(args: string[]): Command {
+  const { values, positionals } = withUsageErrors(() =>
+    parseArgs({
+      args,
+      allowPositionals: true,
+      options: {
+        quiet: { type: "boolean" },
+      },
+    }),
+  );
+  return {
+    name: "clean",
+    dir: appDir(positionals),
+    quiet: values.quiet ?? false,
+  };
 }
 
 async function parseBuild(args: string[]): Promise<Command> {

@@ -115,6 +115,23 @@ describe("parseCommand", () => {
     });
   });
 
+  test("clean takes a folder and --quiet, defaulting to the current folder", async () => {
+    expect(await parseCommand(["clean"], NO_ENV)).toEqual({
+      name: "clean",
+      dir: ".",
+      quiet: false,
+    });
+    expect(await parseCommand(["clean", "app", "--quiet"], NO_ENV)).toEqual({
+      name: "clean",
+      dir: "app",
+      quiet: true,
+    });
+  });
+
+  test("clean rejects more than one folder", async () => {
+    await expect(parseCommand(["clean", "a", "b"], NO_ENV)).rejects.toBeInstanceOf(UsageError);
+  });
+
   test("lint takes paths and its flags, defaulting to the current folder", async () => {
     expect(await parseCommand(["lint"], NO_ENV)).toEqual({
       name: "lint",

@@ -29,6 +29,11 @@ export type Command =
       cache: CacheSettings;
     }
   | {
+      name: "clean";
+      dir: string;
+      quiet: boolean;
+    }
+  | {
       name: "format";
       paths: string[];
       check: boolean;

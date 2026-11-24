@@ -3,8 +3,10 @@ export const USAGE = `Usage:
   lusia dev    [dir] [--port 3000] [--no-cache] [--quiet]
   lusia format [paths...] [--check] [--no-cache] [--quiet]
   lusia lint   [paths...] [--fix] [--max-warnings 0] [--quiet]
+  lusia clean  [dir] [--quiet]
 
   dir       App folder with an index.html and optional lusia.config.json (default: .)
+  clean     Deletes the .lusia/cache folder of the app (the disk caches). Nothing else
   paths     .lusia files, folders or globs (default: .)
   --outdir  Output folder, relative to the current folder (default: dist inside the app folder)
   --port    Dev server port (default: $PORT or 3000)
@@ -31,7 +33,8 @@ Dev output (lusia dev), one block per save:
 Startup (lusia dev header), with a detail line under each part:
   boot      Bun start, and the config read
   types     Screen types written
-  styles    Sass to CSS: block count, cached or compiled
+  cache     Disk caches opened (.lusia/cache)
+  styles   Sass to CSS: block count, cached or compiled
   compile   .lusia files to JavaScript: file count, slowest file
   bundle    The bundler: module count (from packages), output size
   server    Dev server start

@@ -14,6 +14,7 @@ async function runCommand(command: Command, configMs: number): Promise<number> {
     return 0;
   }
   if (command.name === "build") return (await import("./build/build.ts")).runBuild(command);
+  if (command.name === "clean") return (await import("./clean/clean.ts")).runClean(command);
   if (command.name === "format") return (await import("./format/format.ts")).runFormat(command);
   if (command.name === "lint") return (await import("./lint/lint.ts")).runLint(command);
   await (await import("./dev/dev.ts")).startDev({ ...command, configMs });
