@@ -10,6 +10,9 @@ type Attributes = Partial<Record<string, string>>;
 const TOP_FILES = 8;
 const TOP_TESTS = 5;
 const MAX_TEST_LABEL = 70;
+const TEST_ROOT = "test";
+const EXAMPLES_AREA = "examples";
+const AREA_DEPTH = 2;
 
 export function formatSeconds(ms: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
@@ -66,6 +69,37 @@ function testEntries(xml: string): TimedEntry[] {
   }));
 }
 
+interface AreaTime {
+  area: string;
+  ms: number;
+  files: number;
+}
+
+export function areaOf(file: string): string {
+  const parts = file.replace(/^\.\//, "").split("/");
+  if (parts[0] === EXAMPLES_AREA) {
+    return EXAMPLES_AREA;
+  }
+  const directories = parts.slice(0, -1);
+  const relative = directories[0] === TEST_ROOT ? directories.slice(1) : directories;
+  return relative.slice(0, AREA_DEPTH).join("/") || TEST_ROOT;
+}
+
+function addToArea(areas: Map<string, AreaTime>, entry: TimedEntry): void {
+  const area = areaOf(entry.label);
+  const current = areas.get(area) ?? { area, ms: 0, files: 0 };
+  areas.set(area, { area, ms: current.ms + entry.ms, files: current.files + 1 });
+}
+
+// `entries` are file entries: the label is the file path.
+export function timeByArea(entries: TimedEntry[]): AreaTime[] {
+  const areas = new Map<string, AreaTime>();
+  for (const entry of entries) {
+    addToArea(areas, entry);
+  }
+  return [...areas.values()].sort((a, b) => b.ms - a.ms);
+}
+
 function slowest(entries: TimedEntry[], count: number): TimedEntry[] {
   return [...entries].sort((a, b) => b.ms - a.ms).slice(0, count);
 }
@@ -75,13 +109,28 @@ function formatSection(title: string, entries: TimedEntry[]): string {
   return [title, ...lines].join("\n");
 }
 
+function formatFileCount(count: number): string {
+  return count === 1 ? "1 file" : `${count} files`;
+}
+
+function formatAreaSection(areas: AreaTime[]): string {
+  const width = Math.max(...areas.map((area) => area.area.length));
+  const lines = areas.map(
+    (area) =>
+      `  ${area.area.padEnd(width)}  ${formatSeconds(area.ms).padStart(7)}  ${formatFileCount(area.files)}`,
+  );
+  return ["time by area", ...lines].join("\n");
+}
+
 export function slowestReport(xml: string): string {
-  const files = slowest(fileEntries(xml), TOP_FILES);
+  const files = fileEntries(xml);
   if (files.length === 0) {
     return "";
   }
-  const tests = slowest(testEntries(xml), TOP_TESTS);
-  return [formatSection("slowest test files", files), formatSection("slowest tests", tests)].join(
-    "\n",
-  );
+  const sections = [
+    formatAreaSection(timeByArea(files)),
+    formatSection("slowest test files", slowest(files, TOP_FILES)),
+    formatSection("slowest tests", slowest(testEntries(xml), TOP_TESTS)),
+  ];
+  return sections.join("\n\n");
 }

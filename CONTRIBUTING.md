@@ -49,11 +49,11 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
 2. Check your change:
 
-   | Command              | What it does                        |
-   | -------------------- | ----------------------------------- |
-   | `bun run check`      | Typecheck and tests, with timings   |
-   | `bun run format`     | Format all files                    |
-   | `bun run dev:stress` | Run the stress example on port 3000 |
+   | Command              | What it does                                                                                                     |
+   | -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+   | `bun run check`      | Typecheck and tests, with timings by area. Uses every CPU at low priority; set `LUSIA_TEST_PARALLEL=4` to cap it |
+   | `bun run format`     | Format all files                                                                                                 |
+   | `bun run dev:stress` | Run the stress example on port 3000                                                                              |
 
 > [!TIP]
 > Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
