@@ -29,53 +29,14 @@ jobs:
           VERSION=$(bun -p "require('./package.json').version")
           test "v$VERSION" = "$GITHUB_REF_NAME"
 
-      - name: Publish
-        run: |
-          VERSION=$(bun -p "require('./package.json').version")
-          TAG=latest
-          case "$VERSION" in *-*) TAG=beta ;; esac
-          bun publish --access public --tag "$TAG"
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build the editor packages
+        run: bun scripts/build-editor.ts && bun scripts/build-prettier-plugin.ts
 
-      - name: Keep latest on the newest beta while no stable version exists
+      - name: Publish to npm
         run: |
-          NAME=$(bun -p "require('./package.json').name")
-          VERSION=$(bun -p "require('./package.json').version")
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-          # A first publish can take a minute to show up, so wait for it instead of failing.
-          LATEST=""
-          for attempt in 1 2 3 4 5 6; do
-            LATEST=$(npm view "$NAME" dist-tags.latest 2>/dev/null) && break
-            sleep 10
-          done
-          case "$LATEST" in
-            ""|0.0.0*|*-*) npm dist-tag add "$NAME@$VERSION" latest ;;
-          esac
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish @lusiajs/language-tools with the same version
-        run: |
-          bun scripts/build-editor.ts
-          ROOT_VERSION=$(bun -p "require('./package.json').version")
-          TOOLS_VERSION=$(bun -p "require('./packages/language-tools/package.json').version")
-          test "$TOOLS_VERSION" = "$ROOT_VERSION"
-          NAME=$(bun -p "require('./packages/language-tools/package.json').name")
-          TAG=latest
-          case "$TOOLS_VERSION" in *-*) TAG=beta ;; esac
-          cd packages/language-tools
-          bun publish --access public --tag "$TAG"
-          cd "$GITHUB_WORKSPACE"
-          # A first publish can take a minute to show up, so wait for it instead of failing.
-          LATEST=""
-          for attempt in 1 2 3 4 5 6; do
-            LATEST=$(npm view "$NAME" dist-tags.latest 2>/dev/null) && break
-            sleep 10
-          done
-          case "$LATEST" in
-            ""|0.0.0*|*-*) npm dist-tag add "$NAME@$TOOLS_VERSION" latest ;;
-          esac
+          scripts/publish-package.sh .
+          scripts/publish-package.sh packages/language-tools
+          scripts/publish-package.sh packages/prettier-plugin
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

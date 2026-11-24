@@ -81,6 +81,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - Source: `src/prettier-plugin/`. Build: `bun scripts/build-prettier-plugin.ts`, which writes `packages/prettier-plugin/dist/index.js`.
 - The end-to-end test builds the plugin itself.
 - The version always matches `lusiajs`. A test checks it.
+- Release: the publish workflow builds and publishes it right after `@lusiajs/language-tools`, with the same version.
 - Users read [the plugin README](packages/prettier-plugin/README.md).
 
 ## Open a pull request
