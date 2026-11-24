@@ -1,6 +1,6 @@
-import type { Steps } from "../build/timings.ts";
+import type { StartupSteps } from "../build/timings.ts";
 import { ANSI, categoryCode, stripAnsi } from "./color.ts";
-import { startupRows } from "./dev-timing.ts";
+import { startupRows, type StartupDetails } from "./dev-timing.ts";
 import { styled } from "./style.ts";
 
 export interface HeaderUrl {
@@ -12,7 +12,9 @@ export interface HeaderOptions {
   urls: HeaderUrl[];
   version: string;
   /** Startup breakdown, with `total`. */
-  startup: Steps;
+  startup: StartupSteps;
+  /** One detail line per part, shown under the part. */
+  details: StartupDetails;
   /** Shows only the total row. */
   quiet: boolean;
   watching: string;
@@ -21,6 +23,7 @@ export interface HeaderOptions {
 }
 
 const TITLE = "lusia dev";
+const SHORTCUT_HINT = "press h for shortcuts";
 const TITLE_CATEGORY = "dev";
 const LABEL_WIDTH = 9;
 const RIGHT_PADDING = 3;
@@ -52,6 +55,7 @@ export function formatHeader(header: HeaderOptions): string {
     watchingRow(header),
     "",
     ...startupBlock(header).map((row) => `   ${row}`),
+    ...hintRows(header),
   ];
   const inner = innerWidth(rows, header);
   const top = topBorder(header, inner, box);
@@ -60,7 +64,7 @@ export function formatHeader(header: HeaderOptions): string {
   return [top, ...body, bottom].join("\n");
 }
 
-function formatUrlRow({ label, url }: HeaderUrl, color: boolean): string {
+export function formatUrlRow({ label, url }: HeaderUrl, color: boolean): string {
   return `   ➜  ${label.padEnd(LABEL_WIDTH)}${styled(url, ANSI.bold, color)}`;
 }
 
@@ -69,8 +73,13 @@ function watchingRow(header: HeaderOptions): string {
 }
 
 function startupBlock(header: HeaderOptions): string[] {
-  const steps = header.quiet ? { total: header.startup.total } : header.startup;
-  return startupRows(steps, header.color);
+  if (header.quiet) return startupRows({ total: header.startup.total }, header.color);
+  return startupRows(header.startup, header.color, header.details);
+}
+
+function hintRows(header: HeaderOptions): string[] {
+  if (header.quiet) return [];
+  return ["", `   ${styled(SHORTCUT_HINT, ANSI.dim, header.color)}`];
 }
 
 function innerWidth(rows: string[], header: HeaderOptions): number {

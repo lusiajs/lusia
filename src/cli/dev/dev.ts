@@ -5,18 +5,24 @@ import type { Screens } from "#runtime/screen/screens.ts";
 import { version } from "../../../package.json" with { type: "json" };
 import { colorEnabled } from "../log/color.ts";
 import { formatBrowserError, formatBuildError } from "../log/dev-block.ts";
-import { formatHeader, type HeaderUrl } from "../log/dev-header.ts";
+import { formatHeader } from "../log/dev-header.ts";
 import { entryPath } from "../build/bundle.ts";
-import { now, type Steps } from "../build/timings.ts";
+import { now } from "../build/timings.ts";
+import { emptyReport } from "../build/build-report.ts";
+import { startupDetails } from "../log/dev-detail.ts";
 import { prepareStyles } from "../build/sass-warm.ts";
 import { saveStyleCache } from "../build/sass-disk-cache.ts";
 import { DEFAULT_SCREENS } from "#runtime/screen/screens.ts";
 import { createDevServer } from "./dev-server.ts";
-import { networkAddress } from "./network-address.ts";
+import { startShortcuts } from "./key-actions.ts";
 import { createRebuild } from "./rebuild.ts";
+import { serverUrls } from "./server-urls.ts";
+import { startupSteps } from "./startup.ts";
 import { createUpdatePrinter } from "./update-printer.ts";
 import { watchFolder } from "./watch.ts";
 import { writeScreenTypes } from "../types/screen-types.ts";
+
+const INTERRUPT_EXIT_CODE = 130;
 
 export interface DevOptions {
   dir: string;
@@ -26,6 +32,8 @@ export interface DevOptions {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  /** Time spent reading lusia.config, shown under the boot step. */
+  configMs?: number;
 }
 
 export interface DevHandle {
@@ -40,6 +48,7 @@ export async function startDev({
   lazy,
   animate,
   screens,
+  configMs,
 }: DevOptions): Promise<DevHandle> {
   const started = now();
   const root = resolve(dir);
@@ -60,26 +69,39 @@ export async function startDev({
     onBrowserError: (error) =>
       printer.print(formatBrowserError({ time: new Date(), ...error }, color)),
   });
+  const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
   const rebuild = createRebuild({
     root,
     server,
     lazy,
     animate,
     screens,
+    startStyles: styles.blocks,
     onUpdate: (update) => printer.show(update),
     onBuildError: (messages) =>
       printer.print(formatBuildError(new Date(), relativeTo(root, messages), color)),
   });
-  const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
-  const firstBuild = (await rebuild.request({ files: [], waitMs: 0 })) ?? {};
-  const startup = startupSteps({ started, types, styles, build: firstBuild, total: now() });
+  const firstBuild = (await rebuild.startup()) ?? {
+    steps: {},
+    report: emptyReport(root),
+  };
+  const startup = startupSteps({
+    started,
+    types,
+    styles: styles.ms,
+    build: firstBuild.steps,
+    total: now(),
+    configMs,
+  });
   void saveStyleCache(root);
 
+  const urls = serverUrls(server.url);
   printer.print(
     formatHeader({
-      urls: serverUrls(server.url),
+      urls,
       version: `v${version}`,
       startup,
+      details: startupDetails(firstBuild.report, startup),
       quiet,
       watching: `${basename(root)}/`,
       width: terminalWidth(),
@@ -89,51 +111,32 @@ export async function startDev({
   const watcher = watchFolder(root, (files, waitMs) => {
     void rebuild.request({ files, waitMs });
   });
-  return {
-    url: server.url,
-    stop() {
-      watcher.close();
-      server.stop();
+
+  const keys = startShortcuts({
+    root,
+    urls,
+    localUrl: server.url.href,
+    startup,
+    color,
+    printer,
+    rebuild,
+    onInterrupt: () => {
+      stop();
+      process.exit(INTERRUPT_EXIT_CODE);
     },
-  };
-}
-
-interface StartupTimes {
-  started: number;
-  types: number;
-  styles: number;
-  build: Steps;
-  total: number;
-}
-
-/** Server is the time left over: everything from the first build's end to the header print. */
-function startupSteps({ started, types, styles, build, total }: StartupTimes): Steps {
-  const sass = styles + (build.sass ?? 0);
-  const buildMs = sass + (build.compile ?? 0) + (build.bundle ?? 0);
-  const server = total - started - types - buildMs;
-  return {
-    boot: started,
-    types,
-    sass,
-    compile: build.compile,
-    bundle: build.bundle,
-    server,
-    total,
-  };
+  });
+  function stop(): void {
+    keys?.stop();
+    watcher.close();
+    server.stop();
+  }
+  return { url: server.url, stop };
 }
 
 /** Build messages show paths from the app folder, not the whole disk path. */
 function relativeTo(root: string, messages: string[]): string[] {
   const prefix = `${root}${sep}`;
   return messages.map((message) => message.split(prefix).join(""));
-}
-
-function serverUrls(url: URL): HeaderUrl[] {
-  const address = networkAddress();
-  const local = { label: "Local", url: url.href };
-  // The dev server binds all interfaces, so the LAN address reaches it.
-  if (!address) return [local];
-  return [local, { label: "Network", url: `http://${address}:${url.port}/` }];
 }
 
 // Some terminals report 0 columns, which would squash the box.

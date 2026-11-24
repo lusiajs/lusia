@@ -46,7 +46,8 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const started = now();
   await rm(outdir, { recursive: true, force: true });
   const bundleStart = now();
-  addStep(steps, "sass", await prepareStyles(dir, options.screens ?? DEFAULT_SCREENS));
+  const styles = await prepareStyles(dir, options.screens ?? DEFAULT_SCREENS);
+  addStep(steps, "sass", styles.ms);
   const result = await bundleApp({
     dir,
     minify: options.minify,

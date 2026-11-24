@@ -31,8 +31,16 @@ export interface CompileResult {
   deps: StyleResult["deps"];
   /** Time spent in the Sass compiler. Zero when every style came from the cache. */
   sassMs: number;
+  /** One entry per Sass style, in source order. Plain CSS styles are left out. */
+  styleBlocks: StyleBlockTiming[];
   /** The script and markup only. If this is unchanged, a change to the styles alone needs no reload. */
   scriptAndMarkup: string;
+}
+
+export interface StyleBlockTiming {
+  index: number;
+  cached: boolean;
+  ms: number;
 }
 
 /** Turns one style section into scoped CSS. The caller decides whether Sass runs. */
@@ -63,6 +71,9 @@ export function compileParts(
   const { statements, body, components } = splitImports(parsed.script, file);
   const deps = styles.flatMap((style) => style.deps);
   const sassMs = styles.reduce((sum, style) => sum + style.sassMs, 0);
+  const styleBlocks = parsed.styles.flatMap((section, index) =>
+    section.attrs.lang === "css" ? [] : [styleBlockTiming(index, styles[index]!)],
+  );
   const scriptAndMarkup = JSON.stringify([
     parsed.script?.content,
     parsed.script?.attrs,
@@ -90,5 +101,9 @@ export function compileParts(
     script: scriptRange(parsed.script),
   });
   const { code, map } = extractSourceMap(generated, file, source);
-  return { code, css, id, map, deps, sassMs, scriptAndMarkup };
+  return { code, css, id, map, deps, sassMs, styleBlocks, scriptAndMarkup };
+}
+
+function styleBlockTiming(index: number, style: StyleResult): StyleBlockTiming {
+  return { index, cached: style.cached, ms: style.sassMs };
 }

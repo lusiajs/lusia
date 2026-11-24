@@ -32,6 +32,7 @@ export async function bundleApp({
   return Bun.build({
     entrypoints: [entryPath(dir)],
     minify,
+    metafile: true,
     splitting: true,
     sourcemap: "linked",
     throw: false,

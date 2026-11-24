@@ -20,12 +20,14 @@ export interface StyleResult {
   deps: StyleDep[];
   /** Time spent in the Sass compiler. Zero on a cache hit. */
   sassMs: number;
+  cached: boolean;
 }
 
 interface SassOutput {
   css: string;
   deps: StyleDep[];
   sassMs: number;
+  cached: boolean;
 }
 
 interface SassEntry {
@@ -56,10 +58,10 @@ export function compileStyleResult(
 ): StyleResult {
   const isPlainCss = style.attrs.lang === "css";
   const sassOutput = isPlainCss
-    ? { css: style.content, deps: [], sassMs: 0 }
+    ? { css: style.content, deps: [], sassMs: 0, cached: false }
     : compileScss(style, file, index, screens);
   const css = scopeCss(sassOutput.css, id, styleMode(style)).trim();
-  return { css, deps: sassOutput.deps, sassMs: sassOutput.sassMs };
+  return { css, deps: sassOutput.deps, sassMs: sassOutput.sassMs, cached: sassOutput.cached };
 }
 
 export function depsCurrent(deps: StyleDep[]): boolean {
@@ -127,7 +129,7 @@ type StyleSource = Pick<Section, "content">;
 
 function compileScss(style: Section, file: string, index: number, screens: Screens): SassOutput {
   const hit = cachedEntry(file, index, style, screens);
-  if (hit) return { css: hit.css, deps: hit.deps, sassMs: 0 };
+  if (hit) return { css: hit.css, deps: hit.deps, sassMs: 0, cached: true };
   const start = performance.now();
   const result = runSass(style, file, screens);
   const sassMs = performance.now() - start;
@@ -136,7 +138,7 @@ function compileScss(style: Section, file: string, index: number, screens: Scree
     text: readFileSync(path, "utf8"),
   }));
   primeStyle(file, index, style, screens, result.css, deps);
-  return { css: result.css, deps, sassMs };
+  return { css: result.css, deps, sassMs, cached: false };
 }
 
 // The screen sizes are part of the key, because the screen() mixin is built from them.

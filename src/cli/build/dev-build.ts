@@ -9,6 +9,7 @@ import { withReloadClient } from "../dev/reload-client.ts";
 import { RUNTIME_PATH, runtimeModule } from "./runtime-module.ts";
 import { RUNTIME_SPECIFIER } from "./runtime-shim.ts";
 import { addBundleStep, now, type Steps } from "./timings.ts";
+import { emptyReport, recordBundle, type BuildReport } from "./build-report.ts";
 
 const IMPORT_MAP = `<script type="importmap">${JSON.stringify({
   imports: { [RUNTIME_SPECIFIER]: RUNTIME_PATH },
@@ -17,7 +18,7 @@ const IMPORT_MAP = `<script type="importmap">${JSON.stringify({
 export type Assets = Map<string, Blob>;
 
 export type DevBuild =
-  | { ok: true; assets: Assets; changes: ModuleUpdate[]; steps: Steps }
+  | { ok: true; assets: Assets; changes: ModuleUpdate[]; steps: Steps; report: BuildReport }
   | { ok: false; messages: string[] };
 
 export async function buildDev(
@@ -28,6 +29,7 @@ export async function buildDev(
 ): Promise<DevBuild> {
   const steps: Steps = {};
   const changes: ModuleUpdate[] = [];
+  const report = emptyReport(dir);
   const start = now();
   const result = await bundleApp({
     dir,
@@ -37,14 +39,16 @@ export async function buildDev(
     lazy,
     animate,
     screens,
+    report,
     onUpdate: (update) => changes.push(update),
   });
   addBundleStep(steps, now() - start);
   if (!result.success)
     return { ok: false, messages: [formatBuildFailure(result.logs, colorEnabled(), dir)] };
+  recordBundle(report, result);
   const entries = await Promise.all(result.outputs.map(toEntry));
   const runtime = [assetKey(RUNTIME_PATH), await runtimeModule()] as const;
-  return { ok: true, assets: new Map([...entries, runtime]), changes, steps };
+  return { ok: true, assets: new Map([...entries, runtime]), changes, steps, report };
 }
 
 async function toEntry(output: Blob & { path: string }): Promise<[string, Blob]> {

@@ -11,31 +11,35 @@ import type { Screens } from "#runtime/screen/screens.ts";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AsyncCompiler } from "sass-embedded";
+import type { StyleTiming } from "./build-report.ts";
 import { loadStyleCache } from "./sass-disk-cache.ts";
 
 const SKIPPED_FOLDERS = new Set(["node_modules", "dist"]);
 
-interface StyleJob {
-  file: string;
-  index: number;
+interface StyleBlock extends StyleTiming {
   style: Section;
 }
 
-/** Loads the saved Sass cache, then compiles every uncached style in parallel. Returns the time taken. */
-export async function prepareStyles(root: string, screens: Screens): Promise<number> {
+export interface StylePreparation {
+  ms: number;
+  blocks: StyleTiming[];
+}
+
+/** Loads the saved Sass cache, then compiles every uncached style in parallel. */
+export async function prepareStyles(root: string, screens: Screens): Promise<StylePreparation> {
   const start = performance.now();
   await loadStyleCache(root);
-  await warmStyles(root, screens);
-  return performance.now() - start;
+  const blocks = await warmStyles(root, screens);
+  return { ms: performance.now() - start, blocks };
 }
 
 /** Fills the Sass cache for every style under root, so the sync compile finds them cached. */
-export async function warmStyles(root: string, screens: Screens): Promise<number> {
-  const start = performance.now();
+export async function warmStyles(root: string, screens: Screens): Promise<StyleTiming[]> {
   const files = await lusiaFiles(root);
-  const jobs = (await Promise.all(files.map((file) => styleJobs(file, screens)))).flat();
-  if (jobs.length > 0) await compileJobs(jobs, screens);
-  return performance.now() - start;
+  const blocks = (await Promise.all(files.map((file) => styleBlocks(file, screens)))).flat();
+  const misses = blocks.filter((block) => !block.cached);
+  if (misses.length > 0) await compileBlocks(misses, screens);
+  return blocks.map(({ file, index, cached, ms }) => ({ file, index, cached, ms }));
 }
 
 async function lusiaFiles(folder: string): Promise<string[]> {
@@ -54,25 +58,26 @@ function isWalkable(name: string): boolean {
   return !SKIPPED_FOLDERS.has(name) && !name.startsWith(".");
 }
 
-async function styleJobs(file: string, screens: Screens): Promise<StyleJob[]> {
+async function styleBlocks(file: string, screens: Screens): Promise<StyleBlock[]> {
   try {
     const source = await readFile(file, "utf8");
     return parse(source, file).styles.flatMap((style, index) =>
-      needsCompile(file, index, style, screens) ? [{ file, index, style }] : [],
+      style.attrs.lang === "css" ? [] : [sassBlock(file, index, style, screens)],
     );
   } catch {
     return [];
   }
 }
 
-function needsCompile(file: string, index: number, style: Section, screens: Screens): boolean {
-  return style.attrs.lang !== "css" && !isStyleCached(file, index, style, screens);
+function sassBlock(file: string, index: number, style: Section, screens: Screens): StyleBlock {
+  const cached = isStyleCached(file, index, style, screens);
+  return { file, index, cached, ms: 0, style };
 }
 
-async function compileJobs(jobs: StyleJob[], screens: Screens): Promise<void> {
+async function compileBlocks(blocks: StyleBlock[], screens: Screens): Promise<void> {
   const compiler = await startCompiler();
   try {
-    await Promise.all(jobs.map((job) => compileJob(compiler, job, screens)));
+    await Promise.all(blocks.map((block) => compileBlock(compiler, block, screens)));
   } finally {
     await compiler.dispose();
   }
@@ -84,16 +89,23 @@ async function startCompiler(): Promise<AsyncCompiler> {
   return initAsyncCompiler();
 }
 
-async function compileJob(compiler: AsyncCompiler, job: StyleJob, screens: Screens): Promise<void> {
+async function compileBlock(
+  compiler: AsyncCompiler,
+  block: StyleBlock,
+  screens: Screens,
+): Promise<void> {
+  const start = performance.now();
   try {
     const result = await compiler.compileStringAsync(
-      scssSource(job.style),
-      sassOptions(job.file, screens),
+      scssSource(block.style),
+      sassOptions(block.file, screens),
     );
     const deps = await readDeps(loadedFilePaths(result.loadedUrls));
-    primeStyle(job.file, job.index, job.style, screens, result.css, deps);
+    primeStyle(block.file, block.index, block.style, screens, result.css, deps);
   } catch {
     // The sync compile reports this error with its position.
+  } finally {
+    block.ms = performance.now() - start;
   }
 }
 

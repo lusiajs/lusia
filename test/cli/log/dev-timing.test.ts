@@ -13,6 +13,21 @@ const STEPS = {
 };
 
 describe("startupRows", () => {
+  test("detail lines follow their part, with the last one marked as the end", () => {
+    expect(startupRows(STEPS, false, { compile: ["3 files", "x"] })).toEqual([
+      "boot        180 ms",
+      "types         5 ms",
+      "styles      830 ms",
+      "compile     170 ms",
+      "| | 3 files",
+      "| ` x",
+      "bundle      270 ms",
+      "server       40 ms",
+      "------------------",
+      "total      1495 ms",
+    ]);
+  });
+
   test("lists the parts in startup order, then a rule and the total", () => {
     expect(startupRows(STEPS, false)).toEqual([
       "boot        180 ms",

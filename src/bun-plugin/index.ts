@@ -5,6 +5,7 @@ import { animateNamesJson, animatePrelude } from "./animate-prelude.ts";
 import { screensKey, screenPrelude } from "./screen-prelude.ts";
 import { setupFallback } from "./fallback.ts";
 import { now, addStep, type Steps } from "#cli/build/timings.ts";
+import { recordCompile, type BuildReport } from "#cli/build/build-report.ts";
 import type { BunPlugin } from "bun";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
@@ -24,6 +25,8 @@ export interface LusiaPluginOptions {
   animate?: AnimateConfig;
   /** Screen sizes from lusia.config. Default: PHONE, TABLET and DESKTOP. */
   screens?: Screens;
+  /** Receives the files compiled and the styles compiled in this build. */
+  report?: BuildReport;
 }
 
 export function lusia({
@@ -33,6 +36,7 @@ export function lusia({
   lazy,
   animate = {},
   screens,
+  report,
 }: LusiaPluginOptions = {}): BunPlugin {
   return {
     name: "lusia",
@@ -52,8 +56,10 @@ export function lusia({
         const next = toCachedModule(source, dev, { ...result, code: prelude + result.code }, key);
         const update = moduleUpdate(path, storeModule(path, next), next);
         if (update) onUpdate?.(update);
+        const compileMs = now() - start - result.sassMs;
         addStep(steps, "sass", result.sassMs);
-        addStep(steps, "compile", now() - start - result.sassMs);
+        addStep(steps, "compile", compileMs);
+        if (report) recordCompile(report, path, compileMs, result.styleBlocks);
         return { contents: next.code, loader: "ts" };
       });
       setupFallback(build, dev);

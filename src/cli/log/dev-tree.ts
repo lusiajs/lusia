@@ -14,10 +14,10 @@ const KIND_STYLES: Record<BlockKind, { mark: string; code: string }> = {
   error: { mark: "✖", code: ANSI.red },
 };
 
-export const UNICODE_TREE = { pipe: "│", end: "└" };
-export const PLAIN_TREE = { pipe: "|", end: "`" };
+export const UNICODE_TREE = { pipe: "│", branch: "├", end: "└" };
+export const PLAIN_TREE = { pipe: "|", branch: "|", end: "`" };
 
-export function treeChars(color: boolean): { pipe: string; end: string } {
+export function treeChars(color: boolean): { pipe: string; branch: string; end: string } {
   return color ? UNICODE_TREE : PLAIN_TREE;
 }
 

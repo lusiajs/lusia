@@ -74,5 +74,5 @@ function browserStyle(
     style.attrs.lang === "css"
       ? style.content
       : compileSectionScss(style, file, importers, screens);
-  return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
+  return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0, cached: false };
 }

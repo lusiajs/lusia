@@ -17,6 +17,19 @@ async function makeApp(): Promise<string> {
 }
 
 describe("warmStyles", () => {
+  test("returns every Sass block, cached or compiled, and skips plain CSS", async () => {
+    const dir = await makeApp();
+    const file = join(dir, "Card.lusia");
+    await writeFile(file, `${STYLE_SOURCE}<style lang="css">.b { color: red; }</style>\n`);
+    const first = await warmStyles(dir, DEFAULT_SCREENS);
+    expect(first).toEqual([{ file, index: 0, cached: false, ms: expect.any(Number) }]);
+    expect(first[0]!.ms).toBeGreaterThan(0);
+    const second = await warmStyles(dir, DEFAULT_SCREENS);
+    expect(second).toEqual([{ file, index: 0, cached: true, ms: 0 }]);
+    forgetStyles(file);
+    await rm(dir, { recursive: true, force: true });
+  });
+
   test("a warmed style is a cache hit: no Sass time", async () => {
     const dir = await makeApp();
     const file = join(dir, "Card.lusia");

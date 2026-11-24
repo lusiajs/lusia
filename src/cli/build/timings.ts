@@ -13,6 +13,8 @@ const BUILD_STEPS: [Step, string][] = [
   ["total", "total"],
 ];
 
+export type StartupSteps = Steps & { configMs?: number };
+
 export function now(): number {
   return performance.now();
 }

@@ -7,6 +7,7 @@ import type { DevServer } from "./dev-server.ts";
 import { createHotBuilder, type HotBuilder, type HotModule } from "../build/hot-build.ts";
 import type { UpdateBlock } from "../log/dev-block.ts";
 import { now, type Steps } from "../build/timings.ts";
+import type { BuildReport, StyleTiming } from "../build/build-report.ts";
 import { chooseUpdate, RELOAD, type Update } from "./update.ts";
 import { buildHotModules } from "./hot-plan.ts";
 import { writeScreenTypes } from "../types/screen-types.ts";
@@ -15,10 +16,21 @@ import { type DevConfig, isConfigFile, readDevConfig } from "./config-reload.ts"
 interface Change {
   files: string[];
   waitMs: number;
+  /** The first build. It prints no update block, and its styles come from the warm step. */
+  startup?: boolean;
 }
 
-interface Rebuild {
-  request(change: Change): Promise<Steps | undefined>;
+export interface BuildSummary {
+  steps: Steps;
+  report: BuildReport;
+}
+
+export interface Rebuild {
+  request(change: Change): Promise<BuildSummary | undefined>;
+  startup(): Promise<BuildSummary | undefined>;
+  /** Rebuilds everything and sends a full reload to the page. */
+  reload(): Promise<BuildSummary | undefined>;
+  lastReport(): BuildReport | undefined;
 }
 
 interface RebuildOptions {
@@ -29,6 +41,8 @@ interface RebuildOptions {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  /** Style blocks the startup warm step compiled. The startup build reports these. */
+  startStyles: StyleTiming[];
 }
 
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
@@ -40,6 +54,7 @@ export function createRebuild({
   lazy: startLazy,
   animate: startAnimate,
   screens: startScreens,
+  startStyles,
 }: RebuildOptions): Rebuild {
   let busy = false;
   let pending: Change | null = null;
@@ -49,6 +64,7 @@ export function createRebuild({
   let animate = startAnimate;
   let screens = startScreens;
   let hotBuilder: HotBuilder = createHotBuilder(animate, screens);
+  let latestReport: BuildReport | undefined;
 
   function applyConfig(config: DevConfig): void {
     lazy = config.lazy;
@@ -64,7 +80,11 @@ export function createRebuild({
     return undefined;
   }
 
-  async function buildAndPublish(change: Change): Promise<Steps | undefined> {
+  function reportFor(change: Change, buildReport: BuildReport): BuildReport {
+    return change.startup ? { ...buildReport, styles: startStyles } : buildReport;
+  }
+
+  async function buildAndPublish(change: Change): Promise<BuildSummary | undefined> {
     const started = now();
     if (change.files.some(isConfigFile)) {
       const config = await readDevConfig(root);
@@ -74,6 +94,8 @@ export function createRebuild({
     }
     const build = await buildDev(root, lazy, animate, screens);
     if (!build.ok) return report(build.messages);
+    const buildReport = reportFor(change, build.report);
+    latestReport = buildReport;
     const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
     let update = planned;
     let modules: HotModule[] = [];
@@ -86,31 +108,36 @@ export function createRebuild({
     }
     needsReload = false;
     server.publish(build.assets, update, modules);
-    if (change.files.length > 0) {
+    if (!change.startup) {
       const steps: Steps = { ...build.steps, wait: change.waitMs, total: now() - started };
       onUpdate({ time: new Date(), kind: blockKind(update), files: change.files, steps });
     }
-    return build.steps;
+    return { steps: build.steps, report: buildReport };
+  }
+
+  async function request(change: Change): Promise<BuildSummary | undefined> {
+    pending = mergeChange(pending, change);
+    if (busy) return undefined;
+    busy = true;
+    let first: BuildSummary | undefined;
+    try {
+      while (pending) {
+        const next = pending;
+        pending = null;
+        const summary = await buildAndPublish(next);
+        first ??= summary;
+      }
+    } finally {
+      busy = false;
+    }
+    return first;
   }
 
   return {
-    async request(change) {
-      pending = mergeChange(pending, change);
-      if (busy) return undefined;
-      busy = true;
-      let firstSteps: Steps | undefined;
-      try {
-        while (pending) {
-          const next = pending;
-          pending = null;
-          const steps = await buildAndPublish(next);
-          firstSteps ??= steps;
-        }
-      } finally {
-        busy = false;
-      }
-      return firstSteps;
-    },
+    request,
+    startup: () => request({ files: [], waitMs: 0, startup: true }),
+    reload: () => request({ files: [], waitMs: 0 }),
+    lastReport: () => latestReport,
   };
 }
 

@@ -26,4 +26,21 @@ Dev output (lusia dev), one block per save:
   bundle    The bundler
   browser   From the publish until the page reports ready
   total     The build and publish, without wait and browser
+
+Startup (lusia dev header), with a detail line under each part:
+  boot      Bun start, and the config read
+  types     Screen types written
+  styles    Sass to CSS: block count, cached or compiled
+  compile   .lusia files to JavaScript: file count, slowest file
+  bundle    The bundler: module count (from packages), output size
+  server    Dev server start
+
+Keys (lusia dev, in a terminal):
+  d         Deep report of the last build: every module, style and file
+  r         Rebuild and reload the page
+  o         Open the Local URL in the browser
+  u         Show the URLs again
+  c         Clear the terminal
+  h         List the keys
+  Ctrl+C    Stop
 `;

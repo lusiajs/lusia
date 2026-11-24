@@ -75,18 +75,30 @@ function formatPart(part: TimingPart, isSlowest: boolean, color: boolean): strin
   return styled(`${part.name} ${Math.round(part.ms)}`, code, color);
 }
 
+/** Detail lines shown under a startup part, such as "3 files, slowest a.lusia 9 ms". */
+export type StartupDetails = Partial<Record<TimingName, string[]>>;
+
 /**
  * Startup breakdown for the header, one row per part, then a rule and the bold total.
  * Zero parts are hidden. With no parts, only the total row shows.
  */
-export function startupRows(steps: Steps, color: boolean): string[] {
+export function startupRows(steps: Steps, color: boolean, details: StartupDetails = {}): string[] {
   const parts = startupParts(steps);
   const totalRow = startupRow("total", Math.round(steps.total ?? 0), ANSI.bold, color);
   if (parts.length === 0) return [totalRow];
-  const partRows = parts.map((part) =>
+  const partRows = parts.flatMap((part) => [
     startupRow(part.name, part.ms, PART_CODES[part.name], color),
-  );
+    ...detailRows(details[part.name] ?? [], color),
+  ]);
   return [...partRows, startupRule(color), totalRow];
+}
+
+function detailRows(lines: string[], color: boolean): string[] {
+  const tree = treeChars(color);
+  return lines.map((line, index) => {
+    const isLast = index === lines.length - 1;
+    return styled(`${tree.pipe} ${isLast ? tree.end : tree.branch} ${line}`, ANSI.dim, color);
+  });
 }
 
 function startupParts(steps: Steps): TimingPart[] {
