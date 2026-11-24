@@ -80,7 +80,13 @@ const CLIENT_CODE = `
     }));
   }
 
+  // The browser defers the extra size notices to the next frame, so nothing is lost.
+  function isResizeObserverNotice(event) {
+    return typeof event.message === "string" && event.message.indexOf("ResizeObserver loop") === 0;
+  }
+
   function reportWindowError(event) {
+    if (isResizeObserverNotice(event)) return;
     var stack = event.error ? stackOf(event.error) : event.message + "\\n" + event.filename + ":" + event.lineno + ":" + event.colno;
     reportError(event.message, stack);
   }
