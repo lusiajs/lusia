@@ -7,6 +7,7 @@ A cat-ear letter L with a curly tail. Black and white, with a white border.
 | File                             | Use                                                                |
 | -------------------------------- | ------------------------------------------------------------------ |
 | `logo.svg`                       | Main logo, scales to any size                                      |
+| `logo-animated.svg`              | Animated logo: the cat bobs and its tail wags                      |
 | `favicon.svg`                    | Browser tab icon (modern browsers)                                 |
 | `favicon.ico`                    | Browser tab icon (16, 32, 48, 64 px)                               |
 | `apple-touch-icon.png`           | iOS home screen icon (180 px, white background)                    |
