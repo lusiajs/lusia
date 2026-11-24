@@ -1,3 +1,4 @@
+import { isIgnoredBrowserError } from "./ignored-browser-errors.ts";
 import type { ServerWebSocket } from "bun";
 import { assetKey } from "../build/bundle.ts";
 import type { Assets } from "../build/dev-build.ts";
@@ -109,7 +110,8 @@ export function createDevServer({
 
   function reportBrowserError(report: ClientReport): void {
     const browserError = toBrowserError(report);
-    if (browserError) onBrowserError?.(browserError);
+    if (!browserError || isIgnoredBrowserError(browserError.message)) return;
+    onBrowserError?.(browserError);
   }
 
   function messagesFor(update: Update, modules: HotModule[]): object[] {
