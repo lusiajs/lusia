@@ -58,15 +58,15 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 > [!TIP]
 > Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
 
-## Editor tools
+## VS Code support
 
-`@lusiajs/language-tools` is a separate package in `packages/language-tools`. It holds the built logic that editors load: completion, hover, lint and format.
+`@lusiajs/vscode-support` is a separate package in `packages/vscode-support`. It holds the built logic that editors load: completion, hover, lint and format.
 
 | Entry | File | Used by |
 | ----- | ---- | ------- |
-| `@lusiajs/language-tools/vscode` | `dist/vscode.js` | The VS Code extension |
+| `@lusiajs/vscode-support/vscode` | `dist/vscode.js` | The VS Code extension |
 
-- Source: `src/editor/host.ts`. Build: `bun scripts/build-language-tools.ts` (also run by `bun run check`).
+- Source: `src/editor/host.ts`. Build: `bun scripts/build-vscode-support.ts` (also run by `bun run check`).
 - Types: `dist/vscode.d.ts` is one bundled file with no `#` imports, so consumers do not need `skipLibCheck`. A test type-checks a consumer project against it. The types use browser types (Element, Event), so a consumer needs `"lib": ["ESNext", "DOM"]` in its tsconfig, as VS Code extensions already have.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.
@@ -81,7 +81,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 - Source: `src/prettier-plugin/`. Build: `bun scripts/build-prettier-plugin.ts`, which writes `packages/prettier-plugin/dist/index.js`.
 - The end-to-end test builds the plugin itself.
 - The version always matches `lusiajs`. A test checks it.
-- Release: the publish workflow builds and publishes it right after `@lusiajs/language-tools`, with the same version.
+- Release: the publish workflow builds and publishes it right after `@lusiajs/vscode-support`, with the same version.
 - Users read [the plugin README](packages/prettier-plugin/README.md).
 
 ## Open a pull request

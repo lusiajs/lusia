@@ -16,7 +16,7 @@ interface StepResult {
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 
 // The build runs first: the test imports its output.
-const BUILD: Step = { name: "build", cmd: ["bun", "scripts/build-language-tools.ts"], cwd: ROOT };
+const BUILD: Step = { name: "build", cmd: ["bun", "scripts/build-vscode-support.ts"], cwd: ROOT };
 
 // The steps touch separate outputs, so they run at the same time.
 const STEPS: Step[] = [

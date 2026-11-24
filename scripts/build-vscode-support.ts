@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { generateDtsBundle } from "dts-bundle-generator";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const PACKAGE_DIR = "packages/language-tools";
+const PACKAGE_DIR = "packages/vscode-support";
 const VSCODE_ENTRY = "vscode";
 
 interface PackageJson {
@@ -49,18 +49,18 @@ async function bundleTypes(root: string, distDir: string): Promise<void> {
   await writeFile(join(distDir, `${VSCODE_ENTRY}.d.ts`), declarations.join(""));
 }
 
-export async function buildLanguageTools(root: string = ROOT): Promise<void> {
+export async function buildVsCodeSupport(root: string = ROOT): Promise<void> {
   const rootPackage = await readPackageJson(join(root, "package.json"));
-  const toolsDir = join(root, PACKAGE_DIR);
-  const toolsPackage = await readPackageJson(join(toolsDir, "package.json"));
-  const distDir = join(toolsDir, "dist");
+  const packageDir = join(root, PACKAGE_DIR);
+  const supportPackage = await readPackageJson(join(packageDir, "package.json"));
+  const distDir = join(packageDir, "dist");
   await rm(distDir, { recursive: true, force: true });
 
-  await bundleEntry(root, distDir, rootPackage.version ?? "", externalNames(toolsPackage));
+  await bundleEntry(root, distDir, rootPackage.version ?? "", externalNames(supportPackage));
   await bundleTypes(root, distDir);
 }
 
 if (import.meta.main) {
-  await buildLanguageTools();
+  await buildVsCodeSupport();
   console.log(`Built ${PACKAGE_DIR}/dist/${VSCODE_ENTRY}.js and .d.ts`);
 }

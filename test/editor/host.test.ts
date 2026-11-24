@@ -3,10 +3,10 @@ import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
-import { buildLanguageTools } from "../../scripts/build-language-tools.ts";
+import { buildVsCodeSupport } from "../../scripts/build-vscode-support.ts";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
-const TOOLS_DIR = "packages/language-tools";
+const SUPPORT_DIR = "packages/vscode-support";
 const BUILD_TIMEOUT_MS = 60_000;
 const CONSUMER_CHECK_LIMIT_MS = 20_000;
 const TIMED_OUT = Symbol("timed out");
@@ -25,7 +25,7 @@ const CONSUMER_TSCONFIG = {
   files: ["index.ts"],
 };
 
-const CONSUMER_INDEX = `import { EDITOR_API_VERSION, hover, lint } from "@lusiajs/language-tools/vscode";
+const CONSUMER_INDEX = `import { EDITOR_API_VERSION, hover, lint } from "@lusiajs/vscode-support/vscode";
 
 export const version: number = EDITOR_API_VERSION;
 export type Issue = lint.LintIssue;
@@ -34,7 +34,7 @@ export type Hover = ReturnType<typeof hover.hoverAt>;
 
 async function writeConsumer(consumerDir: string): Promise<void> {
   await mkdir(join(consumerDir, "node_modules/@lusiajs"), { recursive: true });
-  await symlink(join(ROOT, TOOLS_DIR), join(consumerDir, "node_modules/@lusiajs/language-tools"), "dir");
+  await symlink(join(ROOT, SUPPORT_DIR), join(consumerDir, "node_modules/@lusiajs/vscode-support"), "dir");
   await writeFile(join(consumerDir, "package.json"), JSON.stringify({ name: "consumer", private: true, type: "module" }));
   await writeFile(join(consumerDir, "tsconfig.json"), JSON.stringify(CONSUMER_TSCONFIG));
   await writeFile(join(consumerDir, "index.ts"), CONSUMER_INDEX);
@@ -106,8 +106,8 @@ async function loadWithPlainNode(entry: string): Promise<{ version: number; keys
 test(
   "built editor entry loads in plain node and exports the contract",
   async () => {
-    await buildLanguageTools(ROOT);
-    const loaded = await loadWithPlainNode(join(ROOT, TOOLS_DIR, "dist/vscode.js"));
+    await buildVsCodeSupport(ROOT);
+    const loaded = await loadWithPlainNode(join(ROOT, SUPPORT_DIR, "dist/vscode.js"));
 
     expect(loaded.version).toBe(1);
     for (const name of CONTRACT_NAMESPACES) {
@@ -117,16 +117,16 @@ test(
   BUILD_TIMEOUT_MS,
 );
 
-test("language tools version matches lusiajs", async () => {
+test("vscode support version matches lusiajs", async () => {
   const rootPackage = await Bun.file(join(ROOT, "package.json")).json();
-  const toolsPackage = await Bun.file(join(ROOT, TOOLS_DIR, "package.json")).json();
-  expect(toolsPackage.version).toBe(rootPackage.version);
+  const supportPackage = await Bun.file(join(ROOT, SUPPORT_DIR, "package.json")).json();
+  expect(supportPackage.version).toBe(rootPackage.version);
 });
 
 test(
   "built editor types check in a consumer without skipLibCheck",
   async () => {
-    await buildLanguageTools(ROOT);
+    await buildVsCodeSupport(ROOT);
     const consumerDir = await mkdtemp(join(tmpdir(), "lusia-consumer-"));
     try {
       await writeConsumer(consumerDir);

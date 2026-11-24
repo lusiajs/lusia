@@ -1,13 +1,13 @@
 {
-  "name": "@lusiajs/language-tools",
+  "name": "@lusiajs/vscode-support",
   "version": "0.1.1-beta",
-  "description": "Language tools for Lusia editors: completion, hover, lint and format",
+  "description": "VS Code support for Lusia: completion, hover, lint and format",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lusiajs/lusia.git",
-    "directory": "packages/language-tools"
+    "directory": "packages/vscode-support"
   },
   "files": [
     "dist"
