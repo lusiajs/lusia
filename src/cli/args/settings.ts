@@ -3,7 +3,7 @@ import type { LazySettings } from "#bun-plugin/children.ts";
 import type { LusiaConfig } from "./config-types.ts";
 
 export const DEFAULT_PORT = 3000;
-const DEFAULT_OUTDIR = "dist";
+export const DEFAULT_OUTDIR = "dist";
 const DEFAULT_LAZY_MODE = "smart";
 const DEFAULT_LAZY_PREFETCH = "idle";
 
