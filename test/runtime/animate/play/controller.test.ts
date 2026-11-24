@@ -5,7 +5,7 @@ import { controller } from "#runtime/animate/play/controller.ts";
 import type { Keyframes } from "#runtime/animate/options/keyframes.ts";
 import { EASE } from "#runtime/animate/modes/modes.ts";
 import { ON } from "#runtime/animate/modes/trigger.ts";
-import { advance, onReset, useFakeClock } from "./clock.ts";
+import { advance, onReset, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 

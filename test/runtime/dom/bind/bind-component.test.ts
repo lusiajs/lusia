@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import BoundField from "./fixtures/BoundField.lusia";
-import FixedBind from "./fixtures/FixedBind.lusia";
-import { click, host, mount, resetMounts, text } from "./fixtures/mount.ts";
+import BoundField from "../fixtures/BoundField.lusia";
+import FixedBind from "../fixtures/FixedBind.lusia";
+import { click, host, mount, resetMounts, text } from "../fixtures/mount.ts";
 
 afterEach(resetMounts);
 

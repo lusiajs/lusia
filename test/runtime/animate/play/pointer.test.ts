@@ -4,7 +4,7 @@ import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { PointerPosition } from "#runtime/animate/options/pointer-item.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
 import { ON } from "#runtime/animate/modes/trigger.ts";
-import { advance, onReset, useFakeClock } from "./clock.ts";
+import { advance, onReset, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 

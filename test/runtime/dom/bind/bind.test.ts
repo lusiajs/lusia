@@ -4,11 +4,11 @@ import { bindInput } from "#runtime/dom/bind/input.ts";
 import { bindProp } from "#runtime/dom/bind/property.ts";
 import { watch } from "#runtime/variable/graph.ts";
 import { variable } from "#runtime/variable/variable.ts";
-import Clicks from "./fixtures/Clicks.lusia";
-import Fields from "./fixtures/Fields.lusia";
-import Writes from "./fixtures/Writes.lusia";
-import { resetVariable, state } from "./fixtures/state.ts";
-import { click, host, mount, resetMounts, text, unmount } from "./fixtures/mount.ts";
+import Clicks from "../fixtures/Clicks.lusia";
+import Fields from "../fixtures/Fields.lusia";
+import Writes from "../fixtures/Writes.lusia";
+import { resetVariable, state } from "../fixtures/state.ts";
+import { click, host, mount, resetMounts, text, unmount } from "../fixtures/mount.ts";
 
 beforeEach(resetVariable);
 afterEach(resetMounts);

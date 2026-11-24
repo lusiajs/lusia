@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
-import { compileLintScss } from "../../../src/language/lint/rules/style-compile.browser.ts";
+import { compileLintScss } from "#language/lint/rules/style-compile.browser.ts";
 
-const LINT_ENTRY = new URL("../../../src/language/lint/lint.ts", import.meta.url).pathname;
+const LINT_ENTRY = new URL("../../../../src/language/lint/lint.ts", import.meta.url).pathname;
 
 // The docs editor lints in the browser, so the linter must bundle without Node-only modules.
 test("the linter bundles for the browser without Sass", async () => {

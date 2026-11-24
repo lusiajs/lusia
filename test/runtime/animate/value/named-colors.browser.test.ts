@@ -14,7 +14,7 @@ const suite = browser ? describe : describe.skip;
 const SKIP_HINT = `set LUSIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
 
 async function bundledRuntime(): Promise<string> {
-  const entry = fileURLToPath(new URL("./fixtures/browser-entry.ts", import.meta.url));
+  const entry = fileURLToPath(new URL("../fixtures/browser-entry.ts", import.meta.url));
   const build = await Bun.build({ entrypoints: [entry], format: "iife", target: "browser" });
   if (!build.success) throw new Error(build.logs.map(String).join("\n"));
   return await build.outputs[0]!.text();

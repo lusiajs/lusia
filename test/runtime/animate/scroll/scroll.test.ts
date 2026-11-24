@@ -13,7 +13,7 @@ import { EDGE } from "#runtime/animate/modes/edge.ts";
 import type { ScrollPoint } from "#runtime/animate/scroll/scroll-touch.ts";
 import { variable } from "#runtime/variable/variable.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
-import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
+import { advance, onReset, setReducedMotion, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 

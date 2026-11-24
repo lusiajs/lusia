@@ -13,7 +13,7 @@ afterAll(() => browser?.close());
 const suite = browser ? describe : describe.skip;
 
 async function bundledRuntime(): Promise<string> {
-  const entry = fileURLToPath(new URL("./fixtures/layout-entry.ts", import.meta.url));
+  const entry = fileURLToPath(new URL("../fixtures/layout-entry.ts", import.meta.url));
   const build = await Bun.build({ entrypoints: [entry], format: "iife", target: "browser" });
   if (!build.success) throw new Error(build.logs.map(String).join("\n"));
   return await build.outputs[0]!.text();

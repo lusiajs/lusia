@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { bindIf } from "#runtime/dom/blocks/if.ts";
 import { TEXT_MARKER } from "#runtime/markers.ts";
 import { variable } from "#runtime/variable/variable.ts";
-import Branches from "./fixtures/Branches.lusia";
-import { resetVariable, state } from "./fixtures/state.ts";
-import { host, mount, resetMounts, unmount } from "./fixtures/mount.ts";
+import Branches from "../fixtures/Branches.lusia";
+import { resetVariable, state } from "../fixtures/state.ts";
+import { host, mount, resetMounts, unmount } from "../fixtures/mount.ts";
 
 beforeEach(resetVariable);
 afterEach(resetMounts);

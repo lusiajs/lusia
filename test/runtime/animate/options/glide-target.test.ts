@@ -3,7 +3,7 @@ import { animate } from "#runtime/animate/bind.ts";
 import type { AnimateItem } from "#runtime/animate/animation.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
 import { variable } from "#runtime/variable/variable.ts";
-import { advance, onReset, useFakeClock } from "./clock.ts";
+import { advance, onReset, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 

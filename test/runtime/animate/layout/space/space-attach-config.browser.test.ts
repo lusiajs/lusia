@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { Page } from "playwright";
-import { browser, openPage, ATTACH_LIST, attachSamples } from "./fixtures/browser-page.ts";
+import { browser, openPage, ATTACH_LIST, attachSamples } from "../../fixtures/browser-page.ts";
 
 const suite = browser ? describe : describe.skip;
 

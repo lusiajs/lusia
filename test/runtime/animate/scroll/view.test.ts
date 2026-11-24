@@ -13,7 +13,7 @@ const readOptions = (on: Parameters<typeof readWith>[0], options: Parameters<typ
   readWith(on, options, readBase);
 import type { Leave } from "#runtime/dom/component/leave.ts";
 import { variable } from "#runtime/variable/variable.ts";
-import { advance, onReset, useFakeClock } from "./clock.ts";
+import { advance, onReset, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 

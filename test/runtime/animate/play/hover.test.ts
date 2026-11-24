@@ -8,7 +8,7 @@ import { ON } from "#runtime/animate/modes/trigger.ts";
 import { HOVER_AREA } from "#runtime/animate/modes/hover-modes.ts";
 import { HOVER_KEYS } from "#runtime/animate/options/keys.ts";
 import type { Leave } from "#runtime/dom/component/leave.ts";
-import { advance, onReset, useFakeClock } from "./clock.ts";
+import { advance, onReset, useFakeClock } from "../clock.ts";
 
 useFakeClock();
 
