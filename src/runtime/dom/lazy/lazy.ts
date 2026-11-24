@@ -35,8 +35,9 @@ export function lazyComponent(
   };
   if (prefetch === "idle") whenIdle(() => void fetch().catch(() => {}));
   const place: Place = (parent, anchor, host, leaves) => {
-    if (loaded) return loaded.place(parent, anchor, host, leaves);
-    return placeLoading(loader, parent, anchor, host, leaves);
+    const prefetch = placementPrefetch(host.scope, loader.prefetch);
+    if (loaded && prefetch !== "view") return loaded.place(parent, anchor, host, leaves);
+    return placeLoading(loader, prefetch, parent, anchor, host, leaves);
   };
   return componentFrom(place);
 }
@@ -48,6 +49,7 @@ export function lazy(): never {
 
 function placeLoading(
   loader: Loader,
+  prefetch: LazyPrefetch,
   parent: Node,
   anchor: Node | null,
   host: Host,
@@ -87,9 +89,8 @@ function placeLoading(
     );
   };
 
-  const prefetch = placementPrefetch(host.scope, loader.prefetch);
-  if (prefetch === "view" && loader.fallback) {
-    // The import waits until the sentinel is near the screen.
+  if (prefetch === "view") {
+    // Every placement waits until its spot is near the screen, with or without a fallback.
     sentinel = document.createElement("span");
     parent.insertBefore(sentinel, marker);
     stopWatch = whenNear(sentinel, show);

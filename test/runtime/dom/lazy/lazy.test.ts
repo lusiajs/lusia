@@ -1,10 +1,10 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { lazy, type Component } from "lusiajs";
 import { lazyComponent } from "#runtime/dom/lazy/lazy.ts";
 
 import Counter from "../fixtures/Counter.lusia";
 import Loading from "../fixtures/Loading.lusia";
-import { host, mount, resetMounts, text } from "../fixtures/mount.ts";
+import { host, mount, resetMounts, text, unmount } from "../fixtures/mount.ts";
 
 afterEach(resetMounts);
 
@@ -19,6 +19,47 @@ function deferredLoad(component: Component) {
   };
   return { load, finish: () => resolve(), calls: () => calls };
 }
+
+// Records every observer so a test can say when an element comes near the screen.
+class FakeIntersectionObserver {
+  static created: FakeIntersectionObserver[] = [];
+  readonly targets = new Set<Element>();
+  disconnected = false;
+
+  constructor(private readonly onEntries: (entries: IntersectionObserverEntry[]) => void) {
+    FakeIntersectionObserver.created.push(this);
+  }
+
+  observe(el: Element): void {
+    this.targets.add(el);
+  }
+
+  disconnect(): void {
+    this.disconnected = true;
+    this.targets.clear();
+  }
+
+  static nearScreen(el: Element): void {
+    for (const observer of FakeIntersectionObserver.created) {
+      if (observer.disconnected || !observer.targets.has(el)) continue;
+      observer.onEntries([
+        { target: el, isIntersecting: true } as unknown as IntersectionObserverEntry,
+      ]);
+    }
+  }
+}
+
+const realIntersectionObserver = globalThis.IntersectionObserver;
+beforeAll(() => {
+  globalThis.IntersectionObserver =
+    FakeIntersectionObserver as unknown as typeof IntersectionObserver;
+});
+afterAll(() => {
+  globalThis.IntersectionObserver = realIntersectionObserver;
+});
+beforeEach(() => {
+  FakeIntersectionObserver.created = [];
+});
 
 const flush = () => new Promise((done) => setTimeout(done, 0));
 
@@ -126,6 +167,68 @@ describe("lazy", () => {
     } finally {
       globalThis.reportError = original;
     }
+  });
+
+  test("a view placement waits until its spot is near the screen, without a fallback", async () => {
+    const { load, finish, calls } = deferredLoad(Counter);
+    const el = host();
+    mount(lazyComponent(load, undefined, "view"), el);
+
+    expect(calls()).toBe(0);
+    expect(el.querySelector(".counter")).toBeNull();
+
+    FakeIntersectionObserver.nearScreen(el.querySelector("span")!);
+    finish();
+    await flush();
+
+    expect(calls()).toBe(1);
+    expect(text(el, ".count")).toBe("0");
+  });
+
+  test("a view placement after the component has loaded still waits until near the screen", async () => {
+    const { load, finish } = deferredLoad(Counter);
+    const Chart = lazyComponent(load, Loading, "view");
+    mount(Chart, host());
+    finish();
+    await flush();
+
+    const second = host();
+    mount(Chart, second);
+    expect(second.querySelector(".counter")).toBeNull();
+
+    FakeIntersectionObserver.nearScreen(second.querySelector("span")!);
+    await flush();
+
+    expect(second.querySelector(".loading")).toBeNull();
+    expect(text(second, ".count")).toBe("0");
+  });
+
+  test("detaching a view placement before it is near the screen never renders it", async () => {
+    const { load, finish } = deferredLoad(Counter);
+    const el = host();
+    const instance = mount(lazyComponent(load, undefined, "view"), el);
+    const sentinel = el.querySelector("span")!;
+
+    unmount(instance);
+    finish();
+    FakeIntersectionObserver.nearScreen(sentinel);
+    await flush();
+
+    expect(el.childNodes.length).toBe(0);
+    expect(FakeIntersectionObserver.created.every((observer) => observer.disconnected)).toBe(true);
+  });
+
+  test("a none placement after the component has loaded places at once", async () => {
+    const { load, finish } = deferredLoad(Counter);
+    const Chart = lazyComponent(load, Loading, "none");
+    mount(Chart, host());
+    finish();
+    await flush();
+
+    const second = host();
+    mount(Chart, second);
+
+    expect(text(second, ".count")).toBe("0");
   });
 
   test("lazy() is removed, and calling it says to import the component instead", () => {

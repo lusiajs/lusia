@@ -58,7 +58,7 @@
         },
         "prefetch": {
           "enum": ["idle", "view", "none"],
-          "description": "When split components start to download. Default: idle"
+          "description": "When split components download. With view, each one also shows only near the screen. Default: idle"
         }
       }
     },
