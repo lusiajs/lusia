@@ -1,4 +1,4 @@
-import { api, type ApiEntry } from "../../reference/api.ts";
+import { api, type ApiEntry } from "#reference/api.ts";
 
 export function apiKey(entry: ApiEntry): string {
   return entry.name.replace(/^function /, "").split(/[(<]/)[0] ?? entry.name;

@@ -3,8 +3,8 @@ import {
   importedSymbolAt,
   importedSymbols,
   type SymbolLookup,
-} from "../../../src/editor/script/imported-symbols.ts";
-import type { ScriptSymbol } from "../../../src/editor/script/symbols.ts";
+} from "#integrations/vscode-support/script/imported-symbols.ts";
+import type { ScriptSymbol } from "#integrations/vscode-support/script/symbols.ts";
 
 function symbol(name: string, isDefault = false): ScriptSymbol {
   return {

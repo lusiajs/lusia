@@ -1,4 +1,4 @@
-import { FORM_TAGS } from "../../../../src/compiler/template/bind.ts";
+import { FORM_TAGS } from "#compiler/template/bind.ts";
 import { parseLusiaImports } from "../../parse/imports.ts";
 import { tagAttributes } from "../attributes.ts";
 import type { LintContext, LintFinding } from "../types.ts";

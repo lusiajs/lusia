@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { api, type ApiEntry } from "../../reference/api.ts";
-import * as runtime from "../../src/runtime/index.ts";
+import { api, type ApiEntry } from "#reference/api.ts";
+import * as runtime from "#runtime/index.ts";
 import { RESERVED_TAGS } from "#compiler/parse/reserved.ts";
 import {
   HOVER_KEYS,

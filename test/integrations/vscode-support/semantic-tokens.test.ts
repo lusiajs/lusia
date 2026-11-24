@@ -4,7 +4,7 @@ import {
   TOKEN_MODIFIERS,
   TOKEN_TYPES,
   type SemanticToken,
-} from "../../src/editor/semantic-tokens.ts";
+} from "#integrations/vscode-support/semantic-tokens.ts";
 
 const CONSTRUCTS = `<script>
   import Badge from "./badge.lusia";

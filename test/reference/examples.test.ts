@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
-import { api, type ApiEntry } from "../../reference/api.ts";
+import { api, type ApiEntry } from "#reference/api.ts";
 import { compile } from "#compiler/index.ts";
 import { componentSource, exampleShape, syntaxErrors } from "./examples-shape.ts";
 

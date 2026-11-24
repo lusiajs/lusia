@@ -1,7 +1,7 @@
-import { CODES } from "../../../../src/compiler/errors/codes.ts";
-import { fill } from "../../../../src/compiler/errors/create.ts";
-import { unknownKeysAt } from "../../../../src/compiler/template/check/animate-keys.ts";
-import type { UnknownKey } from "../../../../src/compiler/template/check/key-scan.ts";
+import { CODES } from "#compiler/errors/codes.ts";
+import { fill } from "#compiler/errors/create.ts";
+import { unknownKeysAt } from "#compiler/template/check/animate-keys.ts";
+import type { UnknownKey } from "#compiler/template/check/key-scan.ts";
 import type { LintContext, LintFinding } from "../types.ts";
 
 const ANIMATE_EXPRESSION = /\banimate=\{/g;

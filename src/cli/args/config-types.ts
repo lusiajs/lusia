@@ -1,6 +1,6 @@
-import type { AnimateConfig } from "../../runtime/animate/options/config.ts";
-import type { LazyMode, LazyPrefetch } from "../../compiler/lazy/options.ts";
-import type { LintRuleSettings } from "../../language/lint/types.ts";
+import type { AnimateConfig } from "#runtime/animate/options/config.ts";
+import type { LazyMode, LazyPrefetch } from "#compiler/lazy/options.ts";
+import type { LintRuleSettings } from "#language/lint/types.ts";
 
 const JSON_CONFIG_FILE = "lusia.config.json";
 const TS_CONFIG_FILE = "lusia.config.ts";

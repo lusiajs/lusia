@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { api } from "../../reference/api.ts";
+import { api } from "#reference/api.ts";
 import { PRESET } from "#runtime/animate/options/presets.ts";
 
 const KINDS = new Set(["function", "type", "markup", "style", "value"]);

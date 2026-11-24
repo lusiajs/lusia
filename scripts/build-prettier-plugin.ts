@@ -10,7 +10,7 @@ export async function buildPrettierPlugin(root: string = ROOT): Promise<void> {
   await rm(distDir, { recursive: true, force: true });
 
   const bundle = await Bun.build({
-    entrypoints: [join(root, "src/prettier-plugin/index.ts")],
+    entrypoints: [join(root, "src/integrations/prettier-plugin/index.ts")],
     outdir: distDir,
     naming: "index.js",
     target: "node",

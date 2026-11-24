@@ -9,7 +9,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | `src/runtime` | The `lusiajs` package: variables, DOM helpers, animate |
 | `src/compiler` | Turns `.lusia` files into TypeScript modules |
 | `src/language` | Parse, format and lint for `.lusia` files |
-| `src/editor` | Completion, hover and error logic for editors |
+| `src/integrations` | Add-ons for other tools: `vscode-support` (editor logic), `prettier-plugin` |
 | `src/bun-plugin` | The Bun loader for `.lusia` files |
 | `src/cli` | The `lusia` command |
 | `test/` | Tests. One folder per area, mirroring `src/` |
@@ -51,7 +51,7 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 
    | Command | What it does |
    | ------- | ------------ |
-   | `bun run check` | Typecheck and tests, then the slowest test files and tests |
+   | `bun run check` | Typecheck and tests, with timings |
    | `bun run format` | Format all files |
    | `bun run dev:stress` | Run the stress example on port 3000 |
 
@@ -66,19 +66,19 @@ Thanks for helping. Read the rules, set up, then open a pull request.
 | ----- | ---- | ------- |
 | `@lusiajs/vscode-support/vscode` | `dist/vscode.js` | The VS Code extension |
 
-- Source: `src/editor/host.ts`. Build: `bun scripts/build-vscode-support.ts` (the host test runs it once, so `bun run check` covers it).
+- Source: `src/integrations/vscode-support/host.ts`. Build: `bun scripts/build-vscode-support.ts` (the host test runs it once, so `bun run check` covers it).
 - Types: `dist/vscode.d.ts` is one bundled file with no `#` imports, so consumers do not need `skipLibCheck`. A test type-checks a consumer project against it. The types use browser types (Element, Event), so a consumer needs `"lib": ["ESNext", "DOM"]` in its tsconfig, as VS Code extensions already have.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `lusiajs`, with the same version.
-- Bump `EDITOR_API_VERSION` in `src/editor/host.ts` when a namespace changes in a breaking way.
-- Namespaces (the contract, checked by `test/editor/host.test.ts`): `range`, `completions`, `completionData`, `markupItems`, `hover`, `markdown`, `apiLookup`, `autoImport`, `errorPosition`, `semanticTokens`, `scriptSymbols`, `format`, `formatExpressions`, `indentSetting`, `prettierParts`, `lint`, `parseImports`, `parseProps`, `parseRegions`, `parseSections`, `parseTag`, `compiler`, `api`, `runtime`.
+- Bump `EDITOR_API_VERSION` in `src/integrations/vscode-support/host.ts` when a namespace changes in a breaking way.
+- Namespaces (the contract, checked by `test/integrations/vscode-support/host.test.ts`): `range`, `completions`, `completionData`, `markupItems`, `hover`, `markdown`, `apiLookup`, `autoImport`, `errorPosition`, `semanticTokens`, `scriptSymbols`, `format`, `formatExpressions`, `indentSetting`, `prettierParts`, `lint`, `parseImports`, `parseProps`, `parseRegions`, `parseSections`, `parseTag`, `compiler`, `api`, `runtime`.
 - `semanticTokens.semanticTokens(source)` returns tokens for markup. Editors build their legend from `semanticTokens.TOKEN_TYPES` and `semanticTokens.TOKEN_MODIFIERS`.
 
 ## Prettier plugin
 
 `@lusiajs/prettier-plugin` is in `packages/prettier-plugin`. It formats `.lusia` files with the same formatter as `lusia format`.
 
-- Source: `src/prettier-plugin/`. Build: `bun scripts/build-prettier-plugin.ts`, which writes `packages/prettier-plugin/dist/index.js`.
+- Source: `src/integrations/prettier-plugin/`. Build: `bun scripts/build-prettier-plugin.ts`, which writes `packages/prettier-plugin/dist/index.js`.
 - The end-to-end test builds the plugin itself.
 - The version always matches `lusiajs`. A test checks it.
 - Release: the publish workflow builds and publishes it right after `@lusiajs/vscode-support`, with the same version.

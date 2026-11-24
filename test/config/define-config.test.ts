@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { defineConfig } from "../../src/config/index.ts";
+import { defineConfig } from "#config/index.ts";
 
 describe("defineConfig", () => {
   test("returns the same object", () => {

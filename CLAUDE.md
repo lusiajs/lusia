@@ -86,6 +86,8 @@ Order groups and entries so a beginner meets each idea before anything that uses
 
 Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/`, `dom/`.
 
+`src/integrations/` holds add-ons for other tools: `vscode-support`, `prettier-plugin`.
+
 # 20. Shared helpers in utils
 
 `utils/` holds only helpers used by two or more domains. Move a helper there when a second domain needs it.
@@ -100,7 +102,7 @@ Test folders match the source folders.
 
 # 23. Import aliases
 
-Imports across areas use `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/`, `#language/` (the `imports` map in `package.json`, so they also resolve for apps that install `lusiajs`), except inside `src/runtime`: it ships to apps and uses relative imports only. Same-area imports stay relative.
+Imports across areas use `#runtime/`, `#compiler/`, `#bun-plugin/`, `#cli/`, `#language/`, `#integrations/`, `#config/`, `#reference/` (the `imports` map in `package.json`, so they also resolve for apps that install `lusiajs`), except inside `src/runtime`: it ships to apps and uses relative imports only. Same-area imports stay relative.
 
 # 24. Clean design over quick fixes
 

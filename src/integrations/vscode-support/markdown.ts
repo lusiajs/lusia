@@ -1,4 +1,4 @@
-import type { ApiEntry, ApiMember } from "../../reference/api.ts";
+import type { ApiEntry, ApiMember } from "#reference/api.ts";
 import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";

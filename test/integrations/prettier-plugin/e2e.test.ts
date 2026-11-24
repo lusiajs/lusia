@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promis
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildPrettierPlugin } from "../../scripts/build-prettier-plugin.ts";
+import { buildPrettierPlugin } from "../../../scripts/build-prettier-plugin.ts";
 
-const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const PLUGIN_DIR = join(ROOT, "packages/prettier-plugin");
 const PLUGIN_FILE = join(PLUGIN_DIR, "dist/index.js");
 const PRETTIER_BIN = join(ROOT, "node_modules/prettier/bin/prettier.cjs");

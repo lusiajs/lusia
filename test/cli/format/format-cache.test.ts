@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { openFormatCache } from "../../../src/cli/format/format-cache.ts";
+import { openFormatCache } from "#cli/format/format-cache.ts";
 
 const UNFORMATTED = "<p>   hi</p>\n";
 const FORMATTED = "<p>hi</p>\n";

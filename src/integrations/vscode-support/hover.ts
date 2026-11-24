@@ -1,4 +1,4 @@
-import type { ApiEntry } from "../../reference/api.ts";
+import type { ApiEntry } from "#reference/api.ts";
 import type { PropLookup } from "./completions.ts";
 import { inExpressionAt } from "#language/format/format-expressions.ts";
 import { markupHover } from "./hover/markup.ts";

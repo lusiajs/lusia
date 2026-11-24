@@ -1,7 +1,7 @@
 import type { PropDef } from "#language/parse/props.ts";
 import { apiKey, findApiById, importableApi, importKey } from "./api-lookup.ts";
 import type { LusiaImport } from "#language/parse/imports.ts";
-import type { ApiEntry } from "../../reference/api.ts";
+import type { ApiEntry } from "#reference/api.ts";
 
 export type CompletionKind =
   "function" | "type" | "class" | "property" | "keyword" | "snippet" | "variable";

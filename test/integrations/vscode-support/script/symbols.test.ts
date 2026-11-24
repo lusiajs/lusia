@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { exportedSymbols } from "../../../src/editor/script/symbols.ts";
+import { exportedSymbols } from "#integrations/vscode-support/script/symbols.ts";
 
 describe("exportedSymbols", () => {
   test("reads a function with its JSDoc and multi-line parameters", () => {

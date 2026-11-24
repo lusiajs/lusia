@@ -4,9 +4,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import prettier from "prettier";
-import plugin from "../../src/prettier-plugin/index.ts";
+import plugin from "#integrations/prettier-plugin/index.ts";
 
-const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const CLI = join(ROOT, "src/cli/index.ts");
 const FIXTURES = [
   "examples/stress/flow/Toggle.lusia",

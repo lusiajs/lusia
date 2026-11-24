@@ -1,4 +1,4 @@
-import type { ApiEntry, ApiMember } from "../../../reference/api.ts";
+import type { ApiEntry, ApiMember } from "#reference/api.ts";
 import { findEnum } from "../api-lookup.ts";
 import type { ScriptItem } from "../completion-data.ts";
 

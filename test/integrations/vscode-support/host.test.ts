@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
-import { buildVsCodeSupport } from "../../scripts/build-vscode-support.ts";
+import { buildVsCodeSupport } from "../../../scripts/build-vscode-support.ts";
 
-const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const SUPPORT_DIR = "packages/vscode-support";
 const BUILD_TIMEOUT_MS = 60_000;
 const CONSUMER_CHECK_LIMIT_MS = 20_000;

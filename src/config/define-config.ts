@@ -1,4 +1,4 @@
-import type { LusiaConfig } from "../cli/args/config-types.ts";
+import type { LusiaConfig } from "#cli/args/config-types.ts";
 
 export type LusiaConfigInput = LusiaConfig;
 

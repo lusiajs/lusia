@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { Importer } from "sass";
-import { compileForBrowser, LusiaError } from "../../src/compiler/browser.ts";
+import { compileForBrowser, LusiaError } from "#compiler/browser.ts";
 
 describe("compileForBrowser", () => {
   test("removes the TypeScript from the script", () => {

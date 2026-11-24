@@ -42,7 +42,7 @@
     "./config": "./src/config/index.ts",
     "./api": "./reference/api.ts",
     "./language/*": "./src/language/*",
-    "./editor/*": "./src/editor/*",
+    "./editor/*": "./src/integrations/vscode-support/*",
     "./errors/*": "./src/compiler/errors/*",
     "./types": "./lusia.d.ts",
     "./compiler/*": "./src/compiler/*"
@@ -56,7 +56,10 @@
     "#compiler/*": "./src/compiler/*",
     "#bun-plugin/*": "./src/bun-plugin/*",
     "#cli/*": "./src/cli/*",
-    "#language/*": "./src/language/*"
+    "#language/*": "./src/language/*",
+    "#integrations/*": "./src/integrations/*",
+    "#config/*": "./src/config/*",
+    "#reference/*": "./reference/*"
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",

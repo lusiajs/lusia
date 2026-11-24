@@ -26,7 +26,7 @@ function externalNames(toolsPackage: PackageJson): string[] {
 
 async function bundleEntry(root: string, distDir: string, version: string, external: string[]) {
   const bundle = await Bun.build({
-    entrypoints: [join(root, "src/editor/host.ts")],
+    entrypoints: [join(root, "src/integrations/vscode-support/host.ts")],
     outdir: distDir,
     naming: `${VSCODE_ENTRY}.js`,
     target: "node",
@@ -43,7 +43,7 @@ async function bundleEntry(root: string, distDir: string, version: string, exter
 // Bundles the types from the source, so every `#alias` import is resolved into one file.
 async function bundleTypes(root: string, distDir: string): Promise<void> {
   const declarations = generateDtsBundle(
-    [{ filePath: join(root, "src/editor/host.ts"), output: { noBanner: true } }],
+    [{ filePath: join(root, "src/integrations/vscode-support/host.ts"), output: { noBanner: true } }],
     { preferredConfigPath: join(root, "tsconfig.editor.json") },
   );
   await writeFile(join(distDir, `${VSCODE_ENTRY}.d.ts`), declarations.join(""));

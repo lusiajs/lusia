@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { hoverAt, type HoverResult } from "../../src/editor/hover.ts";
-import { hoverMarkdown } from "../../src/editor/markdown.ts";
-import type { SymbolLookup } from "../../src/editor/script/imported-symbols.ts";
-import type { ScriptSymbol } from "../../src/editor/script/symbols.ts";
+import { hoverAt, type HoverResult } from "#integrations/vscode-support/hover.ts";
+import { hoverMarkdown } from "#integrations/vscode-support/markdown.ts";
+import type { SymbolLookup } from "#integrations/vscode-support/script/imported-symbols.ts";
+import type { ScriptSymbol } from "#integrations/vscode-support/script/symbols.ts";
 
 const noProps = () => [];
 

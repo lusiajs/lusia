@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseScriptImports } from "../../../src/editor/script/import-declarations.ts";
+import { parseScriptImports } from "#integrations/vscode-support/script/import-declarations.ts";
 
 describe("parseScriptImports", () => {
   test("reads a default import", () => {
