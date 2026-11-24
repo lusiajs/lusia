@@ -85,7 +85,7 @@ function groupModule(group: (typeof GROUPS)[number], names: string[]): string {
   return `${HEADER}\nexport const ${group.constant}: readonly string[] = [\n${body}\n];\n`;
 }
 
-function reexportModule(): string {
+function reExportModule(): string {
   const imports = GROUPS.map(
     (group) => `import { ${group.constant} } from "./${group.file}.ts";`,
   ).join("\n");
@@ -101,5 +101,5 @@ mkdirSync(OUT_DIR, { recursive: true });
 for (const group of GROUPS) {
   writeFileSync(join(OUT_DIR, `${group.file}.ts`), groupModule(group, namesByFile.get(group.file) ?? []));
 }
-writeFileSync(join(OUT_DIR, "css-properties.ts"), reexportModule());
+writeFileSync(join(OUT_DIR, "css-properties.ts"), reExportModule());
 console.log(`wrote ${names.length} css properties to ${GROUPS.length + 1} files`);
