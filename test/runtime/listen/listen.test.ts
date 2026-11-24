@@ -3,6 +3,9 @@ import { EVENT, keepRunning, listen } from "lusiajs";
 import ListenWindow from "./fixtures/ListenWindow.lusia";
 import { events } from "./fixtures/listen-log.ts";
 import { host, mount, resetMounts, unmount } from "../dom/fixtures/mount.ts";
+import { advance, useFakeClock } from "../animate/clock.ts";
+
+useFakeClock();
 
 const PING = "lusia-ping";
 const stops: Array<() => void> = [];
@@ -39,6 +42,33 @@ describe("listen", () => {
     ping(b);
     expect(events).toEqual(["ping"]);
     result[1]!();
+  });
+
+  test("a DOM scroll listener is called once on the next frame, with a scroll event", () => {
+    stops.push(listen(window, "scroll", (event) => events.push(event.type)));
+    expect(events).toEqual([]);
+    advance(16);
+    expect(events).toEqual(["scroll"]);
+  });
+
+  test("a DOM scroll listener is not called after stop", () => {
+    const stop = listen(window, "scroll", () => events.push("scroll"));
+    stop();
+    advance(16);
+    expect(events).toEqual([]);
+  });
+
+  test("a DOM scroll listener on a detached element is not called", () => {
+    const detached = document.createElement("div");
+    stops.push(listen(detached, "scroll", () => events.push("scroll")));
+    advance(16);
+    expect(events).toEqual([]);
+  });
+
+  test("other DOM events are not called on start", () => {
+    stops.push(listen(window, PING, () => events.push("ping")));
+    advance(16);
+    expect(events).toEqual([]);
   });
 
   test("stop can be called twice", () => {

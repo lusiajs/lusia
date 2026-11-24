@@ -78,8 +78,35 @@ export function startListening(
 ): Stop {
   if (isLusiaEvent(what)) return startEvent(target, what, handler, options);
   if (typeof what !== "string") throw runtimeError("L2079", { value: String(what) });
-  target.addEventListener(what, handler);
-  return () => target.removeEventListener(what, handler);
+  return startDomEvent(target, what, handler);
+}
+
+function startDomEvent(
+  target: EventTarget,
+  name: string,
+  handler: (event: unknown) => void,
+): Stop {
+  target.addEventListener(name, handler);
+  const cancelFirstCall = name === "scroll" ? callOnNextFrame(target, handler) : () => {};
+  return () => {
+    cancelFirstCall();
+    target.removeEventListener(name, handler);
+  };
+}
+
+/** A scroll listener is called once on the next frame, so it reads the position it starts at. */
+function callOnNextFrame(target: EventTarget, handler: (event: unknown) => void): () => void {
+  let waiting = true;
+  requestAnimationFrame(() => {
+    if (waiting && isOnPage(target)) handler(new Event("scroll"));
+  });
+  return () => {
+    waiting = false;
+  };
+}
+
+function isOnPage(target: EventTarget): boolean {
+  return target instanceof Node ? target.isConnected : true;
 }
 
 function once(stop: Stop): Stop {
