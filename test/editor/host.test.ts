@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { beforeAll, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -103,10 +103,11 @@ async function loadWithPlainNode(entry: string): Promise<{ version: number; keys
   return JSON.parse(stdout);
 }
 
+beforeAll(() => buildVsCodeSupport(ROOT), BUILD_TIMEOUT_MS);
+
 test(
   "built editor entry loads in plain node and exports the contract",
   async () => {
-    await buildVsCodeSupport(ROOT);
     const loaded = await loadWithPlainNode(join(ROOT, SUPPORT_DIR, "dist/vscode.js"));
 
     expect(loaded.version).toBe(1);
@@ -126,7 +127,6 @@ test("vscode support version matches lusiajs", async () => {
 test(
   "built editor types check in a consumer without skipLibCheck",
   async () => {
-    await buildVsCodeSupport(ROOT);
     const consumerDir = await mkdtemp(join(tmpdir(), "lusia-consumer-"));
     try {
       await writeConsumer(consumerDir);
