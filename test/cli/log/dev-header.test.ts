@@ -30,18 +30,21 @@ describe("formatHeader", () => {
         "|   server       40 ms                   |",
         "|   ------------------                   |",
         "|   total      1495 ms                   |",
-        "|                                        |",
-        "|   press h for shortcuts                |",
         "+----------------------------------------+",
       ].join("\n"),
     );
   });
 
-  test("quiet shows only the total row and no hint", () => {
+  test("has no shortcut hint, so the keys are shown by the key grid", () => {
+    const text = formatHeader({ ...HEADER, color: false });
+    expect(text).not.toContain("press h");
+    expect(text).not.toContain("shortcuts");
+  });
+
+  test("quiet shows only the total row", () => {
     const text = formatHeader({ ...HEADER, quiet: true, color: false });
     expect(text).not.toContain("boot");
     expect(text).not.toContain("|   ---");
-    expect(text).not.toContain("press h");
     expect(text).toContain("|   total      1495 ms                   |");
   });
 

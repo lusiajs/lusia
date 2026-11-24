@@ -23,7 +23,6 @@ export interface HeaderOptions {
 }
 
 const TITLE = "lusia dev";
-const SHORTCUT_HINT = "press h for shortcuts";
 const TITLE_CATEGORY = "dev";
 const LABEL_WIDTH = 9;
 const RIGHT_PADDING = 3;
@@ -55,7 +54,6 @@ export function formatHeader(header: HeaderOptions): string {
     watchingRow(header),
     "",
     ...startupBlock(header).map((row) => `   ${row}`),
-    ...hintRows(header),
   ];
   const inner = innerWidth(rows, header);
   const top = topBorder(header, inner, box);
@@ -75,11 +73,6 @@ function watchingRow(header: HeaderOptions): string {
 function startupBlock(header: HeaderOptions): string[] {
   if (header.quiet) return startupRows({ total: header.startup.total }, header.color);
   return startupRows(header.startup, header.color, header.details);
-}
-
-function hintRows(header: HeaderOptions): string[] {
-  if (header.quiet) return [];
-  return ["", `   ${styled(SHORTCUT_HINT, ANSI.dim, header.color)}`];
 }
 
 function innerWidth(rows: string[], header: HeaderOptions): number {
