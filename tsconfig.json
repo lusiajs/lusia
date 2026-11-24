@@ -12,5 +12,5 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src", "test", "examples", "reference", "lusia.d.ts"]
+  "include": ["src", "test", "examples", "reference", "scripts", "lusia.d.ts"]
 }
