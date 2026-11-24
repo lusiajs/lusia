@@ -1,6 +1,7 @@
 import { formatTable } from "./report.ts";
 
-export type Step = "wait" | "compile" | "sass" | "bundle" | "write" | "copy" | "total";
+export type Step =
+  "boot" | "types" | "wait" | "compile" | "sass" | "bundle" | "write" | "copy" | "server" | "total";
 export type Steps = Partial<Record<Step, number>>;
 
 const BUILD_STEPS: [Step, string][] = [

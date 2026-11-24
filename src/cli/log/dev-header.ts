@@ -1,4 +1,6 @@
+import type { Steps } from "../build/timings.ts";
 import { ANSI, categoryCode, stripAnsi } from "./color.ts";
+import { startupRows } from "./dev-timing.ts";
 import { styled } from "./style.ts";
 
 export interface HeaderUrl {
@@ -9,7 +11,10 @@ export interface HeaderUrl {
 export interface HeaderOptions {
   urls: HeaderUrl[];
   version: string;
-  readyMs: number;
+  /** Startup breakdown, with `total`. */
+  startup: Steps;
+  /** Shows only the total row. */
+  quiet: boolean;
   watching: string;
   width: number;
   color: boolean;
@@ -44,7 +49,9 @@ export function formatHeader(header: HeaderOptions): string {
     "",
     ...header.urls.map((item) => formatUrlRow(item, header.color)),
     "",
-    readyRow(header),
+    watchingRow(header),
+    "",
+    ...startupBlock(header).map((row) => `   ${row}`),
   ];
   const inner = innerWidth(rows, header);
   const top = topBorder(header, inner, box);
@@ -57,8 +64,13 @@ function formatUrlRow({ label, url }: HeaderUrl, color: boolean): string {
   return `   ➜  ${label.padEnd(LABEL_WIDTH)}${styled(url, ANSI.bold, color)}`;
 }
 
-function readyRow(header: HeaderOptions): string {
-  return `   ready in ${Math.round(header.readyMs)} ms   ·   watching ${header.watching}`;
+function watchingRow(header: HeaderOptions): string {
+  return `   watching ${header.watching}`;
+}
+
+function startupBlock(header: HeaderOptions): string[] {
+  const steps = header.quiet ? { total: header.startup.total } : header.startup;
+  return startupRows(steps, header.color);
 }
 
 function innerWidth(rows: string[], header: HeaderOptions): number {

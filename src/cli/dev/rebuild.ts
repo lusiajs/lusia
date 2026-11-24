@@ -18,7 +18,7 @@ interface Change {
 }
 
 interface Rebuild {
-  request(change: Change): Promise<void>;
+  request(change: Change): Promise<Steps | undefined>;
 }
 
 interface RebuildOptions {
@@ -57,13 +57,14 @@ export function createRebuild({
     hotBuilder = createHotBuilder(animate, screens);
   }
 
-  function report(messages: string[]): void {
+  function report(messages: string[]): undefined {
     onBuildError(messages);
     server.showError(stripAnsi(messages.join("\n\n")));
     needsReload = true;
+    return undefined;
   }
 
-  async function buildAndPublish(change: Change): Promise<void> {
+  async function buildAndPublish(change: Change): Promise<Steps | undefined> {
     const started = now();
     if (change.files.some(isConfigFile)) {
       const config = await readDevConfig(root);
@@ -89,22 +90,26 @@ export function createRebuild({
       const steps: Steps = { ...build.steps, wait: change.waitMs, total: now() - started };
       onUpdate({ time: new Date(), kind: blockKind(update), files: change.files, steps });
     }
+    return build.steps;
   }
 
   return {
     async request(change) {
       pending = mergeChange(pending, change);
-      if (busy) return;
+      if (busy) return undefined;
       busy = true;
+      let firstSteps: Steps | undefined;
       try {
         while (pending) {
           const next = pending;
           pending = null;
-          await buildAndPublish(next);
+          const steps = await buildAndPublish(next);
+          firstSteps ??= steps;
         }
       } finally {
         busy = false;
       }
+      return firstSteps;
     },
   };
 }

@@ -7,7 +7,10 @@ import { colorEnabled } from "../log/color.ts";
 import { formatBrowserError, formatBuildError } from "../log/dev-block.ts";
 import { formatHeader, type HeaderUrl } from "../log/dev-header.ts";
 import { entryPath } from "../build/bundle.ts";
-import { now } from "../build/timings.ts";
+import { now, type Steps } from "../build/timings.ts";
+import { prepareStyles } from "../build/sass-warm.ts";
+import { saveStyleCache } from "../build/sass-disk-cache.ts";
+import { DEFAULT_SCREENS } from "#runtime/screen/screens.ts";
 import { createDevServer } from "./dev-server.ts";
 import { networkAddress } from "./network-address.ts";
 import { createRebuild } from "./rebuild.ts";
@@ -42,7 +45,9 @@ export async function startDev({
   const root = resolve(dir);
   const color = colorEnabled();
   entryPath(root);
+  const typesStart = now();
   await writeScreenTypes(root, screens);
+  const types = now() - typesStart;
 
   const printer = createUpdatePrinter((text) => process.stderr.write(`${text}\n`), {
     color,
@@ -65,13 +70,17 @@ export async function startDev({
     onBuildError: (messages) =>
       printer.print(formatBuildError(new Date(), relativeTo(root, messages), color)),
   });
-  await rebuild.request({ files: [], waitMs: 0 });
+  const styles = await prepareStyles(root, screens ?? DEFAULT_SCREENS);
+  const firstBuild = (await rebuild.request({ files: [], waitMs: 0 })) ?? {};
+  const startup = startupSteps({ started, types, styles, build: firstBuild, total: now() });
+  void saveStyleCache(root);
 
   printer.print(
     formatHeader({
       urls: serverUrls(server.url),
       version: `v${version}`,
-      readyMs: now() - started,
+      startup,
+      quiet,
       watching: `${basename(root)}/`,
       width: terminalWidth(),
       color,
@@ -86,6 +95,30 @@ export async function startDev({
       watcher.close();
       server.stop();
     },
+  };
+}
+
+interface StartupTimes {
+  started: number;
+  types: number;
+  styles: number;
+  build: Steps;
+  total: number;
+}
+
+/** Server is the time left over: everything from the first build's end to the header print. */
+function startupSteps({ started, types, styles, build, total }: StartupTimes): Steps {
+  const sass = styles + (build.sass ?? 0);
+  const buildMs = sass + (build.compile ?? 0) + (build.bundle ?? 0);
+  const server = total - started - types - buildMs;
+  return {
+    boot: started,
+    types,
+    sass,
+    compile: build.compile,
+    bundle: build.bundle,
+    server,
+    total,
   };
 }
 
