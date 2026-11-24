@@ -1,6 +1,6 @@
 {
   "name": "@lusiajs/language-tools",
-  "version": "0.1.0-beta.6",
+  "version": "0.1.1-beta",
   "description": "Language tools for Lusia editors: completion, hover, lint and format",
   "license": "MIT",
   "type": "module",
