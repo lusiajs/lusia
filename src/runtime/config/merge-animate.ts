@@ -19,7 +19,7 @@ export function mergeAnimate(
 }
 
 /** Each part (easeStyle, ease) merges on its own, so a layer with only one part keeps the other. */
-export function mergeEase(
+function mergeEase(
   base: EaseValue | undefined,
   layer: EaseValue | undefined,
 ): EaseValue | undefined {

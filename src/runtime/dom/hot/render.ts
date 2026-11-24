@@ -75,7 +75,7 @@ export function insertRendering(rendering: Rendering, parent: Node, anchor: Node
   }
 }
 
-export function discardRendering(rendering: Rendering): void {
+function discardRendering(rendering: Rendering): void {
   runCleanups(rendering.cleanups);
   removeRegion(rendering.start, rendering.end);
 }

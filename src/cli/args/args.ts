@@ -50,7 +50,7 @@ async function parseBuild(args: string[]): Promise<Command> {
   };
 }
 
-export function parseRoutes(value: string | undefined): string[] {
+function parseRoutes(value: string | undefined): string[] {
   if (value === undefined) return [];
   const routes = value
     .split(",")

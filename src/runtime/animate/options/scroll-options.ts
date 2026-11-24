@@ -57,11 +57,6 @@ export function readScroll({ start, end, follow, part }: ScrollOptions): ScrollR
   return { range: DEFAULT_RANGE, part: readPart(part), follow, pinned: true };
 }
 
-/** The `options` of a scroll item with no start, end or part: the config values, then the library ones. */
-export function scrollDefault(): ScrollRead {
-  return readScroll({});
-}
-
 function readRange(start: unknown, end: unknown): ScrollRange {
   const config = animateConfig().scroll ?? {};
   const range = {

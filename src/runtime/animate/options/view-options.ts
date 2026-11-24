@@ -24,7 +24,7 @@ const LIBRARY_VIEW: ViewDefault = { margin: "0px", amount: 0.15, reverse: false 
 /** A CSS length or percentage, with an optional sign. A bare zero is allowed. */
 const CSS_LENGTH = /^(-?(?:\d+\.?\d*|\.\d+))(px|%|em|rem|vw|vh|vmin|vmax)?$/;
 
-export function viewDefault(): ViewDefault {
+function viewDefault(): ViewDefault {
   const view = animateConfig().view ?? {};
   return {
     margin: view.margin ?? LIBRARY_VIEW.margin,

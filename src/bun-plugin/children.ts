@@ -14,7 +14,7 @@ const NO_CHILD: ChildInfo = { nolazy: false, fallback: false };
 const infos = new Map<string, { source: string; info: ChildInfo }>();
 
 /** Cached per path while the file's text is unchanged. */
-export function childInfo(path: string): ChildInfo {
+function childInfo(path: string): ChildInfo {
   if (!existsSync(path)) return NO_CHILD;
   const source = readFileSync(path, "utf8");
   const cached = infos.get(path);
@@ -35,7 +35,7 @@ function readChildInfo(source: string, path: string): ChildInfo {
 }
 
 /** The .lusia default imports of a file. A file that does not parse has none. */
-export function lusiaImportsOf(source: string, path: string): LusiaImport[] {
+function lusiaImportsOf(source: string, path: string): LusiaImport[] {
   try {
     const { statements } = splitImports(parse(source, path).script, path);
     return statements.flatMap((statement) => (statement.lusia ? [statement.lusia] : []));

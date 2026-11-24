@@ -7,7 +7,7 @@ import { classTypeResolver } from "../lint/class-types.ts";
 import type { ClassTypes } from "../lint/type-program.ts";
 
 /** The file a component imports as `name`, or undefined when it is not imported or missing. */
-export function childFile(documentPath: string, text: string, name: string): string | undefined {
+function childFile(documentPath: string, text: string, name: string): string | undefined {
   const found = findComponentImport(text, name);
   if (!found) return undefined;
   const path = resolve(dirname(documentPath), found.specifier);
@@ -15,7 +15,7 @@ export function childFile(documentPath: string, text: string, name: string): str
 }
 
 /** The props a component declares, or undefined when its file cannot be read. */
-export function declaredProps(
+function declaredProps(
   documentPath: string,
   text: string,
   name: string,

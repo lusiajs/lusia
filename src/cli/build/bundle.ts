@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";
 
-export const ENTRY_FILE = "index.html";
+const ENTRY_FILE = "index.html";
 const INDEX_KEY = "index.html";
 
 export function entryPath(dir: string): string {

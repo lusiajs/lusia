@@ -13,7 +13,7 @@ export interface HotModule {
   body: Blob;
 }
 
-export type HotBuild = { ok: true; module: HotModule } | { ok: false; messages: string[] };
+type HotBuild = { ok: true; module: HotModule } | { ok: false; messages: string[] };
 
 export interface HotBuilder {
   build(file: string): Promise<HotBuild>;

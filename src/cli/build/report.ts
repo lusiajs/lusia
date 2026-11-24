@@ -33,7 +33,7 @@ export function formatReport(rows: FileRow[]): string {
   return formatTable(table);
 }
 
-export function formatSize(bytes: number): string {
+function formatSize(bytes: number): string {
   if (bytes >= MB) return `${(bytes / MB).toFixed(1)} MB`;
   if (bytes >= KB) return `${(bytes / KB).toFixed(1)} KB`;
   return `${bytes} B`;

@@ -1,6 +1,6 @@
 import { categoryCode, colorEnabled, paint } from "./color.ts";
 
-export type Level = "info" | "warn" | "error";
+type Level = "info" | "warn" | "error";
 
 export interface LogOptions {
   color: boolean;

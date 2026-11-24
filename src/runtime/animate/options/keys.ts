@@ -48,7 +48,7 @@ export const OPTION_KEYS_BY_ON: Readonly<Record<string, readonly string[]>> = {
   DETACH: SPACE_KEYS,
 };
 
-export function isNumberKey(key: string): boolean {
+function isNumberKey(key: string): boolean {
   return key.trim() !== "" && Number.isFinite(Number(key));
 }
 

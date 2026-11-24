@@ -2,9 +2,9 @@ import { existsSync } from "node:fs";
 import { cp } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
 
-export const PUBLIC_FOLDER = "public";
+const PUBLIC_FOLDER = "public";
 
-export function publicPath(dir: string): string {
+function publicPath(dir: string): string {
   return join(dir, PUBLIC_FOLDER);
 }
 

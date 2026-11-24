@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { compile } from "#compiler/index.ts";
 import type { HotComponent } from "lusiajs/internal";
 
-export const VERSIONS = join(import.meta.dir, ".versions");
+const VERSIONS = join(import.meta.dir, ".versions");
 
 let sequence = 0;
 

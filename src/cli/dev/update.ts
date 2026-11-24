@@ -1,6 +1,6 @@
 import type { ModuleUpdate } from "#bun-plugin/update.ts";
 
-export interface StyleUpdate {
+interface StyleUpdate {
   id: string;
   css: string;
 }

@@ -55,7 +55,7 @@ async function toEntry(output: Blob & { path: string }): Promise<[string, Blob]>
 }
 
 /** Maps the runtime's bare module names to its URL. Must come before the app's script tags. */
-export function withImportMap(html: string): string {
+function withImportMap(html: string): string {
   const head = /<head[^>]*>/i.exec(html);
   if (!head) return IMPORT_MAP + html;
   const end = head.index + head[0].length;

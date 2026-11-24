@@ -9,7 +9,7 @@ import type { Options } from "prettier";
 const CACHE_VERSION = 1;
 const MAX_ENTRIES = 20000;
 
-export type CacheDecision = "clean" | "changed" | "unknown";
+type CacheDecision = "clean" | "changed" | "unknown";
 
 interface Entry {
   config: string;

@@ -5,7 +5,7 @@ import { Outlet } from "./outlet.ts";
 import { mountBefore, type Mount } from "./mount.ts";
 import { keepScope } from "../../config/scope.ts";
 
-export type BranchRender = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
+type BranchRender = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 
 export interface IfBranch {
   /** Missing for ELSE. */

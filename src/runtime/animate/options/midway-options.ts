@@ -10,7 +10,7 @@ import { readEase, type EaseValue } from "./keyform.ts";
 export type MidwayChoice = MidwayMode | TurnFn;
 
 /** The `midway` field of an item. Each field is optional and takes its config or library value. */
-export interface MidwayItem {
+interface MidwayItem {
   mode?: MidwayChoice;
   duration?: number;
   ease?: EaseValue;

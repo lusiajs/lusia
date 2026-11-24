@@ -12,7 +12,7 @@ export type Props = Record<string, () => unknown>;
 /** The children a parent gave a component. `<CONTENT />` places them; they render in the parent's scope. */
 export type Slot = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 
-export type Bound = Record<string, Variable<unknown>>;
+type Bound = Record<string, Variable<unknown>>;
 
 export interface Host {
   scope?: Scope;

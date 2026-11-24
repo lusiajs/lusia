@@ -39,6 +39,6 @@ export function watchFolder(
   };
 }
 
-export function isIgnored(file: string): boolean {
+function isIgnored(file: string): boolean {
   return file.split(sep).some((part) => part === "node_modules" || part.startsWith("."));
 }

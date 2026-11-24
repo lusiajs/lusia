@@ -18,27 +18,27 @@ import {
 } from "./config-sections.ts";
 import type { SpaceOptions } from "./space-options.ts";
 
-export type PresetName = keyof typeof PRESET;
+type PresetName = keyof typeof PRESET;
 
-export interface MidwayConfig {
+interface MidwayConfig {
   mode?: MidwayChoice;
   duration?: number;
   ease?: EaseValue;
 }
 
-export interface ViewConfig {
+interface ViewConfig {
   margin?: number | string;
   amount?: number;
   reverse?: boolean;
 }
 
-export interface HoverConfig {
+interface HoverConfig {
   inDelay?: number;
   outDelay?: number;
   outDuration?: number;
 }
 
-export interface ScrollConfig {
+interface ScrollConfig {
   start?: ScrollPoint;
   end?: ScrollPoint;
   part?: Part;

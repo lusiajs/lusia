@@ -29,7 +29,7 @@ interface Row extends Mount {
   index: Variable<number> | undefined;
 }
 
-export function listOf(value: unknown): readonly unknown[] {
+function listOf(value: unknown): readonly unknown[] {
   if (value == null) return [];
   return Array.isArray(value) ? value : Array.from(value as Iterable<unknown>);
 }

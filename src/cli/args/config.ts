@@ -1,12 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
-import {
-  CONFIG_FILES,
-  JSON_CONFIG_FILE,
-  TS_CONFIG_FILE,
-  type LusiaConfig,
-} from "./config-types.ts";
+import { CONFIG_FILES, type LusiaConfig } from "./config-types.ts";
 import { optionalAnimateNames, optionalAnimateValues } from "./config-animate.ts";
 import {
   asObject,
@@ -27,7 +22,6 @@ import {
   optionalRoutes,
 } from "./config-sections.ts";
 
-export { JSON_CONFIG_FILE, TS_CONFIG_FILE };
 export type { LusiaConfig };
 export { isRoute } from "./config-values.ts";
 

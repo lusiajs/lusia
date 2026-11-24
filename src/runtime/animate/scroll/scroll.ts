@@ -111,7 +111,7 @@ function followedProgress(el: Element | null, scroll: ScrollRead): number {
 }
 
 /** 0 when the element meets the window at `start`, 1 when it meets it at `end`. Linear, clamped. */
-export function scrollProgress(el: Element, range: ScrollRange): number {
+function scrollProgress(el: Element, range: ScrollRange): number {
   const rect = el.getBoundingClientRect();
   const viewport = window.innerHeight;
   const startTop = topWhenTouching(range.start, viewport, rect.height);
@@ -126,12 +126,12 @@ function topWhenTouching(touch: ScrollTouch, viewport: number, height: number): 
 }
 
 // A tall element runs from its top edge to its bottom edge.
-export function pinnedProgress(rect: { top: number; height: number }, viewport: number): number {
+function pinnedProgress(rect: { top: number; height: number }, viewport: number): number {
   if (rect.height <= viewport) return rect.top <= 0 ? 1 : 0;
   return clamp01(-rect.top / (rect.height - viewport));
 }
 
-export function partProgress(progress: number, [from, to]: Part): number {
+function partProgress(progress: number, [from, to]: Part): number {
   return clamp01((progress - from) / (to - from));
 }
 

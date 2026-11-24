@@ -30,7 +30,7 @@ export function paint(text: string, code: string): string {
   return `${code}${text}${RESET}`;
 }
 
-export function rgbCode(rgb: Rgb): string {
+function rgbCode(rgb: Rgb): string {
   return `\x1b[38;2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
 }
 

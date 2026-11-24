@@ -22,7 +22,7 @@ export interface ClassTypes {
 }
 
 /** TypeScript is an optional peer. Without it, class types stay unknown. */
-export async function loadTypeScript(): Promise<TypeScriptModule | undefined> {
+async function loadTypeScript(): Promise<TypeScriptModule | undefined> {
   try {
     return await import("typescript");
   } catch {

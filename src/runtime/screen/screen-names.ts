@@ -3,7 +3,7 @@ import type { ComputedVariable } from "../variable/compute.ts";
 /** Each project adds its screen names here with declaration merging. See .lusia/screens.d.ts. */
 export interface ProjectScreens {}
 
-export interface DefaultScreenNames {
+interface DefaultScreenNames {
   PHONE: true;
   TABLET: true;
   DESKTOP: true;
