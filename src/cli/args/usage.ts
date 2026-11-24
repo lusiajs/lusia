@@ -14,4 +14,16 @@ export const USAGE = `Usage:
   --fix     Apply the safe lint fixes
   --max-warnings  Fail when there are more warnings than this (default: no limit)
   --quiet   Hide the summary output
+
+Dev output (lusia dev), one block per save:
+  hot       Component swapped in place, no page reload
+  css       Styles swapped in place, no page reload
+  reload    Full page reload
+  error     Build error, or error in the browser
+  wait      Time from the save until the build starts
+  styles    Sass to CSS
+  compile   .lusia files to JavaScript
+  bundle    The bundler
+  browser   From the publish until the page reports ready
+  total     The build and publish, without wait and browser
 `;

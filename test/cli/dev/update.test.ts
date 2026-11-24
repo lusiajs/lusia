@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { ModuleUpdate } from "#bun-plugin/update.ts";
-import { chooseUpdate, describeUpdate, RELOAD } from "#cli/dev/update.ts";
+import { chooseUpdate, RELOAD } from "#cli/dev/update.ts";
 
 const STYLE: ModuleUpdate = { path: "/app/src/Card.lusia", kind: "style", id: "abc", css: ".a{}" };
 const CODE: ModuleUpdate = { path: "/app/src/Card.lusia", kind: "code" };
@@ -38,10 +38,5 @@ describe("chooseUpdate", () => {
 
   test("no changed files reloads", () => {
     expect(chooseUpdate([], [])).toBe(RELOAD);
-  });
-
-  test("labels the update for the log", () => {
-    expect(describeUpdate(RELOAD)).toBe("reload");
-    expect(describeUpdate({ kind: "styles", styles: [] })).toBe("css swap");
   });
 });

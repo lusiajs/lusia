@@ -1,13 +1,13 @@
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import type { Screens } from "#runtime/screen/screens.ts";
-import { colorEnabled, stripAnsi } from "../log/color.ts";
+import { stripAnsi } from "../log/color.ts";
 import { buildDev } from "../build/dev-build.ts";
 import type { DevServer } from "./dev-server.ts";
 import { createHotBuilder, type HotBuilder, type HotModule } from "../build/hot-build.ts";
-import type { Logger } from "../log/log.ts";
-import { formatRebuild, now, type Steps } from "../build/timings.ts";
-import { chooseUpdate, describeUpdate, RELOAD, type Update } from "./update.ts";
+import type { UpdateBlock } from "../log/dev-block.ts";
+import { now, type Steps } from "../build/timings.ts";
+import { chooseUpdate, RELOAD, type Update } from "./update.ts";
 import { buildHotModules } from "./hot-plan.ts";
 import { writeScreenTypes } from "../types/screen-types.ts";
 import { type DevConfig, isConfigFile, readDevConfig } from "./config-reload.ts";
@@ -24,8 +24,8 @@ interface Rebuild {
 interface RebuildOptions {
   root: string;
   server: DevServer;
-  log: Logger;
-  quiet: boolean;
+  onUpdate: (update: UpdateBlock) => void;
+  onBuildError: (messages: string[]) => void;
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
@@ -35,8 +35,8 @@ interface RebuildOptions {
 export function createRebuild({
   root,
   server,
-  log,
-  quiet,
+  onUpdate,
+  onBuildError,
   lazy: startLazy,
   animate: startAnimate,
   screens: startScreens,
@@ -58,7 +58,7 @@ export function createRebuild({
   }
 
   function report(messages: string[]): void {
-    for (const message of messages) process.stderr.write(`${message}\n`);
+    onBuildError(messages);
     server.showError(stripAnsi(messages.join("\n\n")));
     needsReload = true;
   }
@@ -84,12 +84,10 @@ export function createRebuild({
       else update = RELOAD;
     }
     needsReload = false;
-    const sendStart = now();
     server.publish(build.assets, update, modules);
-    if (!quiet) {
-      const steps: Steps = { ...build.steps, wait: change.waitMs, send: now() - sendStart };
-      steps.total = now() - started;
-      log.info(formatRebuild(steps, describeUpdate(update), colorEnabled()));
+    if (change.files.length > 0) {
+      const steps: Steps = { ...build.steps, wait: change.waitMs, total: now() - started };
+      onUpdate({ time: new Date(), kind: blockKind(update), files: change.files, steps });
     }
   }
 
@@ -109,6 +107,11 @@ export function createRebuild({
       }
     },
   };
+}
+
+function blockKind(update: Update): UpdateBlock["kind"] {
+  if (update.kind === "reload") return "reload";
+  return update.kind === "styles" ? "css" : "hot";
 }
 
 function mergeChange(pending: Change | null, change: Change): Change {

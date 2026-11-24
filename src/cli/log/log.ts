@@ -52,6 +52,6 @@ export function createLogger(category: string, options: LogOptions = defaultLogO
   };
 }
 
-function formatTime(date: Date): string {
+export function formatTime(date: Date): string {
   return date.toTimeString().slice(0, 8);
 }

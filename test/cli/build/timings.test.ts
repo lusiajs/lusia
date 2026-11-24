@@ -1,33 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { formatBrowserReady, formatBuildSteps, formatMs, formatRebuild } from "#cli/build/timings.ts";
-
-const STEPS = { wait: 15.2, sass: 3.1, compile: 1.4, bundle: 8.3, send: 0.2, total: 232.6 };
+import { formatBuildSteps, formatMs } from "#cli/build/timings.ts";
 
 describe("formatMs", () => {
   test("one decimal below 10 ms, whole milliseconds above", () => {
     expect(formatMs(0.24)).toBe("0.2");
     expect(formatMs(9.96)).toBe("10.0");
     expect(formatMs(232.6)).toBe("233");
-  });
-});
-
-describe("formatRebuild", () => {
-  test("one compact line with the steps and the update kind", () => {
-    expect(formatRebuild(STEPS, "css swap", false)).toBe(
-      "rebuilt in 233 ms  wait 15 · sass 3.1 · compile 1.4 · bundle 8.3 · send 0.2  (css swap)",
-    );
-  });
-
-  test("colors only when asked, and keeps the same text", () => {
-    const colored = formatRebuild(STEPS, "reload", true);
-    expect(colored).toContain("\x1b[");
-    expect(colored.replace(/\x1b\[[0-9;]*m/g, "")).toBe(formatRebuild(STEPS, "reload", false));
-  });
-});
-
-describe("formatBrowserReady", () => {
-  test("reports the time from the rebuild to the page's ready report", () => {
-    expect(formatBrowserReady(180.4, false)).toBe("browser ready in 180 ms");
   });
 });
 

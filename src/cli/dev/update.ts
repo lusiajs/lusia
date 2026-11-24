@@ -30,11 +30,6 @@ export function chooseUpdate(files: string[], changes: ModuleUpdate[]): Update {
   return { kind: "hot", paths, styles };
 }
 
-export function describeUpdate(update: Update): string {
-  if (update.kind === "reload") return "reload";
-  return update.kind === "styles" ? "css swap" : "hot swap";
-}
-
 function isStyleFile(file: string): boolean {
   return STYLE_FILE.test(file);
 }
