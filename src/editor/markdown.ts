@@ -53,11 +53,20 @@ export function apiDocsMarkdown(entry: ApiEntry): string {
     "",
     ...entry.bullets.map((bullet) => `- ${bullet}`),
     "",
+    ...tableMarkdown(entry.table),
     ...membersMarkdown(entry),
     "Example:",
     "",
     fence(exampleLanguage(entry.example), entry.example),
   ].join("\n");
+}
+
+function tableMarkdown(table: string[][] | undefined): string[] {
+  if (!table) return [];
+  const [header = [], ...rows] = table;
+  const line = (cells: string[]): string => `| ${cells.join(" | ")} |`;
+  const divider = header.map(() => "---");
+  return [line(header), line(divider), ...rows.map(line), ""];
 }
 
 function membersMarkdown(entry: ApiEntry): string[] {
