@@ -19,4 +19,28 @@ describe("createUpdatePrinter", () => {
     createUpdatePrinter((text) => written.push(text), OPTIONS).ready(75);
     expect(written).toEqual([]);
   });
+
+  test("while held, updates and prints are queued and written on release, in order", () => {
+    const written: string[] = [];
+    const printer = createUpdatePrinter((text) => written.push(text), OPTIONS);
+    printer.hold();
+    printer.show({ time: TIME, kind: "hot", files: ["a.lusia"], steps: { total: 10 } });
+    printer.ready(75);
+    printer.print("held line");
+    expect(written).toEqual([]);
+    printer.release();
+    expect(written).toEqual([
+      "15:09:46  ● hot     a.lusia\n          ` total 10 ms | browser 75",
+      "held line",
+    ]);
+  });
+
+  test("after release, output is written at once again", () => {
+    const written: string[] = [];
+    const printer = createUpdatePrinter((text) => written.push(text), OPTIONS);
+    printer.hold();
+    printer.release();
+    printer.print("now");
+    expect(written).toEqual(["now"]);
+  });
 });

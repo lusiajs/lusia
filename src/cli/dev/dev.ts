@@ -113,7 +113,6 @@ export async function startDev({
   });
 
   const keys = startShortcuts({
-    root,
     urls,
     localUrl: server.url.href,
     startup,

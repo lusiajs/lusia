@@ -73,6 +73,28 @@ describe("startKeys", () => {
     expect(actions.ran).toEqual([]);
   });
 
+  test("pause stops the shortcuts and resume brings them back, without touching raw mode", () => {
+    const fake = fakeInput();
+    const actions = fakeActions();
+    const keys = startKeys({ input: fake.input, actions, interrupt: () => {} });
+    keys.pause();
+    fake.press("d");
+    expect(actions.ran).toEqual([]);
+    expect(fake.listenerCount()).toBe(0);
+    keys.resume();
+    fake.press("d");
+    expect(actions.ran).toEqual(["report"]);
+    expect(fake.listenerCount()).toBe(1);
+    expect(fake.calls).toEqual(["raw true", "resume"]);
+  });
+
+  test("resume twice does not add a second listener", () => {
+    const fake = fakeInput();
+    const keys = startKeys({ input: fake.input, actions: fakeActions(), interrupt: () => {} });
+    keys.resume();
+    expect(fake.listenerCount()).toBe(1);
+  });
+
   test("stop restores the terminal and stops listening", () => {
     const fake = fakeInput();
     const actions = fakeActions();

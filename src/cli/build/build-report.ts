@@ -8,6 +8,7 @@ export interface StyleTiming extends StyleBlockTiming {
 export interface CompileTiming {
   file: string;
   ms: number;
+  bytes: number;
 }
 
 export interface SizedPath {
@@ -31,9 +32,10 @@ export function recordCompile(
   report: BuildReport,
   file: string,
   ms: number,
+  bytes: number,
   styleBlocks: StyleBlockTiming[],
 ): void {
-  report.compiles.push({ file, ms });
+  report.compiles.push({ file, ms, bytes });
   for (const block of styleBlocks) report.styles.push({ ...block, file });
 }
 

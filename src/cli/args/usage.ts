@@ -36,7 +36,7 @@ Startup (lusia dev header), with a detail line under each part:
   server    Dev server start
 
 Keys (lusia dev, in a terminal):
-  d         Deep report of the last build: every module, style and file
+  d         Open the build report (↑↓ move, ←→ stage, s sort, enter expand, esc close)
   r         Rebuild and reload the page
   o         Open the Local URL in the browser
   u         Show the URLs again

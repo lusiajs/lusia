@@ -22,6 +22,9 @@ export interface KeyOptions {
 
 export interface KeyControl {
   stop(): void;
+  /** Stops the shortcut keys while another screen reads input. Raw mode stays on. */
+  pause(): void;
+  resume(): void;
 }
 
 const actionByKey = new Map(SHORTCUTS.map(({ key, action }) => [key, action] as const));
@@ -40,13 +43,27 @@ export function startKeys({ input, actions, interrupt }: KeyOptions): KeyControl
   }
 
   function stop(): void {
+    listening = false;
     input.off("data", onData);
     input.setRawMode(false);
     input.pause();
   }
 
+  function pause(): void {
+    if (!listening) return;
+    listening = false;
+    input.off("data", onData);
+  }
+
+  function resume(): void {
+    if (listening) return;
+    listening = true;
+    input.on("data", onData);
+  }
+
+  let listening = true;
   input.setRawMode(true);
   input.on("data", onData);
   input.resume();
-  return { stop };
+  return { stop, pause, resume };
 }

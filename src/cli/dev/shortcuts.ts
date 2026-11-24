@@ -11,7 +11,7 @@ export interface Shortcut {
 }
 
 export const SHORTCUTS: Shortcut[] = [
-  { key: "d", action: "report", label: "deep report of the last build" },
+  { key: "d", action: "report", label: "open the build report" },
   { key: "r", action: "reload", label: "rebuild and reload the page" },
   { key: "o", action: "open", label: "open the Local URL in the browser" },
   { key: "u", action: "urls", label: "show the URLs again" },

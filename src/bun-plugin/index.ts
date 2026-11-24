@@ -59,7 +59,9 @@ export function lusia({
         const compileMs = now() - start - result.sassMs;
         addStep(steps, "sass", result.sassMs);
         addStep(steps, "compile", compileMs);
-        if (report) recordCompile(report, path, compileMs, result.styleBlocks);
+        if (report) {
+          recordCompile(report, path, compileMs, Buffer.byteLength(source), result.styleBlocks);
+        }
         return { contents: next.code, loader: "ts" };
       });
       setupFallback(build, dev);

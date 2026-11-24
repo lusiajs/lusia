@@ -6,6 +6,9 @@ export interface UpdatePrinter {
   show(block: UpdateBlock): void;
   ready(ms: number): void;
   print(text: string): void;
+  /** Queues all output until release. Used while the report screen is open. */
+  hold(): void;
+  release(): void;
 }
 
 /** Holds each update until the browser reports ready, so the block can show the browser time. */
@@ -15,11 +18,17 @@ export function createUpdatePrinter(
 ): UpdatePrinter {
   let pending: UpdateBlock | null = null;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let queued: string[] | null = null;
+
+  function emit(text: string): void {
+    if (queued) queued.push(text);
+    else write(text);
+  }
 
   function flush(): void {
     clearTimeout(timer);
     if (!pending) return;
-    write(formatUpdate(pending, options));
+    emit(formatUpdate(pending, options));
     pending = null;
   }
 
@@ -36,7 +45,15 @@ export function createUpdatePrinter(
     },
     print(text) {
       flush();
-      write(text);
+      emit(text);
+    },
+    hold() {
+      queued ??= [];
+    },
+    release() {
+      const held = queued ?? [];
+      queued = null;
+      held.forEach(write);
     },
   };
 }

@@ -13,8 +13,8 @@ describe("startupDetails", () => {
         { file: "/app/b.lusia", index: 0, cached: false, ms: 4 },
       ],
       compiles: [
-        { file: "/app/a.lusia", ms: 2 },
-        { file: "/app/Features.lusia", ms: 9 },
+        { file: "/app/a.lusia", ms: 2, bytes: 300 },
+        { file: "/app/Features.lusia", ms: 9, bytes: 1200 },
       ],
       modules: [
         { path: "/app/node_modules/lib/index.js", bytes: 100 },
@@ -37,7 +37,7 @@ describe("startupDetails", () => {
     const report = {
       ...emptyReport("/app"),
       styles: [{ file: "/app/a.lusia", index: 0, cached: true, ms: 0 }],
-      compiles: [{ file: "/app/a.lusia", ms: 2 }],
+      compiles: [{ file: "/app/a.lusia", ms: 2, bytes: 300 }],
       modules: [{ path: "/app/src/a.lusia", bytes: 1 }],
       outputs: [{ path: "./index.js", bytes: 1 }],
     };
