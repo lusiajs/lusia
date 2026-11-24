@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import type { Command } from "./command.ts";
 import { isRoute, readConfig } from "./config.ts";
 import { appDir, configDir, pathsOf } from "./paths.ts";
-import { DEFAULT_PORT, lazyOf, outdirOf } from "./settings.ts";
+import { cacheOf, DEFAULT_PORT, lazyOf, outdirOf } from "./settings.ts";
 import { UsageError, withUsageErrors } from "./usage-error.ts";
 import { parseMaxWarnings, parsePort } from "./values.ts";
 
@@ -32,6 +32,7 @@ async function parseBuild(args: string[]): Promise<Command> {
         "no-minify": { type: "boolean" },
         routes: { type: "string" },
         quiet: { type: "boolean" },
+        "no-cache": { type: "boolean" },
       },
     }),
   );
@@ -47,6 +48,7 @@ async function parseBuild(args: string[]): Promise<Command> {
     lazy: lazyOf(config),
     animate: config.animate ?? {},
     screens: config.screens,
+    cache: cacheOf(config, values["no-cache"] === true),
   };
 }
 
@@ -68,7 +70,11 @@ async function parseDev(args: string[], env: Record<string, string | undefined>)
     parseArgs({
       args,
       allowPositionals: true,
-      options: { port: { type: "string" }, quiet: { type: "boolean" } },
+      options: {
+        port: { type: "string" },
+        quiet: { type: "boolean" },
+        "no-cache": { type: "boolean" },
+      },
     }),
   );
   const dir = appDir(positionals);
@@ -82,6 +88,7 @@ async function parseDev(args: string[], env: Record<string, string | undefined>)
     lazy: lazyOf(config),
     animate: config.animate ?? {},
     screens: config.screens,
+    cache: cacheOf(config, values["no-cache"] === true),
   };
 }
 

@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { parseCommand, UsageError } from "#cli/args/args.ts";
 
 const NO_ENV = {};
+const ALL_CACHES = { styles: true, modules: true, packages: true };
+const NO_CACHES = { styles: false, modules: false, packages: false };
 
 describe("parseCommand", () => {
   test("build uses the defaults", async () => {
@@ -15,6 +17,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      cache: ALL_CACHES,
     });
   });
 
@@ -28,6 +31,16 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      cache: ALL_CACHES,
+    });
+  });
+
+  test("--no-cache turns every disk cache off for build and dev", async () => {
+    expect(await parseCommand(["build", "--no-cache"], NO_ENV)).toMatchObject({
+      cache: NO_CACHES,
+    });
+    expect(await parseCommand(["dev", "--no-cache"], NO_ENV)).toMatchObject({
+      cache: NO_CACHES,
     });
   });
 
@@ -48,6 +61,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      cache: ALL_CACHES,
     });
     expect(await parseCommand(["dev"], { PORT: "3100" })).toEqual({
       name: "dev",
@@ -56,6 +70,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      cache: ALL_CACHES,
     });
     expect(await parseCommand(["dev", "--port", "3196"], { PORT: "3100" })).toEqual({
       name: "dev",
@@ -64,6 +79,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      cache: ALL_CACHES,
     });
   });
 

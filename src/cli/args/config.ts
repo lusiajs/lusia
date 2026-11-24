@@ -15,6 +15,7 @@ import {
 } from "./config-values.ts";
 import { optionalScreens } from "./config-screens.ts";
 import {
+  optionalCache,
   optionalDev,
   optionalFormat,
   optionalLazy,
@@ -30,6 +31,7 @@ const ROOT_KEYS = [
   "outdir",
   "minify",
   "routes",
+  "cache",
   "dev",
   "lazy",
   "lint",
@@ -89,6 +91,7 @@ function checkRoot(value: unknown, readAnimate: AnimateReader): LusiaConfig {
     outdir: optionalString(root, "outdir"),
     minify: optionalBoolean(root, "minify"),
     routes: optionalRoutes(root),
+    cache: optionalCache(root),
     dev: optionalDev(root),
     lazy: optionalLazy(root),
     lint: optionalLint(root),

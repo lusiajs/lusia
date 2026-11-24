@@ -6,10 +6,17 @@ const JSON_CONFIG_FILE = "lusia.config.json";
 const TS_CONFIG_FILE = "lusia.config.ts";
 export const CONFIG_FILES = [TS_CONFIG_FILE, JSON_CONFIG_FILE];
 
+export interface CacheConfig {
+  styles?: boolean;
+  modules?: boolean;
+  packages?: boolean;
+}
+
 export interface LusiaConfig {
   outdir?: string;
   minify?: boolean;
   routes?: string[];
+  cache?: CacheConfig;
   dev?: { port?: number };
   lazy?: { mode?: LazyMode; prefetch?: LazyPrefetch };
   lint?: { rules?: LintRuleSettings };

@@ -113,7 +113,7 @@ describe("config file errors", () => {
   test.each([
     [
       '{ "outdr": "x" }',
-      'unknown key "outdr", allowed: $schema, outdir, minify, routes, dev, lazy, lint, format, animate',
+      'unknown key "outdr", allowed: $schema, outdir, minify, routes, cache, dev, lazy, lint, format, animate',
     ],
     ['{ "lazy": { "mode": "some" } }', '"lazy.mode" must be one of: smart, all, off'],
     ['{ "lazy": { "prefetch": "soon" } }', '"lazy.prefetch" must be one of: idle, view, none'],

@@ -23,6 +23,19 @@
         "description": "Starts with a slash and has no .."
       }
     },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Disk caches that make the next build faster. Each is on by default. --no-cache turns all off from the command line.",
+      "properties": {
+        "styles": { "type": "boolean", "description": "Compiled Sass. Default: true" },
+        "modules": { "type": "boolean", "description": "Compiled .lusia files. Default: true" },
+        "packages": {
+          "type": "boolean",
+          "description": "Npm packages in lusia dev, bundled once and reused until the lockfile changes. Default: true"
+        }
+      }
+    },
     "dev": {
       "type": "object",
       "additionalProperties": false,

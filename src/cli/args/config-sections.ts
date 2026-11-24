@@ -18,6 +18,26 @@ import {
   type JsonObject,
 } from "./config-values.ts";
 
+const CACHE_KEYS = ["styles", "modules", "packages"];
+
+export function optionalCache(root: JsonObject): LusiaConfig["cache"] {
+  if (root.cache === undefined) return undefined;
+  const cache = asObject(root.cache, '"cache" must be an object');
+  checkKeys(cache, CACHE_KEYS, "cache");
+  return {
+    styles: optionalCacheFlag(cache, "styles"),
+    modules: optionalCacheFlag(cache, "modules"),
+    packages: optionalCacheFlag(cache, "packages"),
+  };
+}
+
+function optionalCacheFlag(cache: JsonObject, key: string): boolean | undefined {
+  const value = cache[key];
+  if (value === undefined) return undefined;
+  if (typeof value !== "boolean") throw configError(`"cache.${key}" must be true or false`);
+  return value;
+}
+
 export function optionalDev(root: JsonObject): LusiaConfig["dev"] {
   if (root.dev === undefined) return undefined;
   const dev = asObject(root.dev, '"dev" must be an object');

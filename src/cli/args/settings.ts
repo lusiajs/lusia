@@ -19,3 +19,19 @@ export function lazyOf(config: LusiaConfig): LazySettings {
     prefetch: config.lazy?.prefetch ?? DEFAULT_LAZY_PREFETCH,
   };
 }
+
+export interface CacheSettings {
+  styles: boolean;
+  modules: boolean;
+  packages: boolean;
+}
+
+/** Every disk cache is on unless the config or `--no-cache` turns it off. */
+export function cacheOf(config: LusiaConfig, noCache: boolean): CacheSettings {
+  if (noCache) return { styles: false, modules: false, packages: false };
+  return {
+    styles: config.cache?.styles ?? true,
+    modules: config.cache?.modules ?? true,
+    packages: config.cache?.packages ?? true,
+  };
+}
