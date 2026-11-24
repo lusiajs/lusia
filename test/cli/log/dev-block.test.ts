@@ -68,17 +68,19 @@ describe("formatUpdate", () => {
     );
   });
 
-  test("hides zero parts and shows the wait only above 5 ms", () => {
-    const block = formatUpdate(
-      {
-        time: TIME,
-        kind: "css",
-        files: ["src/a.scss"],
-        steps: { wait: 12, sass: 3, compile: 0, bundle: 0, total: 20 },
-      },
-      { color: false, showTiming: true },
-    );
-    expect(block.split("\n")[1]).toBe("          ` total 20 ms | wait 12 | styles 3");
+  test("hides zero parts and shows the wait only above 50 ms", () => {
+    const timingLine = (wait: number) =>
+      formatUpdate(
+        {
+          time: TIME,
+          kind: "css",
+          files: ["src/a.scss"],
+          steps: { wait, sass: 3, compile: 0, bundle: 0, total: 90 },
+        },
+        { color: false, showTiming: true },
+      ).split("\n")[1];
+    expect(timingLine(15)).toBe("          ` total 90 ms | styles 3");
+    expect(timingLine(80)).toBe("          ` total 90 ms | wait 80 | styles 3");
   });
 
   test("colors the labels and the slowest part, and keeps the same text", () => {
