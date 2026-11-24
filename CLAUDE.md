@@ -36,7 +36,7 @@ The main agent reviews, runs `bun run check`, and merges into `dev`. Only the us
 
 # 8. Issues only for unfinished work
 
-Open a GitHub issue only for work left open or a feature the user wants tracked. Add details as comments on an existing issue. Close it with a comment once merged into `dev` and `bun run check` passes. Reference it in the commit (`refs #N`).
+Open a GitHub issue only for work left open or a feature the user wants tracked. Add details as comments on an existing issue. Close it with a comment once merged into `dev` and `bun run check` passes. Before committing, look for the issue the change belongs to and reference it: `refs #N`, or `fixes #N` when the commit finishes it.
 
 # 9. Check before reporting done
 
