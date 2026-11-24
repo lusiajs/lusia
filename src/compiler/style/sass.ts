@@ -1,5 +1,6 @@
-import * as sass from "sass";
+import type * as sass from "sass";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { lusiaError } from "../errors/create.ts";
@@ -29,8 +30,14 @@ interface SassOutput {
 
 interface SassEntry {
   content: string;
+  screens: Screens;
   deps: StyleDep[];
   css: string;
+}
+
+export interface CachedStyle extends SassEntry {
+  file: string;
+  index: number;
 }
 
 // File -> style index -> entry. A new edit overwrites its own slot, so the cache stays bounded.
@@ -70,31 +77,81 @@ export function forgetStyles(file: string): void {
   sassCache.delete(file);
 }
 
+/** Every cached style, for saving the cache to disk. */
+export function cachedStyleEntries(): CachedStyle[] {
+  return [...sassCache].flatMap(([file, entries]) =>
+    entries.flatMap((entry, index) => ({ file, index, ...entry })),
+  );
+}
+
+export function isStyleCached(
+  file: string,
+  index: number,
+  style: StyleSource,
+  screens: Screens,
+): boolean {
+  return cachedEntry(file, index, style, screens) !== undefined;
+}
+
+export function primeStyle(
+  file: string,
+  index: number,
+  style: StyleSource,
+  screens: Screens,
+  css: string,
+  deps: StyleDep[],
+): void {
+  storeEntry(file, index, { content: style.content, screens, deps, css });
+}
+
+/** The Sass source for a style: the screen() mixin, then the style's own content. */
+export function scssSource(style: StyleSource): string {
+  return SCREEN_USE + style.content;
+}
+
+/** The Sass options for a style. Sync and async compilers both take these. */
+export function sassOptions(file: string, screens: Screens) {
+  return {
+    loadPaths: [dirname(file)],
+    importers: [screenImporter(screens)],
+    style: "expanded" as const,
+  };
+}
+
+/** The paths of the files a Sass compile loaded from disk. */
+export function loadedFilePaths(urls: URL[]): string[] {
+  return urls.filter((url) => url.protocol === "file:").map((url) => fileURLToPath(url));
+}
+
+type StyleSource = Pick<Section, "content">;
+
 function compileScss(style: Section, file: string, index: number, screens: Screens): SassOutput {
-  const input = sassInput(style.content, screens);
-  const hit = cachedEntry(file, index, input);
+  const hit = cachedEntry(file, index, style, screens);
   if (hit) return { css: hit.css, deps: hit.deps, sassMs: 0 };
   const start = performance.now();
   const result = runSass(style, file, screens);
   const sassMs = performance.now() - start;
-  const deps = result.loadedUrls
-    .filter((url) => url.protocol === "file:")
-    .map((url) => {
-      const path = fileURLToPath(url);
-      return { path, text: readFileSync(path, "utf8") };
-    });
-  storeEntry(file, index, { content: input, deps, css: result.css });
+  const deps = loadedFilePaths(result.loadedUrls).map((path) => ({
+    path,
+    text: readFileSync(path, "utf8"),
+  }));
+  primeStyle(file, index, style, screens, result.css, deps);
   return { css: result.css, deps, sassMs };
 }
 
-// The screen sizes are part of the input, because the screen() mixin is built from them.
-function sassInput(content: string, screens: Screens): string {
-  return JSON.stringify([screens, content]);
-}
-
-function cachedEntry(file: string, index: number, input: string): SassEntry | undefined {
+// The screen sizes are part of the key, because the screen() mixin is built from them.
+function cachedEntry(
+  file: string,
+  index: number,
+  style: StyleSource,
+  screens: Screens,
+): SassEntry | undefined {
   const entry = sassCache.get(file)?.[index];
-  if (entry && entry.content === input && depsCurrent(entry.deps)) return entry;
+  const matches =
+    entry !== undefined &&
+    entry.content === style.content &&
+    JSON.stringify(entry.screens) === JSON.stringify(screens);
+  if (matches && depsCurrent(entry.deps)) return entry;
   return undefined;
 }
 
@@ -107,13 +164,18 @@ function storeEntry(file: string, index: number, entry: SassEntry): void {
   entries[index] = entry;
 }
 
+// Loaded on the first cache miss, so a cache hit never pays for the Sass compiler.
+const requireFromHere = createRequire(import.meta.url);
+let sassCompilerModule: typeof sass | undefined;
+
+function sassCompiler(): typeof sass {
+  if (!sassCompilerModule) sassCompilerModule = requireFromHere("sass") as typeof sass;
+  return sassCompilerModule;
+}
+
 function runSass(style: Section, file: string, screens: Screens): sass.CompileResult {
   try {
-    return sass.compileString(SCREEN_USE + style.content, {
-      loadPaths: [dirname(file)],
-      importers: [screenImporter(screens)],
-      style: "expanded",
-    });
+    return sassCompiler().compileString(scssSource(style), sassOptions(file, screens));
   } catch (error) {
     const sassError = error as sass.Exception;
     const span = sassError.span;

@@ -1,6 +1,6 @@
 import type { LazySettings } from "#bun-plugin/children.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
-import type { Screens } from "#runtime/screen/screens.ts";
+import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
@@ -12,6 +12,8 @@ import { writeRouteIndexes } from "./routes.ts";
 import { writeScreenTypes } from "../types/screen-types.ts";
 import { fileRows, formatReport } from "./report.ts";
 import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./timings.ts";
+import { prepareStyles } from "./sass-warm.ts";
+import { saveStyleCache } from "./sass-disk-cache.ts";
 
 export interface BuildOptions {
   dir: string;
@@ -44,6 +46,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const started = now();
   await rm(outdir, { recursive: true, force: true });
   const bundleStart = now();
+  addStep(steps, "sass", await prepareStyles(dir, options.screens ?? DEFAULT_SCREENS));
   const result = await bundleApp({
     dir,
     minify: options.minify,
@@ -58,6 +61,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     process.stderr.write(`${formatBuildFailure(result.logs, colorEnabled(), dir)}\n`);
     return 1;
   }
+  await saveStyleCache(dir);
 
   const writeStart = now();
   await writeOutputs(outdir, result.outputs);

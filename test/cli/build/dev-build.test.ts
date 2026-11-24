@@ -22,7 +22,10 @@ let broken: string;
 beforeAll(async () => {
   workRoot = await mkdtemp(join(tmpdir(), "lusia-dev-build-"));
   broken = join(workRoot, "broken");
-  await cp(FIXTURE, broken, { recursive: true });
+  await cp(FIXTURE, broken, {
+    recursive: true,
+    filter: (source) => !source.includes("node_modules"),
+  });
   await mkdir(join(broken, "node_modules"));
   await symlink(REPO, join(broken, "node_modules", "lusiajs"), "dir");
   await writeFile(join(broken, "src/Greeting.lusia"), BROKEN_GREETING);
@@ -54,7 +57,10 @@ describe("buildDev changes", () => {
   beforeAll(async () => {
     GREETING = await Bun.file(join(FIXTURE, "src/Greeting.lusia")).text();
     app = await mkdtemp(join(tmpdir(), "lusia-dev-changes-"));
-    await cp(FIXTURE, app, { recursive: true });
+    await cp(FIXTURE, app, {
+      recursive: true,
+      filter: (source) => !source.includes("node_modules"),
+    });
     await mkdir(join(app, "node_modules"));
     await symlink(REPO, join(app, "node_modules", "lusiajs"), "dir");
   });

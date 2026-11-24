@@ -71,6 +71,7 @@
   },
   "dependencies": {
     "sass": "^1.80.0",
+    "sass-embedded": "^1",
     "sucrase": "3.35.1"
   },
   "devDependencies": {

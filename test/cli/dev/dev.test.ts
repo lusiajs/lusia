@@ -73,7 +73,10 @@ async function waitForBundle(base: URL, text: string): Promise<void> {
 describe("startDev", () => {
   test("serves the page, public files and the bundle, then rebuilds on edit", async () => {
     dir = await mkdtemp(join(tmpdir(), "lusia-dev-"));
-    await cp(FIXTURE, dir, { recursive: true });
+    await cp(FIXTURE, dir, {
+      recursive: true,
+      filter: (source) => !source.includes("node_modules"),
+    });
     await mkdir(join(dir, "node_modules"));
     await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
     const base = await startServer(dir);
@@ -96,7 +99,10 @@ describe("startDev", () => {
 describe("hot updates", () => {
   test("a component edit sends a hot message, not a reload, and serves the new module", async () => {
     dir = await mkdtemp(join(tmpdir(), "lusia-hot-"));
-    await cp(FIXTURE, dir, { recursive: true });
+    await cp(FIXTURE, dir, {
+      recursive: true,
+      filter: (source) => !source.includes("node_modules"),
+    });
     await mkdir(join(dir, "node_modules"));
     await symlink(REPO, join(dir, "node_modules", "lusiajs"), "dir");
     const base = await startServer(dir);

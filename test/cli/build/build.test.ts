@@ -49,7 +49,10 @@ describe("runBuild", () => {
 
   test("returns 1 and reports the error for a broken component", async () => {
     const broken = join(workRoot, "broken");
-    await cp(FIXTURE, broken, { recursive: true });
+    await cp(FIXTURE, broken, {
+      recursive: true,
+      filter: (source) => !source.includes("node_modules"),
+    });
     await mkdir(join(broken, "node_modules"));
     await symlink(REPO, join(broken, "node_modules", "lusiajs"), "dir");
     await writeFile(
