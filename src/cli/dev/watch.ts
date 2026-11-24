@@ -1,9 +1,10 @@
 import { watch } from "node:fs";
 import { basename, sep } from "node:path";
-import { DEFAULT_OUTDIR } from "../args/settings.ts";
 import { now } from "../build/timings.ts";
+import { isIgnoredPath, readIgnore, type IgnoreRules } from "../utils/ignore.ts";
 
 const DEBOUNCE_MS = 15;
+const GITIGNORE_FILE = ".gitignore";
 const EDITOR_TEMP_SUFFIX = /\.tmp\.\d+\.[0-9a-f]+$/;
 const EDITOR_BACKUP_SUFFIX = /(~|\.swp|\.swx)$/;
 const VIM_WRITE_CHECK_FILE = "4913";
@@ -19,6 +20,7 @@ export function watchFolder(
 ): Watcher {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let firstAt = 0;
+  let rules = readIgnore(dir);
   const files = new Set<string>();
 
   function flush(): void {
@@ -30,8 +32,12 @@ export function watchFolder(
 
   const watcher = watch(dir, { recursive: true }, (_event, file) => {
     if (!file) return;
-    const source = sourceFile(file);
-    if (isIgnored(source)) return;
+    const source = toPosix(sourceFile(file));
+    if (source === GITIGNORE_FILE) {
+      rules = readIgnore(dir);
+      return;
+    }
+    if (isIgnored(rules, source)) return;
     if (files.size === 0) firstAt = now();
     files.add(source);
     clearTimeout(timer);
@@ -50,14 +56,12 @@ export function sourceFile(file: string): string {
   return file.replace(EDITOR_TEMP_SUFFIX, "");
 }
 
-export function isIgnored(file: string): boolean {
-  return file.split(sep).some(isIgnoredFolder) || isEditorJunk(basename(file));
+export function isIgnored(rules: IgnoreRules, file: string): boolean {
+  return isEditorJunk(basename(file)) || isIgnoredPath(rules, file, false);
 }
 
-function isIgnoredFolder(part: string, index: number): boolean {
-  return (
-    part === "node_modules" || part.startsWith(".") || (index === 0 && part === DEFAULT_OUTDIR)
-  );
+function toPosix(file: string): string {
+  return file.split(sep).join("/");
 }
 
 function isEditorJunk(name: string): boolean {

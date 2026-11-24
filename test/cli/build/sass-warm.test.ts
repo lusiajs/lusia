@@ -57,6 +57,21 @@ describe("warmStyles", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
+  test("uses the .gitignore instead of the defaults when one exists", async () => {
+    const dir = await makeApp();
+    await writeFile(join(dir, ".gitignore"), "generated/\n");
+    const file = join(dir, "generated", "Card.lusia");
+    const kept = join(dir, "dist", "Kept.lusia");
+    await mkdir(join(dir, "generated"));
+    await mkdir(join(dir, "dist"));
+    await writeFile(file, STYLE_SOURCE);
+    await writeFile(kept, STYLE_SOURCE);
+    const blocks = await warmStyles(dir, DEFAULT_SCREENS);
+    expect(blocks.map((block) => block.file)).toEqual([kept]);
+    forgetStyles(kept);
+    await rm(dir, { recursive: true, force: true });
+  });
+
   test("a broken style is skipped, not thrown", async () => {
     const dir = await makeApp();
     const file = join(dir, "Broken.lusia");

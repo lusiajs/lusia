@@ -8,12 +8,11 @@ import {
   type StyleDep,
 } from "#compiler/style/sass.ts";
 import type { Screens } from "#runtime/screen/screens.ts";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import type { AsyncCompiler } from "sass-embedded";
+import { isIgnoredPath, readIgnore, type IgnoreRules } from "../utils/ignore.ts";
 import type { StyleTiming } from "./build-report.ts";
-
-const SKIPPED_FOLDERS = new Set(["node_modules", "dist"]);
 
 interface StyleBlock extends StyleTiming {
   style: Section;
@@ -40,20 +39,22 @@ export async function warmStyles(root: string, screens: Screens): Promise<StyleT
   return blocks.map(({ file, index, cached, ms }) => ({ file, index, cached, ms }));
 }
 
-async function lusiaFiles(folder: string): Promise<string[]> {
-  const entries = await readdir(folder, { withFileTypes: true });
+async function lusiaFiles(root: string): Promise<string[]> {
+  const rules = readIgnore(root);
+  return lusiaFilesIn(root, "", rules);
+}
+
+async function lusiaFilesIn(root: string, folder: string, rules: IgnoreRules): Promise<string[]> {
+  const entries = await readdir(join(root, folder), { withFileTypes: true });
   const found = await Promise.all(
     entries.map((entry) => {
-      const path = join(folder, entry.name);
-      if (entry.isDirectory()) return isWalkable(entry.name) ? lusiaFiles(path) : [];
-      return entry.isFile() && entry.name.endsWith(".lusia") ? [path] : [];
+      const relativePath = folder === "" ? entry.name : `${folder}/${entry.name}`;
+      if (isIgnoredPath(rules, relativePath, entry.isDirectory())) return [];
+      if (entry.isDirectory()) return lusiaFilesIn(root, relativePath, rules);
+      return entry.isFile() && entry.name.endsWith(".lusia") ? [join(root, relativePath)] : [];
     }),
   );
   return found.flat();
-}
-
-function isWalkable(name: string): boolean {
-  return !SKIPPED_FOLDERS.has(name) && !name.startsWith(".");
 }
 
 async function styleBlocks(file: string, screens: Screens): Promise<StyleBlock[]> {
@@ -108,5 +109,11 @@ async function compileBlock(
 }
 
 async function readDeps(paths: string[]): Promise<StyleDep[]> {
-  return Promise.all(paths.map(async (path) => ({ path, text: await readFile(path, "utf8") })));
+  return Promise.all(
+    paths.map(async (path) => {
+      // Stat before reading: a write in between must look stale, not current.
+      const { mtimeMs } = await stat(path);
+      return { path, text: await readFile(path, "utf8"), mtimeMs };
+    }),
+  );
 }
