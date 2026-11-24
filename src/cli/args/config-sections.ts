@@ -6,7 +6,7 @@ import {
   type LintLevel,
   type LintRuleCode,
   type LintRuleSettings,
-} from "#language/lint/lint.ts";
+} from "#language/lint/types.ts";
 import type { LusiaConfig } from "./config-types.ts";
 import {
   asObject,

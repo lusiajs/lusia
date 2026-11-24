@@ -1,27 +1,27 @@
 #!/usr/bin/env bun
 import { LusiaError } from "#compiler/errors/error.ts";
-import { parseCommand, UsageError } from "./args/args.ts";
+import { parseCommand, UsageError, type Command } from "./args/args.ts";
 import { USAGE } from "./args/usage.ts";
-import { runBuild } from "./build/build.ts";
-import { startDev } from "./dev/dev.ts";
-import { runFormat } from "./format/format.ts";
 import { formatError } from "./format/format-error.ts";
-import { runLint } from "./lint/lint.ts";
 import { colorEnabled } from "./log/color.ts";
 import { createLogger } from "./log/log.ts";
 
+// Each command module loads only when its command runs, so `dev` skips the build, lint and format code.
+async function runCommand(command: Command): Promise<number> {
+  if (command.name === "help") {
+    process.stdout.write(USAGE);
+    return 0;
+  }
+  if (command.name === "build") return (await import("./build/build.ts")).runBuild(command);
+  if (command.name === "format") return (await import("./format/format.ts")).runFormat(command);
+  if (command.name === "lint") return (await import("./lint/lint.ts")).runLint(command);
+  await (await import("./dev/dev.ts")).startDev(command);
+  return 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   try {
-    const command = await parseCommand(argv, process.env);
-    if (command.name === "help") {
-      process.stdout.write(USAGE);
-      return 0;
-    }
-    if (command.name === "build") return await runBuild(command);
-    if (command.name === "format") return await runFormat(command);
-    if (command.name === "lint") return await runLint(command);
-    await startDev(command);
-    return 0;
+    return await runCommand(await parseCommand(argv, process.env));
   } catch (error) {
     if (error instanceof UsageError) {
       process.stderr.write(`${error.message}\n\n${USAGE}`);
