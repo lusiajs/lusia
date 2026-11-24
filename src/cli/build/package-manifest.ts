@@ -1,9 +1,10 @@
 import type { SizedPath } from "./build-report.ts";
 import { cacheStamp } from "./cache-stamp.ts";
+import { CACHE_FOLDER } from "./cache-file.ts";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const PACKAGE_DIR = join("node_modules", ".cache", "lusia", "packages");
+export const PACKAGE_DIR = join(CACHE_FOLDER, "packages");
 export const PACKAGE_URL_PREFIX = "/__lusia/packages/";
 const MANIFEST_FILE = "manifest.json";
 const LOCKFILES = ["bun.lock", "bun.lockb", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"];

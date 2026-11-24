@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import type { Options } from "prettier";
+import { cacheFolder } from "../build/cache-file.ts";
 
 /** Bump when the formatter itself changes, so old results are not reused. */
 const CACHE_VERSION = 1;
@@ -59,7 +60,7 @@ export function openFormatCache(cwd: string): FormatCache | undefined {
 
 function cachePath(cwd: string): string {
   if (existsSync(join(cwd, "node_modules"))) {
-    return join(cwd, "node_modules", ".cache", "lusia", "format.json");
+    return join(cacheFolder(cwd), "format.json");
   }
   return join(tmpdir(), "lusia-format", `${hash(cwd)}.json`);
 }

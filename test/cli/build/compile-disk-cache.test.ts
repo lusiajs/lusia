@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { cacheFolder } from "#cli/build/cache-file.ts";
 import {
   cachedModule,
   cachedModuleEntries,
@@ -104,14 +105,14 @@ describe("compile disk cache", () => {
   });
 
   test("a corrupt cache file is ignored", async () => {
-    await mkdir(join(dir, "node_modules", ".cache", "lusia"), { recursive: true });
+    await mkdir(cacheFolder(dir), { recursive: true });
     await writeFile(compileCachePath(dir), "{ not json");
     await expect(loadCompileCache(dir)).resolves.toBeUndefined();
     expect(primedPaths()).not.toContain(card);
   });
 
   test("a malformed entry is skipped without stopping the load", async () => {
-    await mkdir(join(dir, "node_modules", ".cache", "lusia"), { recursive: true });
+    await mkdir(cacheFolder(dir), { recursive: true });
     const stamp = await cacheStamp();
     await writeFile(compileCachePath(dir), JSON.stringify({ stamp, entries: [null] }));
     await expect(loadCompileCache(dir)).resolves.toBeUndefined();

@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { cacheFolder } from "#cli/build/cache-file.ts";
 import { loadStyleCache, saveStyleCache, styleCachePath } from "#cli/build/sass-disk-cache.ts";
 import { parse } from "#compiler/parse/sections.ts";
 import { compileStyleResult, forgetStyles } from "#compiler/style/sass.ts";
@@ -50,7 +51,7 @@ describe("style disk cache", () => {
 
   test("a corrupt cache file is ignored", async () => {
     const { dir, file, style } = await makeApp();
-    await mkdir(join(dir, "node_modules", ".cache", "lusia"), { recursive: true });
+    await mkdir(cacheFolder(dir), { recursive: true });
     await writeFile(styleCachePath(dir), "{ not json");
     await loadStyleCache(dir);
     expect(compileStyleResult(style, file, ID, 0, DEFAULT_SCREENS).css).toContain("color: red;");

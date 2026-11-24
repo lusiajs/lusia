@@ -2,9 +2,7 @@ import { cachedModuleEntries, primeModule, type CachedModule } from "#bun-plugin
 import { depsCurrent } from "#compiler/index.ts";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { readCacheEntries, writeCacheEntries } from "./cache-file.ts";
-
-const CACHE_FILE = join("node_modules", ".cache", "lusia", "modules.json");
+import { cacheFolder, readCacheEntries, writeCacheEntries } from "./cache-file.ts";
 
 interface CachedPath {
   path: string;
@@ -12,7 +10,7 @@ interface CachedPath {
 }
 
 export function compileCachePath(root: string): string {
-  return join(root, CACHE_FILE);
+  return join(cacheFolder(root), "modules.json");
 }
 
 /** Primes the compile cache from disk. Entries whose file or imports changed are skipped. */

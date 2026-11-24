@@ -1,6 +1,12 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { cacheStamp } from "./cache-stamp.ts";
+
+export const CACHE_FOLDER = join(".lusia", "cache");
+
+export function cacheFolder(root: string): string {
+  return join(root, CACHE_FOLDER);
+}
 
 interface StampedCache<T> {
   stamp: string;

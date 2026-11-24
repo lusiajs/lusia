@@ -62,8 +62,8 @@ describe("openFormatCache", () => {
   test("a corrupt cache file means no cache", async () => {
     const dir = await folder();
     const file = join(dir, "Card.lusia");
-    await mkdir(join(dir, "node_modules/.cache/lusia"), { recursive: true });
-    await writeFile(join(dir, "node_modules/.cache/lusia/format.json"), "not json");
+    await mkdir(join(dir, ".lusia", "cache"), { recursive: true });
+    await writeFile(join(dir, ".lusia", "cache", "format.json"), "not json");
     const cache = openFormatCache(dir)!;
     expect(cache.decide(file, FORMATTED, CONFIG)).toBe("unknown");
   });

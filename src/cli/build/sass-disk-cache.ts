@@ -5,12 +5,10 @@ import {
   type CachedStyle,
 } from "#compiler/style/sass.ts";
 import { join } from "node:path";
-import { readCacheEntries, writeCacheEntries } from "./cache-file.ts";
-
-const CACHE_FILE = join("node_modules", ".cache", "lusia", "styles.json");
+import { cacheFolder, readCacheEntries, writeCacheEntries } from "./cache-file.ts";
 
 export function styleCachePath(root: string): string {
-  return join(root, CACHE_FILE);
+  return join(cacheFolder(root), "styles.json");
 }
 
 /** Primes the Sass cache from disk. Entries whose Sass imports changed are skipped. */
