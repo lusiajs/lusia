@@ -1,5 +1,5 @@
 import * as sass from "sass";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { depsCurrent, type StyleDep } from "#compiler/style/sass.ts";
@@ -31,5 +31,7 @@ export function lintStyleCurrent(style: CompiledStyle): boolean {
 
 function readDep(url: URL): StyleDep {
   const path = fileURLToPath(url);
-  return { path, text: readFileSync(path, "utf8") };
+  // Stat before reading: a write in between must look stale, not current.
+  const mtimeMs = statSync(path).mtimeMs;
+  return { path, text: readFileSync(path, "utf8"), mtimeMs };
 }

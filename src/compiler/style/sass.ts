@@ -1,5 +1,5 @@
 import type * as sass from "sass";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,6 +13,7 @@ import { SCREEN_USE, screenImporter, styleColumn } from "./screen-mixin.ts";
 export interface StyleDep {
   path: string;
   text: string;
+  mtimeMs: number;
 }
 
 export interface StyleResult {
@@ -65,13 +66,30 @@ export function compileStyleResult(
 }
 
 export function depsCurrent(deps: StyleDep[]): boolean {
-  return deps.every((dep) => {
-    try {
-      return readFileSync(dep.path, "utf8") === dep.text;
-    } catch {
-      return false;
-    }
-  });
+  return deps.every(depCurrent);
+}
+
+function depCurrent(dep: StyleDep): boolean {
+  const mtimeMs = currentMtime(dep.path);
+  if (mtimeMs === undefined) return false;
+  if (mtimeMs === dep.mtimeMs) return true;
+  return currentText(dep.path) === dep.text;
+}
+
+function currentMtime(path: string): number | undefined {
+  try {
+    return statSync(path).mtimeMs;
+  } catch {
+    return undefined;
+  }
+}
+
+function currentText(path: string): string | undefined {
+  try {
+    return readFileSync(path, "utf8");
+  } catch {
+    return undefined;
+  }
 }
 
 /** Drops every cached style of a file, for example when the file was deleted. */
@@ -133,10 +151,11 @@ function compileScss(style: Section, file: string, index: number, screens: Scree
   const start = performance.now();
   const result = runSass(style, file, screens);
   const sassMs = performance.now() - start;
-  const deps = loadedFilePaths(result.loadedUrls).map((path) => ({
-    path,
-    text: readFileSync(path, "utf8"),
-  }));
+  const deps = loadedFilePaths(result.loadedUrls).map((path) => {
+    // Stat before reading: a write in between must look stale, not current.
+    const mtimeMs = statSync(path).mtimeMs;
+    return { path, text: readFileSync(path, "utf8"), mtimeMs };
+  });
   primeStyle(file, index, style, screens, result.css, deps);
   return { css: result.css, deps, sassMs, cached: false };
 }

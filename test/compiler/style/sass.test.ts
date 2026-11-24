@@ -1,9 +1,16 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { statSync } from "node:fs";
+import { mkdtemp, rm, utimes, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { LusiaError } from "#compiler/errors/error.ts";
-import { compileStyle, compileStyleResult, forgetStyles } from "#compiler/style/sass.ts";
+import {
+  compileStyle,
+  compileStyleResult,
+  depsCurrent,
+  forgetStyles,
+  type StyleDep,
+} from "#compiler/style/sass.ts";
 import { FILE, ID, SCOPED, TREE } from "./fixtures.ts";
 
 describe("compileStyle", () => {
@@ -96,5 +103,54 @@ describe("compileStyleResult cache", () => {
     compileStyleResult(style, file, ID, 0);
     expect(compileStyleResult(style, file, ID, 0).sassMs).toBe(0);
     await rm(dir, { recursive: true, force: true });
+  });
+});
+
+describe("depsCurrent", () => {
+  async function depFile(text: string): Promise<string> {
+    const dir = await mkdtemp(join(tmpdir(), "lusia-deps-"));
+    const path = join(dir, "_tokens.scss");
+    await writeFile(path, text);
+    return path;
+  }
+
+  function depOf(path: string, text: string): StyleDep {
+    return { path, text, mtimeMs: statSync(path).mtimeMs };
+  }
+
+  test("a file with the stored mtime is current without reading it", async () => {
+    const path = await depFile("$a: red;");
+    const dep = depOf(path, "$a: red;");
+    await writeFile(path, "$a: blue;");
+    await utimes(path, dep.mtimeMs / 1000, dep.mtimeMs / 1000);
+    expect(depsCurrent([dep])).toBe(true);
+  });
+
+  test("a changed mtime with the same text is still current", async () => {
+    const path = await depFile("$a: red;");
+    const dep = { ...depOf(path, "$a: red;"), mtimeMs: 1 };
+    expect(depsCurrent([dep])).toBe(true);
+  });
+
+  test("a changed text is stale", async () => {
+    const path = await depFile("$a: red;");
+    const dep = depOf(path, "$a: red;");
+    await writeFile(path, "$a: blue;");
+    expect(depsCurrent([dep])).toBe(false);
+  });
+
+  test("an entry without mtimeMs falls back to the text", async () => {
+    const path = await depFile("$a: red;");
+    const old = { path, text: "$a: red;" } as StyleDep;
+    expect(depsCurrent([old])).toBe(true);
+    await writeFile(path, "$a: blue;");
+    expect(depsCurrent([old])).toBe(false);
+  });
+
+  test("a missing file is stale", async () => {
+    const path = await depFile("$a: red;");
+    const dep = depOf(path, "$a: red;");
+    await rm(path);
+    expect(depsCurrent([dep])).toBe(false);
   });
 });
