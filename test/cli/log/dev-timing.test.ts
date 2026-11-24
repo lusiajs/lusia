@@ -19,8 +19,8 @@ describe("startupRows", () => {
       "types         5 ms",
       "styles      830 ms",
       "compile     170 ms",
-      "| | 3 files",
-      "| ` x",
+      "  | 3 files",
+      "  ` x",
       "bundle      270 ms",
       "server       40 ms",
       "------------------",
@@ -53,7 +53,7 @@ describe("startupRows", () => {
     });
     expect(rows).toEqual([
       "compile       0 ms",
-      "| ` 2 files: 2 cached, 0 compiled",
+      "  ` 2 files: 2 cached, 0 compiled",
       "-".repeat(18),
       "total         9 ms",
     ]);

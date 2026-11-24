@@ -97,7 +97,7 @@ function detailRows(lines: string[], color: boolean): string[] {
   const tree = treeChars(color);
   return lines.map((line, index) => {
     const isLast = index === lines.length - 1;
-    return styled(`${tree.pipe} ${isLast ? tree.end : tree.branch} ${line}`, ANSI.dim, color);
+    return styled(`  ${isLast ? tree.end : tree.branch} ${line}`, ANSI.dim, color);
   });
 }
 

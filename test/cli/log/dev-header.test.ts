@@ -59,17 +59,17 @@ describe("formatHeader", () => {
       color: false,
     });
     expect(text).toContain("|   boot        180 ms");
-    expect(text).toContain("|   | ` config 9 ms");
-    expect(text).toContain("|   | ` 145 blocks: 145 cached, 0 compiled");
-    expect(text).toContain("|   | | 412 modules (388 from packages), 2.3 MB");
-    expect(text).toContain("|   | ` last line");
+    expect(text).toContain("|     ` config 9 ms");
+    expect(text).toContain("|     ` 145 blocks: 145 cached, 0 compiled");
+    expect(text).toContain("|     | 412 modules (388 from packages), 2.3 MB");
+    expect(text).toContain("|     ` last line");
   });
 
   test("a single detail uses the box-drawing end mark when color is on", () => {
     const text = stripAnsi(
       formatHeader({ ...HEADER, details: { boot: ["config 9 ms"] }, color: true }),
     );
-    expect(text).toContain("│   │ └ config 9 ms");
+    expect(text).toContain("│     └ config 9 ms");
   });
 
   test("every line has the same width", () => {
