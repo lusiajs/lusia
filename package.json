@@ -1,6 +1,6 @@
 {
   "name": "lusiajs",
-  "version": "0.1.2-beta",
+  "version": "0.1.3-beta",
   "description": "Write UI in one file. Update it with variables. Built for Bun.",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@lusiajs/vscode-support",
-  "version": "0.1.2-beta",
+  "version": "0.1.3-beta",
   "description": "VS Code support for Lusia: completion, hover, lint and format",
   "license": "MIT",
   "type": "module",
