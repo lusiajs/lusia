@@ -2,7 +2,7 @@
 
 # Lusia
 
-A UI framework for [Bun](https://bun.sh). Write each component in one `.lusia` file. The page updates when your variables change.
+A UI framework for [Bun](https://bun.sh). Write each component in one `.lusia` file. Small, fast updates, with motion built in.
 
 > [!IMPORTANT]
 > Lusia is in beta. APIs and markup may change.
