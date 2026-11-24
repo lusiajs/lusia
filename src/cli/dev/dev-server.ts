@@ -4,7 +4,7 @@ import { assetKey } from "../build/bundle.ts";
 import type { Assets } from "../build/dev-build.ts";
 import type { HotModule } from "../build/hot-build.ts";
 import { publicFile } from "../build/public.ts";
-import { RELOAD_PATH } from "./reload-client.ts";
+import { RELOAD_PATH } from "./hot-reload.ts";
 import { now } from "../build/timings.ts";
 import type { Update } from "./update.ts";
 

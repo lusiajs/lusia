@@ -156,7 +156,7 @@ const CLIENT_CODE = `
 
 const CLIENT_TAG = `<script>${CLIENT_CODE}</script>`;
 
-export function withReloadClient(html: string): string {
+export function withHotReload(html: string): string {
   if (html.includes("</body>")) return html.replace("</body>", () => `${CLIENT_TAG}</body>`);
   return html + CLIENT_TAG;
 }

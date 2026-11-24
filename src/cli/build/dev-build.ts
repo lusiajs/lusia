@@ -6,7 +6,7 @@ import { formatBuildFailure } from "./build-errors.ts";
 import { assetKey, bundleApp } from "./bundle.ts";
 import type { BuildCache } from "./build-cache.ts";
 import { colorEnabled } from "../log/color.ts";
-import { withReloadClient } from "../dev/reload-client.ts";
+import { withHotReload } from "../dev/hot-reload.ts";
 import { RUNTIME_PATH, runtimeModule } from "./runtime-module.ts";
 import { RUNTIME_SPECIFIER } from "./runtime-shim.ts";
 import { addBundleStep, now, type Steps } from "./timings.ts";
@@ -90,7 +90,7 @@ function toEntry(importMap: string): (output: Blob & { path: string }) => Promis
   return async (output) => {
     const key = assetKey(output.path);
     if (!output.path.endsWith(".html")) return [key, output];
-    const html = withReloadClient(withImportMap(await output.text(), importMap));
+    const html = withHotReload(withImportMap(await output.text(), importMap));
     return [key, new Blob([html], { type: output.type })];
   };
 }
