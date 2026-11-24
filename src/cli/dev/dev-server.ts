@@ -3,6 +3,7 @@ import type { ServerWebSocket } from "bun";
 import { assetKey } from "../build/bundle.ts";
 import type { Assets } from "../build/dev-build.ts";
 import type { HotModule } from "../build/hot-build.ts";
+import { PACKAGE_URL_PREFIX } from "../build/package-manifest.ts";
 import { publicFile } from "../build/public.ts";
 import { RELOAD_PATH } from "./hot-reload.ts";
 import { now } from "../build/timings.ts";
@@ -39,6 +40,7 @@ type Socket = ServerWebSocket<unknown>;
 // Hot modules are needed only until the page has imported them, so the oldest are dropped.
 const MAX_HOT_MODULES = 50;
 const MAX_STACK_LINES = 20;
+const NO_CACHE = { "cache-control": "no-cache" };
 
 export function createDevServer({
   dir,
@@ -83,11 +85,12 @@ export function createDevServer({
     const hot = hotModules.get(pathname);
     if (hot) return new Response(hot, { headers: { "content-type": "text/javascript" } });
     const asset = assets.get(assetKey(pathname));
-    if (asset) return new Response(asset);
+    if (asset) return assetResponse(request, pathname, asset);
     const file = publicFile(dir, pathname);
-    if (file && (await file.exists())) return new Response(file);
+    if (file && (await file.exists())) return new Response(file, { headers: NO_CACHE });
     const index = assets.get(assetKey("index.html"));
-    if (index && isPageRoute(request.method, pathname)) return new Response(index);
+    if (index && isPageRoute(request.method, pathname))
+      return new Response(index, { headers: NO_CACHE });
     return new Response("not found", { status: 404 });
   }
 
@@ -144,6 +147,17 @@ export function createDevServer({
 }
 
 type ClientReport = Record<string, unknown>;
+
+// Package entries are named by package, not content, so browsers must revalidate them.
+async function assetResponse(request: Request, pathname: string, asset: Blob): Promise<Response> {
+  if (!pathname.startsWith(PACKAGE_URL_PREFIX)) return new Response(asset, { headers: NO_CACHE });
+  const bytes = await asset.arrayBuffer();
+  const etag = `"${Bun.hash(bytes)}"`;
+  const headers = { ...NO_CACHE, etag };
+  if (request.headers.get("if-none-match") === etag)
+    return new Response(null, { status: 304, headers });
+  return new Response(bytes, { headers: { ...headers, "content-type": asset.type } });
+}
 
 function parseReport(text: string | Buffer): ClientReport | null {
   try {
