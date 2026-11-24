@@ -143,3 +143,7 @@ Scoped styles match by short component classes, not ancestor selectors (about 40
 # 33. Branches
 
 Work from `main`. Only `main` and `dev` stay long-lived. Delete a branch once it is merged.
+
+# 34. Reuse before writing
+
+Before writing logic, search the repo for code that already does the same job (a check, a cache, a parser, a helper). Reuse or extend it. When two places need the same thing, make one shared helper or base interface and have both use it. Never write a second version. Every agent spec includes this check.
