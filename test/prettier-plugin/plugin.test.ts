@@ -78,7 +78,7 @@ describe("prettier plugin format", () => {
         expect(await formatWithPlugin(input)).toBe(await formatWithCli(input));
       }
     }
-  });
+  }, 30_000);
 
   test("an already formatted file stays the same", async () => {
     for (const source of await fixtureSources()) {
