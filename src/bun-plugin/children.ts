@@ -47,7 +47,10 @@ function lusiaImportsOf(source: string, path: string): LusiaImport[] {
 export function lazyOptionsFor(path: string, settings: LazySettings): LazyOptions {
   return {
     ...settings,
-    childOf: (specifier) => childInfo(resolve(dirname(path), specifier)),
+    childOf: (specifier) => {
+      const child = resolve(dirname(path), specifier);
+      return child === path ? { ...childInfo(child), self: true } : childInfo(child);
+    },
   };
 }
 

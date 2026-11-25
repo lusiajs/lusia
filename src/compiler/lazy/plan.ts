@@ -21,7 +21,7 @@ export function importsWithSplits(
     .join("\n");
 }
 
-/** The names of the imports to split, under the mode's rule. `<NO_LAZY />` files are never split. */
+/** The names of the imports to split, under the mode's rule. `<NO_LAZY />` files and self imports are never split. */
 export function namesToSplit(
   lazy: LazyOptions,
   imports: LusiaImport[],
@@ -31,7 +31,9 @@ export function namesToSplit(
   const names = new Set<string>();
   if (lazy.mode === "off") return names;
   for (const item of imports) {
-    if (lazy.childOf(item.specifier).nolazy) continue;
+    const child = lazy.childOf(item.specifier);
+    // A module cannot load itself lazily: the bundler leaves the self import undefined.
+    if (child.nolazy || child.self) continue;
     const flowOnly = onlyInFlow(markup, item.name) && !usedInScript(script, item.name);
     if (lazy.mode === "all" || flowOnly) names.add(item.name);
   }

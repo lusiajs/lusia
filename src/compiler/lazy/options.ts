@@ -9,6 +9,8 @@ export interface ChildInfo {
   nolazy: boolean;
   /** The file has a <FALLBACK> block. */
   fallback: boolean;
+  /** The specifier points back at the importing file, as in a recursive component. */
+  self?: boolean;
 }
 
 export interface LazyOptions {
