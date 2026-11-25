@@ -4,6 +4,7 @@ import { treeClassesOf } from "../template/classes.ts";
 import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
 import { collectAttachHooks, runAttach, type AttachHook } from "./lifecycle.ts";
+import { attachHead } from "./head.ts";
 import { runtimeError } from "../../errors.ts";
 import { childScope, currentScope, inScope, keepScope, type Scope } from "../../config/scope.ts";
 
@@ -21,6 +22,12 @@ export interface Host {
   content?: Slot;
   /** Tree classes of the ancestors, space-separated. The component's elements carry them. */
   inherited: string;
+  /** The <head> nodes of the last render. The head option reads them. */
+  head?: DocumentFragment;
+}
+
+export interface ComponentOptions {
+  head?: Render;
 }
 
 export interface Rendered {
@@ -98,7 +105,12 @@ export function componentFrom(place: Place): Component {
   return Object.assign(component, { place });
 }
 
-export function defineComponent(id: string, css: string, render: Render): Component {
+export function defineComponent(
+  id: string,
+  css: string,
+  render: Render,
+  options: ComponentOptions = {},
+): Component {
   return componentFrom((parent, anchor, host, leaves) => {
     injectStyle(id, css);
     const cleanups: Cleanup[] = [];
@@ -106,6 +118,7 @@ export function defineComponent(id: string, css: string, render: Render): Compon
     const nodes = [...fragment.childNodes];
     parent.insertBefore(fragment, anchor);
     runAttach(attachHooks, parent, cleanups);
+    attachHead(options.head, host, cleanups, leaves);
     return () => {
       for (const cleanup of cleanups) cleanup();
       for (const node of nodes) node.remove();

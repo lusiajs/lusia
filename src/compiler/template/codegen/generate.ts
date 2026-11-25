@@ -10,6 +10,8 @@ export interface ComponentParts extends GenOptions {
   /** The .lusia line where `body` starts. */
   bodyLine: number;
   template: Template;
+  /** The <head> block. Its nodes are placed in the document head while the component is. */
+  head?: Template;
   css: string;
   id: string;
   scopes: ScopeClasses;
@@ -51,12 +53,20 @@ const HOT_IMPORT = `import {
   hotVariable as __hotVariable,
 } from "lusiajs/internal";`;
 
-function renderFunction(body: string, bodyLine: number, fragment: string): string {
-  return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): DocumentFragment {
-${markLines(body, bodyLine)}
-  return ${fragment};
-}`;
+function renderFunction(body: string, bodyLine: number, fragment: string, head?: string): string {
+  const lines = [
+    "function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): DocumentFragment {",
+    markLines(body, bodyLine),
+  ];
+  if (head) lines.push(`  __host.head = ${head};`);
+  lines.push(`  return ${fragment};`, "}");
+  return lines.join("\n");
 }
+
+// The head is built by __render, in the same script scope; this hands it to the runtime.
+const RENDER_HEAD = `function __renderHead(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): DocumentFragment {
+  return __host.head!;
+}`;
 
 /** The generated module, with position markers that `extractSourceMap` removes. */
 export function generate({
@@ -64,6 +74,7 @@ export function generate({
   body,
   bodyLine,
   template,
+  head,
   css,
   id,
   scopes,
@@ -74,18 +85,21 @@ export function generate({
 }: ComponentParts): string {
   const ctx = new GenContext(scopes, { file, dev, source, script });
   const fragment = ctx.fragment(template);
+  const headFragment = head ? ctx.fragment(head) : undefined;
   return [
     imports,
     RUNTIME_IMPORT,
     ...(dev ? [HOT_IMPORT] : []),
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
-    renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment),
-    exportLine(id, dev),
+    renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment, headFragment),
+    ...(head ? [RENDER_HEAD] : []),
+    exportLine(id, dev, head !== undefined),
   ].join("\n");
 }
 
-function exportLine(id: string, dev: boolean): string {
+function exportLine(id: string, dev: boolean, hasHead: boolean): string {
   const define = dev ? "__hotComponent" : "__defineComponent";
-  return `export default ${define}(${JSON.stringify(id)}, __css, __render);`;
+  const options = hasHead ? ", { head: __renderHead }" : "";
+  return `export default ${define}(${JSON.stringify(id)}, __css, __render${options});`;
 }

@@ -1,5 +1,12 @@
 import type { Cleanup } from "../template/bindings.ts";
-import type { Component, Host, Instance, Props, Render } from "../component/component.ts";
+import type {
+  Component,
+  ComponentOptions,
+  Host,
+  Instance,
+  Props,
+  Render,
+} from "../component/component.ts";
 import { treeClassesOf } from "../template/classes.ts";
 import { leaveThen, type Leave } from "../component/leave.ts";
 import {
@@ -17,8 +24,13 @@ export interface HotComponent extends Component {
 }
 
 // Instances look up the latest definition by id, so hot swaps reach old imports.
-export function hotComponent(id: string, css: string, render: Render): HotComponent {
-  const definition: Definition = { css, render };
+export function hotComponent(
+  id: string,
+  css: string,
+  render: Render,
+  options: ComponentOptions = {},
+): HotComponent {
+  const definition: Definition = { css, render, head: options.head };
   if (!definitionOf(id)) setDefinition(id, definition);
 
   const place = (parent: Node, anchor: Node | null, host: Host, leaves: Leave[]): Cleanup => {

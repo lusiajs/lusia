@@ -1,0 +1,13 @@
+<script>
+  import { props } from "lusiajs";
+
+  const { title } = props({ title: "" });
+</script>
+
+<head>
+  <title>{title.value}</title>
+  <meta name="description" content="Component description" />
+  <meta name="keywords" content="lusia" />
+</head>
+
+<p class="body">Page</p>

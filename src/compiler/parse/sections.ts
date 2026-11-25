@@ -2,7 +2,7 @@ import { lusiaError } from "../errors/create.ts";
 import { skipExpression } from "../utils/braces.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { parseAttrs } from "./attrs.ts";
-import { extractMarkers, type FallbackBlock } from "./markers.ts";
+import { extractMarkers, type MarkupBlock } from "./markers.ts";
 import { styleBranches, type StyleBranch } from "./style-branches.ts";
 
 export interface Section {
@@ -22,7 +22,9 @@ export interface ParsedFile {
   styles: Section[];
   markup: string;
   markupLine: number;
-  fallback: FallbackBlock | null;
+  fallback: MarkupBlock | null;
+  /** The <head> block: its markup is rendered into the document head. */
+  head: MarkupBlock | null;
   nolazy: boolean;
 }
 
@@ -114,6 +116,7 @@ export function parse(source: string, file: string): ParsedFile {
     markup: "",
     markupLine: 1,
     fallback: null,
+    head: null,
     nolazy: false,
   };
   let markup = "";
@@ -134,6 +137,7 @@ export function parse(source: string, file: string): ParsedFile {
   markup += source.slice(last);
   const markers = extractMarkers(markup, file);
   result.fallback = markers.fallback;
+  result.head = markers.head;
   result.nolazy = markers.nolazy;
   result.markup = markers.markup.trim();
   result.markupLine = lineAt(

@@ -5,6 +5,22 @@ import { compile } from "#compiler/index.ts";
 const FILE = `${process.cwd()}/test/compiler/Dim.lusia`;
 const WHERE = relative(process.cwd(), FILE);
 
+describe("<head> option", () => {
+  test("a component with a head passes it as the head option", () => {
+    const { code } = compile("<head><title>{a}</title></head>\n<p>x</p>", FILE);
+    expect(code).toContain("__host.head = ");
+    expect(code).toContain("function __renderHead(");
+    expect(code).toContain('export default __defineComponent("');
+    expect(code).toMatch(/__render, \{ head: __renderHead \}\);/);
+  });
+
+  test("a component without a head has no head option", () => {
+    const { code } = compile("<p>x</p>", FILE);
+    expect(code).not.toContain("__renderHead");
+    expect(code).toMatch(/__render\);$/m);
+  });
+});
+
 describe("compile dev option", () => {
   test("dev keeps a source map that points at the .lusia file", () => {
     const { code, map } = compile("<script>\nlet a = 1;\n</script>\n<p>{a}</p>", FILE, {

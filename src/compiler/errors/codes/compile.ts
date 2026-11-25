@@ -195,4 +195,8 @@ export const COMPILE_CODES = {
     message: "<NOLAZY /> was renamed to <NO_LAZY />",
     hint: "Write <NO_LAZY /> instead.",
   },
+  L1051: {
+    message: "<head> can only be used once",
+    hint: "Keep one <head> block, and move its content into it.",
+  },
 } as const satisfies Record<string, ErrorCode>;

@@ -94,3 +94,37 @@ describe("<NO_LAZY />", () => {
     expect(codeOf("<NOLAZY />\n<p>Hi</p>")).toBe("L1050");
   });
 });
+
+describe("<head>", () => {
+  test("its content is kept apart from the markup, and its line is kept", () => {
+    const parsed = parse(
+      "<script>\nconst a = 1;\n</script>\n<head>\n  <title>{a}</title>\n</head>\n<main>{a}</main>\n",
+      "Card.lusia",
+    );
+    expect(parsed.head?.content).toBe("\n  <title>{a}</title>\n");
+    expect(parsed.head?.line).toBe(4);
+    expect(parsed.markup).not.toContain("<title>");
+    expect(parsed.markup).toContain("<main>");
+  });
+
+  test("the markup after it keeps its line numbers", () => {
+    const parsed = parse("<head>\n<title>x</title>\n</head>\n\n<p>{a}</p>", "Card.lusia");
+    expect(parsed.markupLine).toBe(5);
+  });
+
+  test("is optional", () => {
+    expect(parse("<p>Done</p>", "Card.lusia").head).toBeNull();
+  });
+
+  test("cannot sit inside another element", () => {
+    expect(codeOf("<div>\n<head><title>x</title></head>\n</div>")).toBe("L1038");
+  });
+
+  test("can only be used once", () => {
+    expect(codeOf("<head>a</head>\n<head>b</head>")).toBe("L1051");
+  });
+
+  test("needs its closing tag", () => {
+    expect(codeOf("<head><title>x</title>")).toBe("L1001");
+  });
+});

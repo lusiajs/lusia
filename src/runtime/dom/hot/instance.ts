@@ -10,6 +10,7 @@ import { removeRegion, runCleanups } from "./teardown.ts";
 export interface Definition {
   readonly css: string;
   readonly render: Render;
+  readonly head?: Render;
 }
 
 /** One mounted component in the dev build. Its place in the page is the region from `start` to `end`. */

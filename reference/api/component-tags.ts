@@ -107,4 +107,19 @@ export const componentTagEntries: ApiEntry[] = [
     ],
     example: `<NO_LAZY />\n\n<header>...</header>`,
   },
+  {
+    id: "head",
+    name: "<head>",
+    kind: "markup",
+    group: "components",
+    signature: "<head> ... </head>",
+    summary: "Sets the page title and meta tags while this component is attached.",
+    bullets: [
+      "Write it at the top level of the file. It is optional.",
+      "A title or meta tag replaces the one in the page with the same name or property, and puts it back when the component is detached.",
+      "Other tags are added to the page head, and removed when the component is detached.",
+      "{expr} works, so the title can follow a variable.",
+    ],
+    example: `<head>\n  <title>{title}</title>\n  <meta name="description" content="A short page summary." />\n</head>\n\n<main>...</main>`,
+  },
 ];

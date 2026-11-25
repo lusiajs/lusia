@@ -4,6 +4,7 @@ import { renderWith, type Rendered } from "../component/component.ts";
 import { runAttach, type AttachHook } from "../component/lifecycle.ts";
 import type { Leave } from "../component/leave.ts";
 import { injectStyle } from "../component/styles.ts";
+import { attachHead } from "../component/head.ts";
 import type { Definition, HotInstance } from "./instance.ts";
 import { removeRegion, runCleanups } from "./teardown.ts";
 
@@ -43,6 +44,7 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
   frame = { instance, variables };
   try {
     const rendered: Rendered = renderWith(definition.render, instance.host, cleanups, leaves);
+    attachHead(definition.head, instance.host, cleanups, leaves);
     const start = emptyText();
     const end = emptyText();
     rendered.fragment.prepend(start);

@@ -78,20 +78,25 @@ export function compileParts(
     parsed.script?.content,
     parsed.script?.attrs,
     parsed.markup,
+    parsed.head?.content,
   ]);
-  const imports = importsWithSplits(statements, parsed.markup, body, options.lazy);
-  const template = compileTemplate(
-    parsed.markup,
-    file,
-    parsed.markupLine,
-    components,
-    ownClassNames(scopes),
+  const imports = importsWithSplits(
+    statements,
+    `${parsed.markup}\n${parsed.head?.content ?? ""}`,
+    body,
+    options.lazy,
   );
+  const classes = ownClassNames(scopes);
+  const template = compileTemplate(parsed.markup, file, parsed.markupLine, components, classes);
+  const head = parsed.head
+    ? compileTemplate(parsed.head.content, file, parsed.head.line, components, classes)
+    : undefined;
   const generated = generate({
     imports,
     body,
     bodyLine: parsed.script?.line ?? 1,
     template,
+    head,
     css,
     id,
     scopes,

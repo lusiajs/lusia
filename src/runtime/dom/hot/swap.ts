@@ -23,7 +23,7 @@ export function swapComponent(component: HotComponent): void {
 /** A change to the style only: the markup and script stay as they are. */
 export function swapStyle(id: string, css: string): void {
   const previous = definitionOf(id);
-  if (previous) setDefinition(id, { css, render: previous.render });
+  if (previous) setDefinition(id, { ...previous, css });
   replaceStyle(id, css);
 }
 
