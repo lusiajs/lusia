@@ -7,7 +7,7 @@ import { runLint } from "#cli/lint/lint.ts";
 const UNUSED = '<script>\nimport Badge from "./Badge.lusia";\n</script>\n<p>hi</p>\n';
 const EMPTY = "<p>{ }</p>\n";
 const BADGE =
-  '<script>\nimport { props } from "lusiajs";\nprops({ label: "" });\n</script>\n<p>{label}</p>\n';
+  '<script>\nimport { props } from "lusiajs";\nconst { label } = props(class {\n  label = "";\n});\n</script>\n<p>{label}</p>\n';
 
 let workRoot: string;
 let caseIndex = 0;

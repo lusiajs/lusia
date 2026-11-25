@@ -12,6 +12,8 @@ import { extractSourceMap } from "./sourcemap/extract.ts";
 import { withScreenMedia } from "./style/screen-style.ts";
 import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
 import { basename } from "node:path";
+import { scriptProps } from "./props/script.ts";
+import { rewriteTemplateProps } from "./props/template.ts";
 
 export interface CompileOptions {
   /** Dev builds keep runtime error locations. Default false. */
@@ -73,6 +75,7 @@ export function compileParts(
   const css = styles.map((style) => style.css).join("\n");
   const scopes = scopeClassesOf(css, id);
   const { statements, body, components } = splitImports(parsed.script, file);
+  const script = scriptProps(body, statements, file, parsed.script?.line ?? 1);
   const deps = styles.flatMap((style) => style.deps);
   const sassMs = styles.reduce((sum, style) => sum + style.ms, 0);
   const styleBlocks = parsed.styles.flatMap((section, index) =>
@@ -96,9 +99,11 @@ export function compileParts(
   const head = parsed.head
     ? compileTemplate(parsed.head.content, file, parsed.head.line, components, classes)
     : undefined;
+  rewriteTemplateProps(template, script.names, file);
+  if (head) rewriteTemplateProps(head, script.names, file);
   const generated = generate({
     imports,
-    body,
+    body: script.body,
     bodyLine: parsed.script?.line ?? 1,
     template,
     head,
@@ -110,6 +115,7 @@ export function compileParts(
     dev: options.dev,
     source,
     script: scriptRange(parsed.script),
+    propsHolder: script.holder,
   });
   const { code, map } = extractSourceMap(generated, file, source);
   return { code, css, id, map, deps, sassMs, styleBlocks, scriptAndMarkup };

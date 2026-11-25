@@ -40,7 +40,16 @@ describe("hover", () => {
       name: "Badge",
       props: [{ name: "label", defaultValue: '"New"' }],
     });
-    expect(result && hoverMarkdown(result)).toContain('`label` = `"New"`');
+    expect(result && hoverMarkdown(result)).toContain('`label = "New"`');
+  });
+
+  test("shows a prop's type before its default", () => {
+    const text = `<script>\nimport Badge from "./badge.lusia";\n</script>\n<Badge />`;
+    const lookup = () => [
+      { name: "tone", type: '"info" | "warn"', choices: ["info", "warn"], defaultValue: '"info"' },
+    ];
+    const result = hoverAt(text, text.lastIndexOf("Badge") + 1, lookup);
+    expect(result && hoverMarkdown(result)).toContain('`tone: "info" | "warn" = "info"`');
   });
 
   test("shows nothing on plain text", () => {

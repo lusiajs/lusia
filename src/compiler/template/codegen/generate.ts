@@ -21,6 +21,7 @@ export interface ComponentParts extends GenOptions {
   css: string;
   id: string;
   scopes: ScopeClasses;
+  propsHolder?: string;
 }
 
 const RUNTIME_IMPORT = `import {
@@ -40,6 +41,7 @@ const RUNTIME_IMPORT = `import {
   bindProp as __bindProp,
   bindText as __bindText,
   bindTextContent as __bindTextContent,
+  propTarget as __propTarget,
   defineComponent as __defineComponent,
   instantiate as __instantiate,
   lazyComponent as __lazyComponent,
@@ -90,8 +92,9 @@ export function generate({
   dev,
   source,
   script,
+  propsHolder,
 }: ComponentParts): string {
-  const ctx = new GenContext(scopes, { file, dev, source, script });
+  const ctx = new GenContext(scopes, { file, dev, source, script, propsHolder });
   const fragment = ctx.fragment(template);
   const headFragment = head ? ctx.fragment(head) : undefined;
   return [

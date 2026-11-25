@@ -1,3 +1,4 @@
+import { findPropsCall, parsePropDefs, type PropDef, type PropsCall } from "#language/parse/props.ts";
 import { blankSections, scriptSection } from "#language/parse/sections.ts";
 
 /** The class names a value can give: its literal strings, or `{ wide }` with its printed type when it could be any string. */
@@ -27,6 +28,14 @@ interface ExpressionReading {
   unsafe: boolean;
   values: string[];
   wide: WideClass[];
+}
+
+interface ReadContext {
+  script: string;
+  names: Set<string>;
+  props: PropDef[];
+  propsCall: PropsCall | undefined;
+  resolveType: ClassTypeResolver | undefined;
 }
 
 const CLASS_WORD = /^[A-Za-z_-][\w:-]*$/;
@@ -65,10 +74,15 @@ export function markupClasses(source: string, resolveType?: ClassTypeResolver): 
   addWords(script, used);
   for (const expression of braceExpressions(markup)) addWords(expression, used);
 
-  const names = localNames(script, markup);
-  const readings = findClassExpressions(markup).map((expression) =>
-    readExpression(expression, script, names, resolveType),
-  );
+  const propsCall = findPropsCall(script);
+  const context: ReadContext = {
+    script,
+    names: localNames(script, markup, propsCall),
+    props: parsePropDefs(source),
+    propsCall,
+    resolveType,
+  };
+  const readings = findClassExpressions(markup).map((expression) => readExpression(expression, context));
   for (const reading of readings) for (const value of reading.values) used.add(value);
   return {
     used,
@@ -77,26 +91,75 @@ export function markupClasses(source: string, resolveType?: ClassTypeResolver): 
   };
 }
 
-function readExpression(
-  expression: ClassExpression,
-  script: string,
-  names: Set<string>,
-  resolveType: ClassTypeResolver | undefined,
-): ExpressionReading {
-  if (usesConcat(expression.code, script) || ON_PURPOSE_COMMENT.test(expression.code)) {
+function readExpression(expression: ClassExpression, context: ReadContext): ExpressionReading {
+  if (usesConcat(expression.code, context.script) || ON_PURPOSE_COMMENT.test(expression.code)) {
     return unsafeReading();
   }
-  const undeclared = undeclaredNames(expression.code, names);
-  if (undeclared.length === 0) return { unsafe: false, values: [], wide: [] };
-  if (!resolveType) return unsafeReading();
-  const reading: ExpressionReading = { unsafe: false, values: [], wide: [] };
-  for (const name of undeclared) {
+  const pattern = propReadPattern(context.propsCall);
+  const reading = readProps(expression.code, context.props, pattern);
+  const undeclared = undeclaredNames(stripPropReads(expression.code, pattern), context.names);
+  if (undeclared.length === 0) return reading;
+  if (!context.resolveType) return unsafeReading();
+  return readUndeclared(reading, undeclared, expression, context.resolveType);
+}
+
+// A prop with a literal union gives its choices; any other prop value is unknown.
+function readProps(code: string, props: PropDef[], pattern: RegExp | undefined): ExpressionReading {
+  const reading = emptyReading();
+  for (const name of propNamesRead(code, pattern)) {
+    const choices = props.find((prop) => prop.name === name)?.choices;
+    if (choices) reading.values.push(...choices);
+    else reading.unsafe = true;
+  }
+  return reading;
+}
+
+// Matches `holder.name` for an object form, or a destructured name such as `tone`. Group 1 is the prop name.
+function propReadPattern(call: PropsCall | undefined): RegExp | undefined {
+  if (!call) return undefined;
+  if (call.binding.kind === "object") {
+    return new RegExp(`(?<![\\w$.])${escapeName(call.binding.name)}\\.([A-Za-z_$][\\w$]*)`, "g");
+  }
+  const names = propsBindingNames(call);
+  if (names.length === 0) return undefined;
+  return new RegExp(`(?<![\\w$.])(${names.map(escapeName).join("|")})(?![\\w$])`, "g");
+}
+
+function propNamesRead(code: string, pattern: RegExp | undefined): string[] {
+  if (!pattern) return [];
+  return [...code.matchAll(pattern)].map((match) => match[1]!);
+}
+
+function stripPropReads(code: string, pattern: RegExp | undefined): string {
+  return pattern ? code.replace(pattern, " ") : code;
+}
+
+function propsBindingNames(call: PropsCall): string[] {
+  if (call.binding.kind === "object") return [call.binding.name];
+  return call.binding.names.map((entry) => entry.split(/[:=]/)[0]!.trim());
+}
+
+function escapeName(name: string): string {
+  return name.replace(/\$/g, "\\$");
+}
+
+function readUndeclared(
+  reading: ExpressionReading,
+  names: string[],
+  expression: ClassExpression,
+  resolveType: ClassTypeResolver,
+): ExpressionReading {
+  for (const name of names) {
     const type = resolveType(name, expression.offset);
     if (type === undefined) return unsafeReading();
     if (Array.isArray(type)) reading.values.push(...type);
     else addWide(reading, { name, offset: expression.offset, type: type.wide });
   }
   return reading;
+}
+
+function emptyReading(): ExpressionReading {
+  return { unsafe: false, values: [], wide: [] };
 }
 
 function unsafeReading(): ExpressionReading {
@@ -113,13 +176,14 @@ function undeclaredNames(code: string, names: Set<string>): string[] {
 }
 
 // Names declared in the script or made by a loop in the markup. Anything else comes from an import or a prop.
-function localNames(script: string, markup: string): Set<string> {
+function localNames(script: string, markup: string, propsCall: PropsCall | undefined): Set<string> {
   const names = new Set<string>();
   for (const match of script.matchAll(DECLARATION)) names.add(match[1]!);
   for (const match of script.matchAll(DESTRUCTURING)) {
     for (const name of destructuredNames(match[1]!)) names.add(name);
   }
   for (const match of markup.matchAll(LOOP_ITEM)) names.add(match[1] ?? match[2] ?? match[3]!);
+  if (propsCall) for (const name of propsBindingNames(propsCall)) names.delete(name);
   return names;
 }
 

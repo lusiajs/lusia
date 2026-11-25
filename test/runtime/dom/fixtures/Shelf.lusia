@@ -2,7 +2,9 @@
 import { props } from "lusiajs";
 import badge from "./badge.lusia";
 
-const { label } = props({ label: "Inbox" });
+const { label } = props(class {
+  label = "Inbox";
+});
 </script>
 
 <section class="shelf">

@@ -37,7 +37,7 @@ function eventCall({ type, listen, expr }: EventBinding): string {
 }
 
 function bindCall(bind: BindBinding, ctx: GenContext): string {
-  const target = `(${markedCode(bind.expr)})`;
+  const target = `(${ctx.target(bind.expr)})`;
   const at = trailingArg(ctx.whereOf(bind.expr));
   if (bind.kind === "input")
     return `__bindInput(__node as HTMLElement, ${target}, __cleanups${at});`;

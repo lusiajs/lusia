@@ -40,7 +40,7 @@ export const componentTypeEntries: ApiEntry[] = [
     bullets: [
       "Each key is a prop name.",
       "Each value is a getter that returns the current value.",
-      "A component's props() reads the values from this record.",
+      "The component reads each prop it declares with props() from this record.",
     ],
     example: `function label() {\n  return "Done";\n}\n\nconst passed: Props = { label };`,
   },

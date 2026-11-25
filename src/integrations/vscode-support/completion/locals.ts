@@ -1,5 +1,6 @@
 import type { CompletionItemData } from "../completion-data.ts";
 import { memberItems, type VariableKind } from "./members.ts";
+import { destructuredPropDetails } from "./declared-props.ts";
 
 export interface LocalName {
   name: string;
@@ -12,7 +13,6 @@ const DEFAULT_IMPORT = /\bimport\s+([A-Za-z_$][\w$]*)\s+from\b/g;
 const NAMED_IMPORT = /\bimport\s*\{([^}]*)\}\s*from\b/g;
 const VARIABLE_DECLARATION =
   /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*variable(\.compute)?\s*[(<]/g;
-const PROPS_DESTRUCTURING = /\b(?:const|let|var)\s*\{([^}]*)\}\s*=\s*props\s*\(/g;
 const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 const RECEIVER = /([A-Za-z_$][\w$]*)\.[\w$]*$/;
 const RECEIVER_WINDOW = 128;
@@ -39,6 +39,7 @@ export function localNames(script: string): LocalName[] {
 
 /** Skips names that an API item already has. */
 export function localItems(script: string, taken: ReadonlySet<string>): CompletionItemData[] {
+  const propDetails = destructuredPropDetails(script);
   return localNames(script)
     .filter((local) => !taken.has(local.name))
     .map((local) => ({
@@ -46,11 +47,11 @@ export function localItems(script: string, taken: ReadonlySet<string>): Completi
       kind: local.kind,
       insertText: local.name,
       snippet: false,
-      detail: "In this file",
+      detail: propDetails.get(local.name) ?? "In this file",
     }));
 }
 
-/** What each name holds: from `variable()`, `variable.compute()` or destructured from `props()`. */
+/** What each name holds: from `variable()` or `variable.compute()`. */
 export function variableKinds(script: string): Map<string, VariableKind> {
   const kinds = new Map<string, VariableKind>();
   const declared = new Map<string, number>();
@@ -61,9 +62,6 @@ export function variableKinds(script: string): Map<string, VariableKind> {
   };
   for (const match of script.matchAll(VARIABLE_DECLARATION)) {
     remember(match[1] ?? "", match[2] ? "computed" : "variable", match.index);
-  }
-  for (const match of script.matchAll(PROPS_DESTRUCTURING)) {
-    for (const name of boundNames(match[1] ?? "")) remember(name, "prop", match.index);
   }
   return kinds;
 }

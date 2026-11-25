@@ -155,7 +155,7 @@ describe("config file errors", () => {
     ['{ "lint": { "rules": [] } }', '"lint.rules" must be an object'],
     [
       '{ "lint": { "rules": { "nope": "warn" } } }',
-      'unknown lint rule "nope", allowed: unused-import, props-twice, unknown-prop, empty-expression, style-attribute, animate-keyframes, animate-key, scroll-old-form, flow-chain, bind-target',
+      'unknown lint rule "nope", allowed: unused-import, unknown-prop, prop-choice, empty-expression, style-attribute, animate-keyframes, animate-key, scroll-old-form, flow-chain, bind-target',
     ],
     [
       '{ "lint": { "rules": { "unused-import": "info" } } }',

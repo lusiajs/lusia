@@ -207,4 +207,16 @@ export const COMPILE_CODES = {
     message: "<NO_SSR /> takes no children",
     hint: "Write it as <NO_SSR /> with no content between the tags.",
   },
+  L1054: {
+    message: "props() is called twice",
+    hint: "Call props(class { ... }) once per component.",
+  },
+  L1055: {
+    message: "props() takes a class",
+    hint: "Write `const { name } = props(class { name = default; })`.",
+  },
+  L1056: {
+    message: "`$name` is a prop, so it can't be declared again",
+    hint: "Pick another name, or read it as an object: `const p = props(class {...})`.",
+  },
 } as const satisfies Record<string, ErrorCode>;

@@ -1,11 +1,13 @@
 <script>
-  import { props } from "lusiajs";
-
-  const { id, note } = props({ id: "", note: "" });
+import { props } from "lusiajs";
+  const { id, note } = props(class {
+    id = "";
+    note = "";
+  });
 </script>
 
 <head>
-  <title>Post {id.value} - Site</title>
+  <title>Post {id} - Site</title>
 </head>
 
-<textarea>{note.value}</textarea>
+<textarea>{note}</textarea>

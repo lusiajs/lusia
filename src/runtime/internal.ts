@@ -20,6 +20,7 @@ export { lazyComponent } from "./dom/lazy/lazy.ts";
 export { bindInput } from "./dom/bind/input.ts";
 export { writableTarget } from "./dom/bind/channel.ts";
 export { bindProp } from "./dom/bind/property.ts";
+export { propTarget } from "./dom/component/props.ts";
 export { bindElement } from "./dom/bind/element.ts";
 export { bindIf } from "./dom/blocks/if.ts";
 export { bindEach, followItem } from "./dom/blocks/each.ts";

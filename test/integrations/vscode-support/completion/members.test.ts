@@ -33,11 +33,6 @@ describe("memberItems", () => {
     expect(items[2]?.detail).toBe(computedType[1] ?? "");
   });
 
-  test("lists set() but no onUpdate() on a prop", () => {
-    const items = memberItems("prop");
-    expect(items.map((item) => item.label)).toEqual(["value", "get", "set", "peek"]);
-    expect(items[0]?.detail).toBe(variableType[0] ?? "");
-  });
 });
 
 describe("namespaceMemberItems", () => {

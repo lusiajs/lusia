@@ -3,8 +3,8 @@ import type { PropDef } from "../parse/props.ts";
 
 export const LINT_RULE_CODES = [
   "unused-import",
-  "props-twice",
   "unknown-prop",
+  "prop-choice",
   "empty-expression",
   "style-attribute",
   "animate-keyframes",

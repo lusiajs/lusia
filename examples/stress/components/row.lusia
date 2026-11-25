@@ -1,7 +1,9 @@
 <script>
   import { props } from "lusiajs";
-
-  const { label, value } = props({ label: "", value: 0 });
+  const { label, value } = props(class {
+    label = "";
+    value = 0;
+  });
 </script>
 
 <div class="row">

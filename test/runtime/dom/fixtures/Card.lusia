@@ -1,7 +1,8 @@
 <script>
 import { props } from "lusiajs";
-
-const { title } = props({ title: "Card" });
+const { title } = props(class {
+  title = "Card";
+});
 </script>
 
 <section class="card">

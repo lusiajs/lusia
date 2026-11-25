@@ -1,10 +1,13 @@
 <script>
-import { props, variable } from "lusiajs";
+import { props } from "lusiajs";
+import { variable } from "lusiajs";
 import Tree from "./Tree.lusia";
 
-const { node } = props({ node: { name: "", children: [] } });
+const { node } = props(class {
+  node = { name: "", children: [] };
+});
 const open = variable(true);
-const children = variable.compute(() => node.value.children);
+const children = variable.compute(() => node.children);
 
 function toggle() {
   open.value = !open.value;
@@ -12,7 +15,7 @@ function toggle() {
 </script>
 
 <li class="tree-node">
-  <button class="toggle" onclick={toggle}>{node.value.name}</button>
+  <button class="toggle" onclick={toggle}>{node.name}</button>
   <IF {open}>
     <ul>
       <EACH {children} as={child} key={child.name}>

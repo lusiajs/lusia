@@ -3,7 +3,7 @@ import type { ErrorCode } from "../../codes.ts";
 export const RUNTIME_COMPONENT_CODES = {
   L2040: {
     message: "props() can only be called in a component's <script>",
-    hint: "Call props() at the top level of a .lusia <script>.",
+    hint: "Call `props(class { ... })` at the top level of a .lusia <script>.",
   },
   L2058: {
     message: "$prop is read-only in this component",

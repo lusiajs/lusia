@@ -178,4 +178,28 @@ const rows = [];
     ]);
     expect(result.unsafeDynamic).toBe(true);
   });
+
+  test("a prop with a literal union adds its choices and stays safe", () => {
+    const source = `<script>\nimport { props } from "lusiajs";\nconst { tone } = props(class {\n  tone: "info" | "warn" = "info";\n});\n</script>\n<span class="badge {tone}"></span>`;
+    const result = markupClasses(source);
+    expect(result.used.has("info")).toBe(true);
+    expect(result.used.has("warn")).toBe(true);
+    expect(result.unsafeDynamic).toBe(false);
+  });
+
+  test("a prop without choices is unsafe", () => {
+    const source = `<script>\nimport { props } from "lusiajs";\nconst { tone } = props(class {\n  tone = "info";\n});\n</script>\n<span class="badge {tone}"></span>`;
+    expect(markupClasses(source).unsafeDynamic).toBe(true);
+  });
+
+  test("an object-form prop with a literal union adds its choices and stays safe", () => {
+    const source = `<script>\nimport { props } from "lusiajs";\nconst p = props(class {\n  tone: "info" | "warn" = "info";\n});\n</script>\n<span class="badge {p.tone}"></span>`;
+    const result = markupClasses(source);
+    expect(result.used.has("warn")).toBe(true);
+    expect(result.unsafeDynamic).toBe(false);
+  });
+
+  test("a prop read that is not declared is unsafe", () => {
+    expect(markupClasses('<span class="badge {props.tone}"></span>').unsafeDynamic).toBe(true);
+  });
 });

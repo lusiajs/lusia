@@ -1,11 +1,11 @@
 import { apiKey, findApiById, importableApi } from "../api-lookup.ts";
 import type { CompletionItemData, CompletionKind } from "../completion-data.ts";
 
-export type VariableKind = "variable" | "computed" | "prop";
+export type VariableKind = "variable" | "computed";
 
 const NAMESPACE_ROOT = "variable";
 
-/** The members of a variable, a computed variable or a prop, described from reference/api.ts. */
+/** The members of a variable or a computed variable, described from reference/api.ts. */
 export function memberItems(kind: VariableKind): CompletionItemData[] {
   const type = findApiById(kind === "computed" ? "computed-variable-type" : "variable-type");
   const bullets = type?.bullets ?? [];

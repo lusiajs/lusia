@@ -23,7 +23,7 @@ export interface ScriptItem extends CompletionItemData {
   importName?: string;
 }
 
-const PROPS_SNIPPET = 'props({ ${1:label}: ${2:"New"} })';
+const PROPS_SNIPPET = 'const { ${1:label} } = props(class {\n\t${1:label} = ${2:"New"};\n});';
 
 const SCRIPT_KINDS: Record<ApiEntry["kind"], CompletionKind> = {
   function: "function",
@@ -46,14 +46,14 @@ export function scriptItems(): ScriptItem[] {
     };
   });
   const propsItem: ScriptItem = {
-    label: "props({ ... })",
+    label: "props",
     kind: "snippet",
     insertText: PROPS_SNIPPET,
     snippet: true,
     detail: "Declare props with defaults",
     importName: "props",
   };
-  return [...apiItems, propsItem];
+  return [...apiItems.filter((item) => item.label !== propsItem.label), propsItem];
 }
 
 export function tagNameItems(imports: LusiaImport[]): CompletionItemData[] {

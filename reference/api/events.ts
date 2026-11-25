@@ -13,7 +13,7 @@ export const eventEntries: ApiEntry[] = [
       "Pass a function by name, or an arrow function inline. It gets the DOM event.",
       "The handler is read once, when the component is placed. It is not reactive.",
       "The listener is removed when the component is detached.",
-      "On a child component, onclick is a normal prop. The child reads it with props().",
+      "On a child component, onclick is a normal prop. The child lists it in its props(class {...}).",
     ],
     example: `<script>\nimport { variable } from "lusiajs";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
   },

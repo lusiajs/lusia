@@ -77,8 +77,8 @@
           "description": "Severity of each lint rule: off hides it, warn shows it, error fails lusia lint",
           "properties": {
             "unused-import": { "enum": ["off", "warn", "error"] },
-            "props-twice": { "enum": ["off", "warn", "error"] },
             "unknown-prop": { "enum": ["off", "warn", "error"] },
+            "prop-choice": { "enum": ["off", "warn", "error"] },
             "empty-expression": { "enum": ["off", "warn", "error"] },
             "style-attribute": { "enum": ["off", "warn", "error"] },
             "animate-keyframes": { "enum": ["off", "warn", "error"] },

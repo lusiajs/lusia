@@ -45,13 +45,6 @@ attach(Badge, document.body);
     expect(codes(source)).toEqual([]);
   });
 
-  test("props-twice flags the second props() call", () => {
-    const source =
-      '<script>\nimport { props } from "lusiajs";\nprops({ a: 1 });\nprops({ b: 2 });\n</script>';
-    const issues = lintLusia(source, childProps);
-    expect(issues.map((issue) => [issue.code, issue.line])).toEqual([["props-twice", 4]]);
-  });
-
   test("unknown-prop flags an attribute the child does not declare", () => {
     const issues = lintLusia(`${BADGE_IMPORT}<p>x</p>\n<Badge label="x" size="2" />`, childProps);
     expect(issues.map((issue) => [issue.code, issue.line])).toEqual([["unknown-prop", 5]]);

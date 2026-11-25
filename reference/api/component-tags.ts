@@ -61,7 +61,7 @@ export const componentTagEntries: ApiEntry[] = [
       "There is no depth limit. Add one with a prop and an IF, as the comments demo does.",
       "Each instance has its own state, so each folder keeps its own open flag.",
     ],
-    example: `<script>\n  import { props, variable } from "lusiajs";\n  import Folder from "./Folder.lusia";\n\n  const { item } = props({ item: { name: "" } });\n  const open = variable(true);\n  const children = variable.compute(() => item.value.children ?? []);\n\n  function toggle() {\n    open.value = !open.value;\n  }\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </IF>\n</li>`,
+    example: `<script>\n  import { props, variable } from "lusiajs";\n  import Folder from "./Folder.lusia";\n\n  const { item } = props(class {\n    item = { name: "" };\n  });\n  const open = variable(true);\n  const children = variable.compute(() => item.children ?? []);\n\n  function toggle() {\n    open.value = !open.value;\n  }\n</script>\n\n<li>\n  <IF {item.children}>\n    <button onclick={toggle}>{item.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  <ELSE>\n    <span>{item.name}</span>\n  </IF>\n</li>`,
   },
   {
     id: "content",

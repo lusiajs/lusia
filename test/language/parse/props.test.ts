@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { objectEntries } from "#language/format/object-literal.ts";
-import { parsePropDefs } from "#language/parse/props.ts";
+import { findPropsCall, parsePropDefs } from "#language/parse/props.ts";
 
 describe("object entries", () => {
   test("splits top-level entries and ignores commas in strings", () => {
@@ -15,32 +15,80 @@ describe("object entries", () => {
   });
 });
 
-describe("props", () => {
-  test("reads keys and their default text", () => {
-    const source = `const { label, tone } = props({ label: "New", tone: "info" });`;
+describe("parsePropDefs", () => {
+  test("reads names, types and default text", () => {
+    const source = `const { label, tone, user, count } = props(class {
+  label = "New";
+  tone: "info" | "warn" = "info";
+  user: User | null = null;
+  count?: number;
+});`;
     expect(parsePropDefs(source)).toEqual([
       { name: "label", defaultValue: '"New"' },
-      { name: "tone", defaultValue: '"info"' },
+      { name: "tone", type: '"info" | "warn"', defaultValue: '"info"', choices: ["info", "warn"] },
+      { name: "user", type: "User | null", defaultValue: "null" },
+      { name: "count", type: "number", optional: true },
     ]);
   });
 
-  test("handles nested defaults", () => {
-    const source = `props({ items: [1, 2], opts: { a: "}" }, flag: true })`;
+  test("reads a whole .lusia file through its script", () => {
+    const source = `<script>\nconst { label } = props(class {\n  label = "New";\n});\n</script>\n<b>{label}</b>`;
+    expect(parsePropDefs(source)).toEqual([{ name: "label", defaultValue: '"New"' }]);
+  });
+
+  test("keeps nested generics and object defaults together", () => {
+    const source = `const p = props(class {
+  items: Map<string, Array<number>> = new Map();
+  opts = { a: "}", b: [1, 2] };
+});`;
     expect(parsePropDefs(source)).toEqual([
-      { name: "items", defaultValue: "[1, 2]" },
-      { name: "opts", defaultValue: `{ a: "}" }` },
-      { name: "flag", defaultValue: "true" },
+      { name: "items", type: "Map<string, Array<number>>", defaultValue: "new Map()" },
+      { name: "opts", defaultValue: '{ a: "}", b: [1, 2] }' },
     ]);
   });
 
-  test("handles shorthand and quoted keys", () => {
-    expect(parsePropDefs(`props({ label, "data-x": 3 })`)).toEqual([
-      { name: "label" },
-      { name: "data-x", defaultValue: "3" },
-    ]);
+  test("skips comments, methods, getters and static members", () => {
+    const source = `const { label, tone } = props(class {
+  // not a prop
+  label = "New"; /* also not */ tone = "info" // trailing
+  static shared = 1;
+  get size() { return 1; }
+  format() { return "x"; }
+});`;
+    expect(parsePropDefs(source).map((prop) => prop.name)).toEqual(["label", "tone"]);
+    expect(parsePropDefs(source)[0]).toEqual({ name: "label", defaultValue: '"New"' });
   });
 
-  test("returns nothing without a props call", () => {
+  test("returns nothing without a props() call", () => {
     expect(parsePropDefs("const x = { label: 1 };")).toEqual([]);
+  });
+});
+
+describe("findPropsCall", () => {
+  test("finds a destructured call and its names", () => {
+    const script = `const a = 1;\nlet { label, count } = props(class {\n  label = "New";\n  count?: number;\n});\nconst b = 2;`;
+    const call = findPropsCall(script);
+    expect(call?.names).toEqual(["label", "count"]);
+    expect(call?.binding).toEqual({ kind: "destructure", names: ["label", "count"] });
+    expect(script.slice(call!.start, call!.end)).toBe(
+      'let { label, count } = props(class {\n  label = "New";\n  count?: number;\n})',
+    );
+    expect(script.slice(call!.classStart, call!.classEnd)).toBe(
+      'class {\n  label = "New";\n  count?: number;\n}',
+    );
+  });
+
+  test("finds an object binding", () => {
+    const call = findPropsCall(`const p = props(class { tone: "info" | "warn" = "info"; });`);
+    expect(call?.binding).toEqual({ kind: "object", name: "p" });
+    expect(call?.names).toEqual(["tone"]);
+  });
+
+  test("ignores the words inside a string", () => {
+    expect(findPropsCall(`const s = "const { a } = props(class {";`)).toBeUndefined();
+  });
+
+  test("returns nothing for the old object form", () => {
+    expect(findPropsCall("const { a } = props({ a: 1 });")).toBeUndefined();
   });
 });

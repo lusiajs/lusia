@@ -1,7 +1,8 @@
 <script>
 import { props } from "lusiajs";
-
-const { value } = props({ value: "" });
+const { value } = props(class {
+  value = "";
+});
 </script>
 
 <label class="field">

@@ -3,6 +3,7 @@ import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";
 import type { PropDef } from "#language/parse/props.ts";
+import { propSignature } from "./completion/declared-props.ts";
 import type { ScriptSymbol } from "./script/symbols.ts";
 
 export function hoverMarkdown(result: HoverResult): string {
@@ -92,9 +93,7 @@ function componentMarkdown(name: string, props: PropDef[]): string {
 }
 
 function propLine(prop: PropDef): string {
-  return prop.defaultValue === undefined
-    ? `- \`${prop.name}\``
-    : `- \`${prop.name}\` = \`${prop.defaultValue}\``;
+  return `- \`${propSignature(prop)}\``;
 }
 
 function fence(language: string, code: string): string {

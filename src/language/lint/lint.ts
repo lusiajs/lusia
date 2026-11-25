@@ -7,7 +7,7 @@ import { animateKeys } from "./rules/animate-keys.ts";
 import { bindTargets } from "./rules/bind-targets.ts";
 import { emptyExpression } from "./rules/empty-expression.ts";
 import { flowChain } from "./rules/flow-chain.ts";
-import { propsTwice } from "./rules/props-twice.ts";
+import { propChoice } from "./rules/prop-choice.ts";
 import { scrollLines } from "./rules/scroll-lines.ts";
 import { styleAttribute } from "./rules/style-attribute.ts";
 import { unknownProp } from "./rules/unknown-prop.ts";
@@ -31,8 +31,8 @@ export type {
 
 const RULES: LintRule[] = [
   unusedImport,
-  propsTwice,
   unknownProp,
+  propChoice,
   emptyExpression,
   styleAttribute,
   animateAttributes,

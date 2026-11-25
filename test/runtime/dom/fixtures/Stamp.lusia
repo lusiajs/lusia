@@ -1,8 +1,11 @@
 <script>
-import { onAttach, props } from "lusiajs";
+import { props } from "lusiajs";
+import { onAttach } from "lusiajs";
 import { updateState } from "./update-state.ts";
 
-const { label } = props({ label: "" });
+const { label } = props(class {
+  label = "";
+});
 
 onAttach(() => {
   updateState.attaches.value++;

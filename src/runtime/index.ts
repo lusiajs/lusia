@@ -17,7 +17,7 @@ export type {
 } from "./listen/events.ts";
 export type { ListenOptions, Stop } from "./listen/sources.ts";
 export { props } from "./dom/component/props.ts";
-export type { Prop, PropVariables } from "./dom/component/props.ts";
+export type { Prop } from "./dom/component/props.ts";
 export type { Component, Instance, Props } from "./dom/component/component.ts";
 export { lazy } from "./dom/lazy/lazy.ts";
 export type { EaseStyle } from "./animate/modes/easing.ts";

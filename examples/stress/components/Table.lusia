@@ -3,7 +3,9 @@
   import row from "./row.lusia";
   import { rowValue } from "../variable.ts";
 
-  const { id } = props({ id: 0 });
+  const { id } = props(class {
+    id = 0;
+  });
 </script>
 
 <section class="table">

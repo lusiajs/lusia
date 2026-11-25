@@ -1,7 +1,8 @@
 <script>
 import { props } from "lusiajs";
-
-const { label } = props({ label: "" });
+const { label } = props(class {
+  label = "";
+});
 </script>
 
 <b class="tag">{label}</b>

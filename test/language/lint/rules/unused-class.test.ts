@@ -190,4 +190,35 @@ describe("unused-class", () => {
       ],
     ]);
   });
+
+  test("a prop with choices marks each choice used and reports the rest", () => {
+    const source = `<script>
+import { props } from "lusiajs";
+const { tone } = props(class {
+  tone: "info" | "warn" = "info";
+});
+</script>
+<style>
+.warn { color: red; }
+.test { color: blue; }
+</style>
+<span class="badge {tone}"></span>`;
+    expect(unusedClasses(source).map(([message]) => message)).toEqual([
+      '".test" is not used. No element in this component or its child components has this class.',
+    ]);
+  });
+
+  test("a prop without choices makes the classes unknown, so nothing is reported", () => {
+    const source = `<script>
+import { props } from "lusiajs";
+const { tone } = props(class {
+  tone = "info";
+});
+</script>
+<style>
+.test { color: blue; }
+</style>
+<span class="badge {tone}"></span>`;
+    expect(unusedClasses(source)).toEqual([]);
+  });
 });

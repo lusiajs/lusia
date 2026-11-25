@@ -29,10 +29,11 @@ describe("script completions", () => {
     });
   });
 
-  test("offers the props snippet", () => {
-    const props = items.find((item) => item.label === "props({ ... })");
+  test("offers the props snippet and adds the props import", () => {
+    const props = items.find((item) => item.label === "props");
     expect(props?.snippet).toBe(true);
-    expect(props?.insertText.startsWith("props({")).toBe(true);
+    expect(props?.insertText.startsWith("const { ${1:label} } = props(class {")).toBe(true);
+    expect(props?.importEdit?.text).toBe('import { props } from "lusiajs";\n');
   });
 
   test("offers onAttach, which is a lusia export", () => {
@@ -427,12 +428,34 @@ describe("script member completions", () => {
     expect(labels).toEqual(["value", "get", "peek"]);
   });
 
-  test("offers set() but no onUpdate() on a prop", () => {
-    const labels = memberLabels(
-      `<script>\nconst { label } = props({ label: "x" });\nlabel.`,
-      "label.",
-    );
-    expect(labels).toEqual(["value", "get", "set", "peek"]);
+  test("offers the declared props after the holder of props(class {...})", () => {
+    const text = `<script>\nconst p = props(class {\n  label = "x";\n  tone: "info" | "warn" = "info";\n});\np.`;
+    const items = completionsAt(text, text.length, noProps);
+    expect(items.map((item) => [item.label, item.detail])).toEqual([
+      ["label", "default \"x\""],
+      ["tone", '"info" | "warn"'],
+    ]);
+  });
+
+  test("offers the declared props after the holder in markup", () => {
+    const text = `<script>\nconst p = props(class {\n  label = "x";\n});\n</script>\n<b>{p.`;
+    const labels = completionsAt(text, text.length, noProps).map((item) => item.label);
+    expect(labels).toEqual(["label"]);
+  });
+
+  test("gives a destructured prop its type or default as detail", () => {
+    const text = `<script>\nconst { label, tone } = props(class {\n  label = "x";\n  tone: "info" | "warn" = "info";\n});\nla\n</script>`;
+    const items = completionsAt(text, text.indexOf("\nla") + 3, noProps);
+    expect(items.find((item) => item.label === "label")?.detail).toBe('default "x"');
+  });
+
+  test("offers the choices of a prop inside its quoted value", () => {
+    const text = `${BADGE_SCRIPT}\n<Badge tone="`;
+    const lookup = () => [
+      { name: "tone", type: '"info" | "warn"', choices: ["info", "warn"], defaultValue: '"info"' },
+    ];
+    const labels = completionsAt(text, text.length, lookup).map((item) => item.label);
+    expect(labels).toEqual(["info", "warn"]);
   });
 
   test("offers the namespaced variable functions after variable.", () => {

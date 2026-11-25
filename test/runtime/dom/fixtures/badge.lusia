@@ -1,7 +1,10 @@
 <script>
 import { props } from "lusiajs";
-
-const { label, tone, flag } = props({ label: "New", tone: "info", flag: false });
+const { label, tone, flag } = props(class {
+  label = "New";
+  tone = "info";
+  flag = false;
+});
 </script>
 
 <span class="badge {tone}" data-flag={flag}>{label}</span>

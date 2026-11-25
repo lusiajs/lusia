@@ -16,6 +16,7 @@ import {
   markupAttributeItems,
 } from "./completion/markup-items.ts";
 import { enumMembersAt } from "./completion/enum-members.ts";
+import { propValueItems } from "./completion/declared-props.ts";
 import { findComponentImport, scriptImports } from "#language/parse/imports.ts";
 import { inExpressionAt } from "#language/format/format-expressions.ts";
 import type { PropDef } from "#language/parse/props.ts";
@@ -104,5 +105,6 @@ function markupCompletions(
   if (tag.name === "style") return STYLE_ATTRIBUTE_ITEMS;
   if (isFlowTag(tag.name)) return flowAttributeItems(tag.name);
   if (!findComponentImport(text, tag.name)) return markupAttributeItems(tag.name);
-  return propItems(propsOf(tag.name));
+  const props = propsOf(tag.name);
+  return propValueItems(text, offset, props) ?? propItems(props);
 }

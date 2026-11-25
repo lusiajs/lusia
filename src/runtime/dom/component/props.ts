@@ -2,7 +2,7 @@ import { runtimeError } from "../../errors.ts";
 import { variable } from "../../variable/variable.ts";
 import type { Variable } from "../../variable/variable.ts";
 import { REACTIVE } from "../../variable/reactive.ts";
-import { currentComponentHost } from "./component.ts";
+import { currentComponentHost, type Host } from "./component.ts";
 
 /** A prop as the component sees it. Writing it sets the parent's variable when the parent bound it. */
 export interface Prop<T> {
@@ -12,8 +12,6 @@ export interface Prop<T> {
   peek(): T;
   readonly [REACTIVE]: true;
 }
-
-export type PropVariables<D> = { readonly [K in keyof D]: Prop<D[K]> };
 
 function readOnlyProp<T>(key: string, read: (() => unknown) | undefined, fallback: T): Prop<T> {
   const computed = variable.compute(() => read?.() ?? fallback);
@@ -53,16 +51,38 @@ function boundProp<T>(target: Variable<unknown>, fallback: T): Prop<T> {
   };
 }
 
+function propFor<T>(host: Host, key: string, fallback: T): Prop<T> {
+  const target = host.bound[key];
+  return target ? boundProp(target, fallback) : readOnlyProp(key, host.props[key], fallback);
+}
+
+const targets = new WeakMap<object, Record<string, Prop<unknown>>>();
+
+/** The prop behind `props.name`, for `bind-x={props.name}`. */
+export function propTarget(declared: object, key: string): Prop<unknown> | undefined {
+  return targets.get(declared)?.[key];
+}
+
 // A passed value is read-only unless the parent binds it with bind-<prop>.
-export function props<D extends Record<string, unknown>>(defaults: D): PropVariables<D> {
+export function props<C extends new () => object>(
+  Declared: C,
+  keys: readonly string[] = Object.keys(new Declared()),
+): InstanceType<C> {
   const host = currentComponentHost();
-  const variables = {} as Record<string, Prop<unknown>>;
-  for (const key in defaults) {
-    const target = host.bound[key];
-    const fallback = defaults[key];
-    variables[key] = target
-      ? boundProp(target, fallback)
-      : readOnlyProp(key, host.props[key], fallback);
+  const defaults = new Declared() as Record<string, unknown>;
+  const variables = {};
+  const byKey: Record<string, Prop<unknown>> = {};
+  targets.set(variables, byKey);
+  for (const key of keys) {
+    const prop = propFor(host, key, defaults[key]);
+    byKey[key] = prop;
+    Object.defineProperty(variables, key, {
+      get: () => prop.value,
+      set: (next: unknown) => {
+        prop.value = next;
+      },
+      enumerable: true,
+    });
   }
-  return variables as PropVariables<D>;
+  return variables as InstanceType<C>;
 }

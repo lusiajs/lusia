@@ -181,7 +181,9 @@ ${markup}`;
   test("CONTENT keeps the parent's children when the component is swapped", async () => {
     const card = (tag: string): string => `<script>
 import { props } from "lusiajs";
-const { title } = props({ title: "" });
+const { title } = props(class {
+  title = "";
+});
 </script>
 <${tag} class="card">{title}<CONTENT /></${tag}>`;
     await sourceFile("SlotCard", card("section"));

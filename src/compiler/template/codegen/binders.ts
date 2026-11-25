@@ -25,7 +25,7 @@ function propsObject({ props, binds }: ComponentBinding, ctx: GenContext): strin
 function boundObject({ binds }: ComponentBinding, ctx: GenContext): string {
   const entries = binds.map(({ prop, attr, expr }) => {
     const at = trailingArg(ctx.whereOf(expr));
-    return `${JSON.stringify(prop)}: __writableTarget((${markedCode(expr)}), ${JSON.stringify(attr)}${at})`;
+    return `${JSON.stringify(prop)}: __writableTarget((${ctx.target(expr)}), ${JSON.stringify(attr)}${at})`;
   });
   return `{ ${entries.join(", ")} }`;
 }

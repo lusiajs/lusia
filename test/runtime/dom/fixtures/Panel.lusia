@@ -1,7 +1,8 @@
 <script>
 import { props } from "lusiajs";
-
-const { open } = props({ open: true });
+const { open } = props(class {
+  open = true;
+});
 </script>
 
 <IF {open}>

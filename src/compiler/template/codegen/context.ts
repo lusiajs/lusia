@@ -1,5 +1,5 @@
 import { formatWhere } from "#compiler/errors/where.ts";
-import { markedCode } from "#compiler/sourcemap/marker.ts";
+import { markedCode, markedTarget } from "#compiler/sourcemap/marker.ts";
 import { lineAt, columnAt, lineStarts } from "#compiler/utils/position.ts";
 import { bindersOf } from "./binders.ts";
 import { unknownKeysAt } from "../check/animate-keys.ts";
@@ -16,6 +16,7 @@ export interface GenOptions {
   /** The whole .lusia file, and where its script sits in it. Dev builds use them to find keys. */
   source: string;
   script: ScriptRange;
+  propsHolder?: string;
 }
 
 /** Module-level declarations and names for one generated module. */
@@ -73,6 +74,10 @@ export class GenContext {
   /** A render function for a block body. `params` is the parameter list, ending with the cleanups and leaves. */
   body(template: Template, params: string): string {
     return `(${params}) => ${this.fragment(template)}`;
+  }
+
+  target(expr: Expr): string {
+    return markedTarget(expr, this.options.propsHolder);
   }
 
   /** A watched read of a markup expression. Inside EACH rows it first refreshes each row item, so it follows item updates. */

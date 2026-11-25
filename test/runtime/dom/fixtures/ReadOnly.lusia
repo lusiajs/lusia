@@ -1,12 +1,15 @@
 <script>
-import { props, variable } from "lusiajs";
+import { props } from "lusiajs";
+import { variable } from "lusiajs";
 
-const { label } = props({ label: "none" });
+const { label } = props(class {
+  label = "none";
+});
 const failure = variable("");
 
 function tryWrite() {
   try {
-    label.value = "changed";
+    label = "changed";
   } catch (error) {
     failure.value = (error as Error).message;
   }

@@ -1,11 +1,12 @@
 <script>
-  import { props } from "lusiajs";
-
-  const { title } = props({ title: "" });
+import { props } from "lusiajs";
+  const { title } = props(class {
+    title = "";
+  });
 </script>
 
 <head>
-  <title>{title.value}</title>
+  <title>{title}</title>
   <meta name="description" content="Component description" />
   <meta name="keywords" content="lusia" />
 </head>

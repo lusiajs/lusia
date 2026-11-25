@@ -21,7 +21,7 @@ export const variableTypeEntries: ApiEntry[] = [
     kind: "type",
     group: "reactivity",
     signature: "interface ComputedVariable<T> { readonly value: T; get(): T; peek(): T }",
-    summary: "The type returned by variable.compute() and props().",
+    summary: "The type returned by variable.compute().",
     bullets: [
       "value and get() read it. It has no set().",
       "peek() reads without tracking.",
