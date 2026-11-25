@@ -1,6 +1,6 @@
 {
   "name": "lusiajs",
-  "version": "0.1.5-beta",
+  "version": "0.2.0-beta",
   "description": "Write UI in one file. Small, fast updates, with motion built in. Built for Bun.",
   "license": "MIT",
   "type": "module",
