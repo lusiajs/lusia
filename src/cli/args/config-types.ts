@@ -15,7 +15,7 @@ export interface CacheConfig {
 export interface LusiaConfig {
   outdir?: string;
   minify?: boolean;
-  routes?: string[];
+  routes?: Record<string, string>;
   cache?: CacheConfig;
   dev?: { port?: number };
   lazy?: { mode?: LazyMode; prefetch?: LazyPrefetch };

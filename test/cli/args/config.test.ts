@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { readConfig } from "#cli/args/config.ts";
@@ -18,6 +18,11 @@ function appWith(json: string): string {
   return dir;
 }
 
+function writePage(dir: string, file: string): void {
+  mkdirSync(join(dir, file, ".."), { recursive: true });
+  writeFileSync(join(dir, file), "<p>page</p>\n");
+}
+
 function appWithTs(source: string): string {
   const dir = appFolder();
   writeFileSync(join(dir, "lusia.config.ts"), source);
@@ -30,23 +35,23 @@ describe("readConfig", () => {
   });
 
   test("reads every known key", async () => {
-    const config = await readConfig(
-      appWith(
-        JSON.stringify({
-          $schema: "./node_modules/lusiajs/config.schema.json",
-          outdir: "out",
-          minify: false,
-          routes: ["/guide"],
-          dev: { port: 4000 },
-          lazy: { mode: "all", prefetch: "view" },
-          lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
-        }),
-      ),
+    const dir = appWith(
+      JSON.stringify({
+        $schema: "./node_modules/lusiajs/config.schema.json",
+        outdir: "out",
+        minify: false,
+        routes: { "/guide": "src/pages/Guide.lusia" },
+        dev: { port: 4000 },
+        lazy: { mode: "all", prefetch: "view" },
+        lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
+      }),
     );
+    writePage(dir, "src/pages/Guide.lusia");
+    const config = await readConfig(dir);
     expect(config).toEqual({
       outdir: "out",
       minify: false,
-      routes: ["/guide"],
+      routes: { "/guide": "src/pages/Guide.lusia" },
       dev: { port: 4000 },
       lazy: { mode: "all", prefetch: "view" },
       lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
@@ -119,7 +124,29 @@ describe("config file errors", () => {
     ['{ "lazy": { "prefetch": "soon" } }', '"lazy.prefetch" must be one of: idle, view, none'],
     ['{ "dev": { "port": 70000 } }', '"dev.port" must be a whole number from 0 to 65535'],
     ['{ "dev": { "host": "x" } }', 'unknown key "host" in "dev", allowed: port'],
-    ['{ "routes": ["guide"] }', 'invalid route "guide", use a path such as /guide'],
+    [
+      '{ "routes": ["/guide"] }',
+      '"routes" is now a map of path to page file, such as { "/guide": "src/pages/Guide.lusia" }',
+    ],
+    ['{ "routes": { "guide": "a.lusia" } }', 'invalid route "guide", use a path such as /guide'],
+    ['{ "routes": { "/user/:": "a.lusia" } }', 'invalid route "/user/:"'],
+    ['{ "routes": { "/a/../b": "a.lusia" } }', 'invalid route "/a/../b"'],
+    [
+      '{ "routes": { "/guide": "guide.html" } }',
+      'route "/guide" must point to a .lusia file inside the app folder',
+    ],
+    [
+      '{ "routes": { "/guide": "../guide.lusia" } }',
+      'route "/guide" must point to a .lusia file inside the app folder',
+    ],
+    [
+      '{ "routes": { "/guide": "/abs/guide.lusia" } }',
+      'route "/guide" must point to a .lusia file inside the app folder',
+    ],
+    [
+      '{ "routes": { "/guide": "src/missing.lusia" } }',
+      'route "/guide" points to a file that does not exist: src/missing.lusia',
+    ],
     ['{ "minify": "yes" }', '"minify" must be true or false'],
     ['{ "lint": { "extra": 1 } }', 'unknown key "extra" in "lint", allowed: rules'],
     ['{ "lint": { "rules": [] } }', '"lint.rules" must be an object'],
@@ -143,17 +170,18 @@ describe("config file errors", () => {
 
 describe("CLI merge", () => {
   test("the file sets the build options and flags win", async () => {
-    const dir = appWith(JSON.stringify({ outdir: "out", minify: false, routes: ["/guide"] }));
+    const dir = appWith(
+      JSON.stringify({ outdir: "out", minify: false, routes: { "/guide": "Guide.lusia" } }),
+    );
+    writePage(dir, "Guide.lusia");
     expect(await parseCommand(["build", dir], {})).toMatchObject({
       outdir: join(dir, "out"),
       minify: false,
-      routes: ["/guide"],
+      routes: { "/guide": "Guide.lusia" },
     });
-    expect(
-      await parseCommand(["build", dir, "--outdir", "flag", "--routes", "/reference"], {}),
-    ).toMatchObject({
+    expect(await parseCommand(["build", dir, "--outdir", "flag"], {})).toMatchObject({
       outdir: resolve("flag"),
-      routes: ["/reference"],
+      routes: { "/guide": "Guide.lusia" },
     });
   });
 

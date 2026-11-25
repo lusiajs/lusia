@@ -32,6 +32,7 @@ interface DevApp {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  routes: Record<string, string>;
   steps: Steps;
   changes: ModuleUpdate[];
   report: BuildReport;
@@ -43,12 +44,13 @@ export async function buildDev(
   lazy: LazySettings,
   animate?: AnimateConfig,
   screens?: Screens,
+  routes: Record<string, string> = {},
 ): Promise<DevBuild> {
   const steps: Steps = {};
   const changes: ModuleUpdate[] = [];
   const report = emptyReport(dir);
   const start = now();
-  const app: DevApp = { dir, cache, lazy, animate, screens, steps, changes, report };
+  const app: DevApp = { dir, cache, lazy, animate, screens, routes, steps, changes, report };
   let result = await bundleDevApp(app);
   const packagesBundled = result.success && (await cache.bundleMissing(result));
   if (packagesBundled) result = await bundleDevApp({ ...app, report: emptyReport(dir) });
@@ -81,6 +83,7 @@ function bundleDevApp(app: DevApp): Promise<Bun.BuildOutput> {
     lazy: app.lazy,
     animate: app.animate,
     screens: app.screens,
+    routes: app.routes,
     report: app.report,
     onUpdate: (update) => app.changes.push(update),
   });

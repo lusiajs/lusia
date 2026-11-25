@@ -16,11 +16,11 @@
       "description": "Minify the build. Default: true"
     },
     "routes": {
-      "type": "array",
-      "description": "Client routes that get their own index.html, such as /guide",
-      "items": {
+      "type": "object",
+      "description": "Client routes. Each key is a path that gets its own page: /guide, /user/:id for a part of the path, or * for the 404 page. Each value is a .lusia file inside the app folder.",
+      "additionalProperties": {
         "type": "string",
-        "description": "Starts with a slash and has no .."
+        "description": "A .lusia file inside the app folder, such as src/pages/Guide.lusia"
       }
     },
     "cache": {

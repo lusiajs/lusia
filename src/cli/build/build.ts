@@ -21,7 +21,7 @@ export interface BuildOptions {
   /** Absolute, or relative to the current folder. */
   outdir: string;
   minify: boolean;
-  routes?: string[];
+  routes?: Record<string, string>;
   quiet?: boolean;
   lazy: LazySettings;
   animate?: AnimateConfig;
@@ -60,6 +60,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     lazy: options.lazy,
     animate: options.animate,
     screens: options.screens,
+    routes: options.routes,
   });
   addBundleStep(steps, now() - bundleStart);
   if (!result.success) {
@@ -70,7 +71,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
 
   const writeStart = now();
   await writeOutputs(outdir, result.outputs);
-  await writeRouteIndexes(outdir, options.routes ?? []);
+  await writeRouteIndexes(outdir, options.routes ?? {});
   addStep(steps, "write", now() - writeStart);
 
   const copyStart = now();

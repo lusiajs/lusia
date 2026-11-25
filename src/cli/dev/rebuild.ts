@@ -43,6 +43,7 @@ interface RebuildOptions {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  routes: Record<string, string>;
   /** Style blocks the startup warm step compiled. The startup build reports these. */
   startStyles: StyleTiming[];
   /** Called after each successful build, once its files are published. */
@@ -60,6 +61,7 @@ export function createRebuild({
   lazy: startLazy,
   animate: startAnimate,
   screens: startScreens,
+  routes: startRoutes,
   startStyles,
 }: RebuildOptions): Rebuild {
   let busy = false;
@@ -69,6 +71,7 @@ export function createRebuild({
   let lazy = startLazy;
   let animate = startAnimate;
   let screens = startScreens;
+  let routes = startRoutes;
   let hotBuilder: HotBuilder = createHotBuilder(animate, screens);
   let latestReport: BuildReport | undefined;
 
@@ -76,6 +79,7 @@ export function createRebuild({
     lazy = config.lazy;
     animate = config.animate;
     screens = config.screens;
+    routes = config.routes ?? {};
     hotBuilder = createHotBuilder(animate, screens);
   }
 
@@ -98,7 +102,7 @@ export function createRebuild({
       applyConfig(config.config);
       await writeScreenTypes(root, config.config.screens);
     }
-    const build = await buildDev(root, cache, lazy, animate, screens);
+    const build = await buildDev(root, cache, lazy, animate, screens, routes);
     if (!build.ok) return report(build.messages);
     const buildReport = reportFor(change, build.report);
     latestReport = buildReport;

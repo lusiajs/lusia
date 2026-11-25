@@ -58,7 +58,11 @@ describe("readDevConfig", () => {
 
     expect(result).toEqual({
       ok: true,
-      config: { lazy: { mode: "smart", prefetch: "idle" }, animate: { duration: 250 } },
+      config: {
+        lazy: { mode: "smart", prefetch: "idle" },
+        animate: { duration: 250 },
+        routes: {},
+      },
     });
   });
 
@@ -69,7 +73,7 @@ describe("readDevConfig", () => {
 
     expect(result).toEqual({
       ok: true,
-      config: { lazy: { mode: "smart", prefetch: "idle" }, animate: {} },
+      config: { lazy: { mode: "smart", prefetch: "idle" }, animate: {}, routes: {} },
     });
   });
 

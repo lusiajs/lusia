@@ -13,7 +13,7 @@ describe("parseCommand", () => {
       dir: ".",
       outdir: resolve("dist"),
       minify: true,
-      routes: [],
+      routes: {},
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
@@ -27,7 +27,7 @@ describe("parseCommand", () => {
       dir: "app",
       outdir: resolve("out"),
       minify: false,
-      routes: [],
+      routes: {},
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
@@ -61,6 +61,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      routes: {},
       cache: ALL_CACHES,
     });
     expect(await parseCommand(["dev"], { PORT: "3100" })).toEqual({
@@ -70,6 +71,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      routes: {},
       cache: ALL_CACHES,
     });
     expect(await parseCommand(["dev", "--port", "3196"], { PORT: "3100" })).toEqual({
@@ -79,6 +81,7 @@ describe("parseCommand", () => {
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
       animate: {},
+      routes: {},
       cache: ALL_CACHES,
     });
   });

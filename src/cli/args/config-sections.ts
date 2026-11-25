@@ -12,7 +12,6 @@ import {
   asObject,
   checkKeys,
   configError,
-  isRoute,
   oneOf,
   optionalBoolean,
   type JsonObject,
@@ -100,14 +99,4 @@ function lintRuleCode(name: string): LintRuleCode | undefined {
 
 function isLintLevel(level: unknown): level is LintLevel {
   return typeof level === "string" && (LINT_LEVELS as readonly string[]).includes(level);
-}
-
-export function optionalRoutes(root: JsonObject): string[] | undefined {
-  if (root.routes === undefined) return undefined;
-  if (!Array.isArray(root.routes)) throw configError('"routes" must be a list of paths');
-  for (const route of root.routes) {
-    if (typeof route !== "string" || !isRoute(route))
-      throw configError(`invalid route "${String(route)}", use a path such as /guide`);
-  }
-  return root.routes as string[];
 }

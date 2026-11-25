@@ -10,6 +10,7 @@ import type { BunPlugin } from "bun";
 import { statSync } from "node:fs";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
+import { setupStart, type RoutePages } from "./start.ts";
 import type { AnimateConfig } from "#runtime/animate/options/config.ts";
 import type { Screens } from "#runtime/screen/screens.ts";
 
@@ -28,6 +29,8 @@ export interface LusiaPluginOptions {
   screens?: Screens;
   /** Receives the files compiled and the styles compiled in this build. */
   report?: BuildReport;
+  /** Client routes from lusia.config. Default: none. */
+  routes?: RoutePages;
 }
 
 export function lusia({
@@ -38,6 +41,7 @@ export function lusia({
   animate = {},
   screens,
   report,
+  routes,
 }: LusiaPluginOptions = {}): BunPlugin {
   return {
     name: "lusia",
@@ -75,6 +79,7 @@ export function lusia({
       });
       setupFallback(build, dev);
       setupRaw(build);
+      setupStart(build, routes);
     },
   };
 }

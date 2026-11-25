@@ -11,7 +11,7 @@ export type Command =
       dir: string;
       outdir: string;
       minify: boolean;
-      routes: string[];
+      routes: Record<string, string>;
       quiet: boolean;
       lazy: LazySettings;
       animate: AnimateConfig;
@@ -26,6 +26,7 @@ export type Command =
       lazy: LazySettings;
       animate: AnimateConfig;
       screens?: Screens;
+      routes: Record<string, string>;
       cache: CacheSettings;
     }
   | {

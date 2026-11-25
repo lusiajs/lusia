@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { BuildCache } from "./build-cache.ts";
 import { RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";
+import { routePages } from "./route-pages.ts";
 
 const ENTRY_FILE = "index.html";
 const INDEX_KEY = "index.html";
@@ -19,10 +20,12 @@ export function assetKey(path: string): string {
   return key || INDEX_KEY;
 }
 
-export interface BundleOptions extends LusiaPluginOptions {
+export interface BundleOptions extends Omit<LusiaPluginOptions, "routes"> {
   dir: string;
   minify: boolean;
   cache: BuildCache;
+  /** Route path to page file, relative to the app folder. */
+  routes?: Record<string, string>;
 }
 
 /** Bundles in memory. The caller writes the outputs, so the write time can be measured. */
@@ -30,6 +33,7 @@ export async function bundleApp({
   dir,
   minify,
   cache,
+  routes,
   ...plugin
 }: BundleOptions): Promise<Bun.BuildOutput> {
   const external = cache.externals();
@@ -41,6 +45,10 @@ export async function bundleApp({
     sourcemap: "linked",
     throw: false,
     external: plugin.dev ? [RUNTIME_SPECIFIER, ...external] : external,
-    plugins: [lusia(plugin), ...(plugin.dev ? [runtimeShim()] : []), ...cache.plugins()],
+    plugins: [
+      lusia({ ...plugin, routes: routePages(dir, routes ?? {}) }),
+      ...(plugin.dev ? [runtimeShim()] : []),
+      ...cache.plugins(),
+    ],
   });
 }

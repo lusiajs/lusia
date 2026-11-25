@@ -20,11 +20,10 @@ import {
   optionalFormat,
   optionalLazy,
   optionalLint,
-  optionalRoutes,
 } from "./config-sections.ts";
+import { checkRouteFiles, optionalRoutes } from "./config-routes.ts";
 
 export type { LusiaConfig };
-export { isRoute } from "./config-values.ts";
 
 const ROOT_KEYS = [
   "$schema",
@@ -49,7 +48,9 @@ export async function readConfig(dir: string): Promise<LusiaConfig> {
   const file = files[0];
   if (file === undefined) return {};
   try {
-    return await loadConfigFile(file);
+    const config = await loadConfigFile(file);
+    checkRouteFiles(config.routes, dir);
+    return config;
   } catch (error) {
     throw configFileError(basename(file), error);
   }

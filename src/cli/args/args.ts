@@ -1,6 +1,6 @@
 import { parseArgs } from "node:util";
 import type { Command } from "./command.ts";
-import { isRoute, readConfig } from "./config.ts";
+import { readConfig } from "./config.ts";
 import { appDir, configDir, pathsOf } from "./paths.ts";
 import { cacheOf, DEFAULT_PORT, lazyOf, outdirOf } from "./settings.ts";
 import { UsageError, withUsageErrors } from "./usage-error.ts";
@@ -48,7 +48,6 @@ async function parseBuild(args: string[]): Promise<Command> {
       options: {
         outdir: { type: "string" },
         "no-minify": { type: "boolean" },
-        routes: { type: "string" },
         quiet: { type: "boolean" },
         "no-cache": { type: "boolean" },
       },
@@ -61,26 +60,13 @@ async function parseBuild(args: string[]): Promise<Command> {
     dir,
     outdir: outdirOf(dir, values.outdir, config),
     minify: values["no-minify"] ? false : (config.minify ?? true),
-    routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
+    routes: config.routes ?? {},
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
     animate: config.animate ?? {},
     screens: config.screens,
     cache: cacheOf(config, values["no-cache"] === true),
   };
-}
-
-function parseRoutes(value: string | undefined): string[] {
-  if (value === undefined) return [];
-  const routes = value
-    .split(",")
-    .map((route) => route.trim())
-    .filter(Boolean);
-  for (const route of routes) {
-    if (!isRoute(route))
-      throw new UsageError(`invalid route "${route}", use a path such as /guide`);
-  }
-  return routes;
 }
 
 async function parseDev(args: string[], env: Record<string, string | undefined>): Promise<Command> {
@@ -106,6 +92,7 @@ async function parseDev(args: string[], env: Record<string, string | undefined>)
     lazy: lazyOf(config),
     animate: config.animate ?? {},
     screens: config.screens,
+    routes: config.routes ?? {},
     cache: cacheOf(config, values["no-cache"] === true),
   };
 }

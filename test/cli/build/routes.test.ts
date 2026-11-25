@@ -1,14 +1,16 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseCommand, UsageError } from "#cli/args/args.ts";
+import { parseCommand } from "#cli/args/args.ts";
 import { cacheOf } from "#cli/args/settings.ts";
 import { runBuild } from "#cli/build/build.ts";
+import { writeRouteIndexes } from "#cli/build/routes.ts";
 import { isPageRoute } from "#cli/dev/dev-server.ts";
 
-const FIXTURE = new URL("../fixtures/app", import.meta.url).pathname;
+const ROUTES_APP = new URL("../fixtures/routes-app", import.meta.url).pathname;
 const DEV_SERVER = new URL("../../../src/cli/dev/dev-server.ts", import.meta.url).pathname;
+const MODULE_SCRIPT = /<script type="module"[^>]*src="[^"]+"/;
 
 let workRoot: string;
 
@@ -20,36 +22,67 @@ afterAll(async () => {
   await rm(workRoot, { recursive: true, force: true });
 });
 
-describe("--routes", () => {
-  test("splits the list and trims it", async () => {
-    const command = await parseCommand(["build", FIXTURE, "--routes", "/guide, /reference"], {});
-    expect(command).toMatchObject({ name: "build", routes: ["/guide", "/reference"] });
+describe("routes in the config", () => {
+  test("the build command reads the route map", async () => {
+    expect(await parseCommand(["build", ROUTES_APP], {})).toMatchObject({
+      name: "build",
+      routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
+    });
+  });
+
+  test("the dev command reads the route map", async () => {
+    expect(await parseCommand(["dev", ROUTES_APP], {})).toMatchObject({
+      name: "dev",
+      routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
+    });
   });
 
   test("defaults to no routes", async () => {
-    expect(await parseCommand(["build", FIXTURE], {})).toMatchObject({ routes: [] });
+    expect(await parseCommand(["build", ROUTES_APP, "--no-cache"], {})).toMatchObject({
+      routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
+    });
+    expect(await parseCommand(["build", join(workRoot, "missing-config")], {})).toMatchObject({
+      routes: {},
+    });
   });
+});
 
-  test("rejects a route without a leading slash or with ..", async () => {
-    await expect(parseCommand(["build", "--routes", "guide"], {})).rejects.toThrow(UsageError);
-    await expect(parseCommand(["build", "--routes", "/a/../b"], {})).rejects.toThrow(UsageError);
+describe("writeRouteIndexes", () => {
+  test("copies index.html to each static route and to 404.html for *", async () => {
+    const outdir = join(workRoot, "indexes");
+    await mkdir(outdir, { recursive: true });
+    await writeFile(join(outdir, "index.html"), "<p>root</p>");
+    await writeRouteIndexes(outdir, {
+      "/": "src/pages/Home.lusia",
+      "/guide": "src/pages/Guide.lusia",
+      "/user/:id": "src/pages/User.lusia",
+      "*": "src/pages/Home.lusia",
+    });
+    expect(await readFile(join(outdir, "guide", "index.html"), "utf8")).toBe("<p>root</p>");
+    expect(await readFile(join(outdir, "404.html"), "utf8")).toBe("<p>root</p>");
+    expect(await readFile(join(outdir, "index.html"), "utf8")).toBe("<p>root</p>");
+    expect(await Bun.file(join(outdir, "user")).exists()).toBe(false);
   });
+});
 
-  test("build writes a copy of index.html for each route", async () => {
+describe("runBuild with routes", () => {
+  test("writes the start script into index.html and an index for each route", async () => {
     const outdir = join(workRoot, "dist");
     expect(
       await runBuild({
-        dir: FIXTURE,
+        dir: ROUTES_APP,
         outdir,
         minify: true,
         cache: cacheOf({}, false),
-        routes: ["/guide", "/reference/api"],
+        routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
         lazy: { mode: "smart", prefetch: "idle" },
+        quiet: true,
       }),
     ).toBe(0);
     const root = await readFile(join(outdir, "index.html"), "utf8");
+    expect(root).toMatch(MODULE_SCRIPT);
     expect(await readFile(join(outdir, "guide", "index.html"), "utf8")).toBe(root);
-    expect(await readFile(join(outdir, "reference", "api", "index.html"), "utf8")).toBe(root);
+    expect(await readFile(join(outdir, "404.html"), "utf8")).toBe(root);
   });
 });
 

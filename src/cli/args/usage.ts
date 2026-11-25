@@ -1,5 +1,5 @@
 export const USAGE = `Usage:
-  lusia build  [dir] [--outdir dist] [--no-minify] [--routes /guide,/reference] [--no-cache] [--quiet]
+  lusia build  [dir] [--outdir dist] [--no-minify] [--no-cache] [--quiet]
   lusia dev    [dir] [--port 3000] [--no-cache] [--quiet]
   lusia format [paths...] [--check] [--no-cache] [--quiet]
   lusia lint   [paths...] [--fix] [--max-warnings 0] [--quiet]
@@ -10,7 +10,6 @@ export const USAGE = `Usage:
   paths     .lusia files, folders or globs (default: .)
   --outdir  Output folder, relative to the current folder (default: dist inside the app folder)
   --port    Dev server port (default: $PORT or 3000)
-  --routes  Client routes that get their own index.html, so deep links load on static hosts
   --check   List the files that would change and exit 1, without writing
   --no-cache  Build without the disk caches (lusia build and dev). Format: format every file
               instead of skipping unchanged files

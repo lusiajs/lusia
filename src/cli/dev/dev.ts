@@ -34,6 +34,7 @@ export interface DevOptions {
   lazy: LazySettings;
   animate?: AnimateConfig;
   screens?: Screens;
+  routes?: Record<string, string>;
   /** Time spent reading lusia.config, shown under the boot step. */
   configMs?: number;
   cache: CacheSettings;
@@ -51,6 +52,7 @@ export async function startDev({
   lazy,
   animate,
   screens,
+  routes = {},
   configMs,
   cache: cacheSettings,
 }: DevOptions): Promise<DevHandle> {
@@ -85,6 +87,7 @@ export async function startDev({
     lazy,
     animate,
     screens,
+    routes,
     startStyles: styles.blocks,
     onUpdate: (update) => printer.show(update),
     onBuildError: (messages) =>

@@ -13,6 +13,7 @@ export interface DevConfig {
   lazy: LazySettings;
   animate: AnimateConfig;
   screens?: Screens;
+  routes?: Record<string, string>;
 }
 
 type DevConfigResult = { ok: true; config: DevConfig } | { ok: false; messages: string[] };
@@ -26,7 +27,12 @@ export async function readDevConfig(root: string): Promise<DevConfigResult> {
     const config = await readConfig(root);
     return {
       ok: true,
-      config: { lazy: lazyOf(config), animate: config.animate ?? {}, screens: config.screens },
+      config: {
+        lazy: lazyOf(config),
+        animate: config.animate ?? {},
+        screens: config.screens,
+        routes: config.routes ?? {},
+      },
     };
   } catch (error) {
     return { ok: false, messages: [errorMessage(error)] };
