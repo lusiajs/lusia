@@ -81,11 +81,7 @@ export function startListening(
   return startDomEvent(target, what, handler);
 }
 
-function startDomEvent(
-  target: EventTarget,
-  name: string,
-  handler: (event: unknown) => void,
-): Stop {
+function startDomEvent(target: EventTarget, name: string, handler: (event: unknown) => void): Stop {
   target.addEventListener(name, handler);
   const cancelFirstCall = name === "scroll" ? callOnNextFrame(target, handler) : () => {};
   return () => {

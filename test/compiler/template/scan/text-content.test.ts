@@ -59,7 +59,10 @@ describe("expressions in title and textarea", () => {
   });
 
   test("character references next to an expression are decoded", () => {
-    const { bindings } = compileTemplate("<title>Tom &amp; Jerry {x} &#39;&#x41;&#66;&lt;</title>", FILE);
+    const { bindings } = compileTemplate(
+      "<title>Tom &amp; Jerry {x} &#39;&#x41;&#66;&lt;</title>",
+      FILE,
+    );
     expect(bindings).toEqual([
       {
         kind: "element",

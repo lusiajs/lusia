@@ -12,10 +12,7 @@ beforeAll(async () => {
   document.body.append(target);
   log = [];
   await resetAddress("/");
-  await startRoutes(
-    { "/": fakePage("home", log), "/guide": fakePage("guide", log) },
-    target,
-  );
+  await startRoutes({ "/": fakePage("home", log), "/guide": fakePage("guide", log) }, target);
 });
 
 beforeEach(async () => {
@@ -34,7 +31,9 @@ function linkTo(href: string, attributes: Record<string, string> = {}): HTMLAnch
 
 // Returns true when the click was not cancelled, so the browser keeps its own behaviour.
 function click(link: Element, init: MouseEventInit = {}): boolean {
-  return link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0, ...init }));
+  return link.dispatchEvent(
+    new MouseEvent("click", { bubbles: true, cancelable: true, button: 0, ...init }),
+  );
 }
 
 describe("link clicks", () => {

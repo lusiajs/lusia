@@ -26,6 +26,9 @@ export function findRoute(keys: readonly string[], path: string): Route | undefi
   return (
     firstMatch(keys.filter(isExactKey), path) ??
     firstMatch(keys.filter(isParamKey), path) ??
-    firstMatch(keys.filter((key) => key === "*"), path)
+    firstMatch(
+      keys.filter((key) => key === "*"),
+      path,
+    )
   );
 }

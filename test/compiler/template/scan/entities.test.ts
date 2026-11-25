@@ -3,9 +3,7 @@ import { decodeEntities } from "#compiler/template/scan/entities.ts";
 
 describe("decodeEntities", () => {
   test("decodes named references", () => {
-    expect(decodeEntities("&amp; &lt; &gt; &quot; &#39; &apos; &nbsp;")).toBe(
-      `& < > " ' '  `,
-    );
+    expect(decodeEntities("&amp; &lt; &gt; &quot; &#39; &apos; &nbsp;")).toBe(`& < > " ' '  `);
   });
 
   test("decodes decimal and hex numeric references", () => {
