@@ -79,3 +79,18 @@ describe("prettierParts section indent", () => {
     expect(prettierParts(load, { useTabs: true }, false).parts.sectionIndent).toBe("");
   });
 });
+
+describe("prettierParts component tags", () => {
+  test("keeps the case of components named like HTML elements", async () => {
+    const prettier = (await import("prettier")) as unknown as PrettierLike;
+    const { parts } = prettierParts(async () => prettier);
+    const markup = "<section>\n<Content />\n<Section><Menu>{a}</Menu></Section>\n<content></content>\n</section>";
+
+    const html = await parts.markup(markup);
+    expect(html).toContain("<Content />");
+    expect(html).toContain("<Section");
+    expect(html).toContain("<Menu>{a}</Menu>");
+    expect(html).toContain("</Section");
+    expect(html).toContain("<content></content>");
+  });
+});

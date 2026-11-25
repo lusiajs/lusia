@@ -1,4 +1,5 @@
 import type { FormatParts } from "./format.ts";
+import { protectComponentTags, restoreComponentTags } from "./component-tags.ts";
 import { protectFlowTags } from "./flow-placeholders.ts";
 import { restoreFlowTags } from "./flow-restore.ts";
 import { convertOldFlowForm } from "./old-flow-form.ts";
@@ -36,7 +37,9 @@ export function prettierParts(
       markup: async (markup) => {
         const flow = protectFlowTags(convertOldFlowForm(markup));
         const protectedMarkup = protectExpressions(flow.text);
-        const html = await formatPart(protectedMarkup.text, "html");
+        const components = protectComponentTags(protectedMarkup.text);
+        const formatted = await formatPart(components.text, "html");
+        const html = restoreComponentTags(formatted, components.names);
         return restoreExpressions(restoreFlowTags(html, flow.tags), protectedMarkup.expressions);
       },
       sectionIndent: indentScriptAndStyle ? indentUnit(config) : "",
