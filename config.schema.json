@@ -15,6 +15,10 @@
       "type": "boolean",
       "description": "Minify the build. Default: true"
     },
+    "ssr": {
+      "type": "boolean",
+      "description": "Render each route page to HTML at build time, so crawlers and slow phones see the content before the script runs. Set false to ship the empty page only. Default: true"
+    },
     "routes": {
       "type": "object",
       "description": "Client routes. Each key is a path that gets its own page: /guide, /user/:id for a part of the path, or * for the 404 page. Each value is a .lusia file inside the app folder.",

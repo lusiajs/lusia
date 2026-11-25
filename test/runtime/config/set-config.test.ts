@@ -37,7 +37,7 @@ describe("setConfig validation", () => {
   });
 
   test("a build-only key says it belongs in lusia.config", () => {
-    for (const key of ["outdir", "minify", "routes", "dev", "lint", "format"]) {
+    for (const key of ["outdir", "minify", "routes", "ssr", "dev", "lint", "format"]) {
       const error = thrown(() => setConfig({ [key]: true } as never, SCOPE.GLOBAL));
       expect(error.code, key).toBe("L2072");
       expect(error.message).toBe(`setConfig key "${key}" is build-only`);

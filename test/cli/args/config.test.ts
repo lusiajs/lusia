@@ -41,6 +41,7 @@ describe("readConfig", () => {
         outdir: "out",
         minify: false,
         routes: { "/guide": "src/pages/Guide.lusia" },
+        ssr: false,
         dev: { port: 4000 },
         lazy: { mode: "all", prefetch: "view" },
         lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
@@ -52,6 +53,7 @@ describe("readConfig", () => {
       outdir: "out",
       minify: false,
       routes: { "/guide": "src/pages/Guide.lusia" },
+      ssr: false,
       dev: { port: 4000 },
       lazy: { mode: "all", prefetch: "view" },
       lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
@@ -118,7 +120,7 @@ describe("config file errors", () => {
   test.each([
     [
       '{ "outdr": "x" }',
-      'unknown key "outdr", allowed: $schema, outdir, minify, routes, cache, dev, lazy, lint, format, animate',
+      'unknown key "outdr", allowed: $schema, outdir, minify, routes, ssr, cache, dev, lazy, lint, format, animate',
     ],
     ['{ "lazy": { "mode": "some" } }', '"lazy.mode" must be one of: smart, all, off'],
     ['{ "lazy": { "prefetch": "soon" } }', '"lazy.prefetch" must be one of: idle, view, none'],
@@ -148,6 +150,7 @@ describe("config file errors", () => {
       'route "/guide" points to a file that does not exist: src/missing.lusia',
     ],
     ['{ "minify": "yes" }', '"minify" must be true or false'],
+    ['{ "ssr": "yes" }', '"ssr" must be true or false'],
     ['{ "lint": { "extra": 1 } }', 'unknown key "extra" in "lint", allowed: rules'],
     ['{ "lint": { "rules": [] } }', '"lint.rules" must be an object'],
     [

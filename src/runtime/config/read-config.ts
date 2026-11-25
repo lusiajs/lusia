@@ -4,7 +4,7 @@ import { readLazy } from "./read-lazy.ts";
 import type { RuntimeConfig } from "./scope.ts";
 
 const SECTION_KEYS = ["animate", "lazy"];
-const BUILD_ONLY_KEYS = ["outdir", "minify", "routes", "dev", "lint", "format", "screens"];
+const BUILD_ONLY_KEYS = ["outdir", "minify", "routes", "ssr", "dev", "lint", "format", "screens"];
 
 /** Checks every section of a setConfig value and returns a copy that holds only accepted values. */
 export function readConfig(config: RuntimeConfig): RuntimeConfig {
