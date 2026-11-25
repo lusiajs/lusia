@@ -13,20 +13,20 @@ No name lists them.
 
 ## Playgrounds
 
-| Name | Shows | Status |
-|---|---|---|
-| [basics](basics/) | `{expr}`, `<script>` | Runs |
-| [reactivity](reactivity/) | `variable`, `compute`, `autoRun`, `watch`, `onUpdate` | Runs |
-| [flow](flow/) | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>` | Runs |
-| [events](events/) | `on*`, `bind-*`, `listen`, `EVENT`, `keepRunning` | Runs |
-| [components](components/) | props, attach/detach, `<CONTENT />`, recursion, `<HTML>`, hooks | Runs |
-| [lazy](lazy/) | lazy children, `<FALLBACK>`, `<NO_LAZY />`, `lazy` config | Runs |
-| [styling](styling/) | style modes, `:global`, `SCREEN`, `screens` | Runs |
-| [motion](motion/) | `animate`, layout, presets, `EASE`, controller, `setConfig` | Runs |
-| [routes](routes/) | `routes` map, layout with `<CONTENT />`, `<head>`, `PATH`, `PARAMS` | Design (issue #104) |
-| [ssr](ssr/) | build-time SSR, `<NO_SSR />`, `ssr: false` | Design (issue #95) |
+| Name                      | Shows                                                               | Status              |
+| ------------------------- | ------------------------------------------------------------------- | ------------------- |
+| [basics](basics/)         | `{expr}`, `<script>`                                                | Runs                |
+| [reactivity](reactivity/) | `variable`, `compute`, `autoRun`, `watch`, `onUpdate`               | Runs                |
+| [flow](flow/)             | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`                     | Runs                |
+| [events](events/)         | `on*`, `bind-*`, `listen`, `EVENT`, `keepRunning`                   | Runs                |
+| [components](components/) | props, attach/detach, `<CONTENT />`, recursion, `<HTML>`, hooks     | Runs                |
+| [lazy](lazy/)             | lazy children, `<FALLBACK>`, `<NO_LAZY />`, `lazy` config           | Runs                |
+| [styling](styling/)       | style modes, `:global`, `SCREEN`, `screens`                         | Runs                |
+| [motion](motion/)         | `animate`, layout, presets, `EASE`, controller, `setConfig`         | Runs                |
+| [routes](routes/)         | `routes` map, layout with `<CONTENT />`, `<head>`, `PATH`, `PARAMS` | Runs |
+| [ssr](ssr/)               | build-time SSR, `<NO_SSR />`, `ssr: false`                          | Design (issue #95)  |
 
-"Design": not built yet. The app is the target.
+"Design": not built yet. The app is the target. (none right now)
 
 ## Layout of one playground
 
