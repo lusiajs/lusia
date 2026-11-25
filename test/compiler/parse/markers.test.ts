@@ -63,15 +63,15 @@ describe("<FALLBACK>", () => {
   });
 });
 
-describe("<NOLAZY />", () => {
+describe("<NO_LAZY />", () => {
   test("is removed from the markup and sets nolazy", () => {
-    const parsed = parse("<NOLAZY />\n<p>Hi</p>", "Card.lusia");
+    const parsed = parse("<NO_LAZY />\n<p>Hi</p>", "Card.lusia");
     expect(parsed.nolazy).toBe(true);
     expect(parsed.markup).toBe("<p>Hi</p>");
   });
 
   test("works in a file with no script", () => {
-    expect(parse("<NOLAZY />", "Card.lusia").nolazy).toBe(true);
+    expect(parse("<NO_LAZY />", "Card.lusia").nolazy).toBe(true);
   });
 
   test("is false when absent", () => {
@@ -79,14 +79,18 @@ describe("<NOLAZY />", () => {
   });
 
   test("cannot sit inside another element", () => {
-    expect(codeOf("<div><NOLAZY /></div>")).toBe("L1038");
+    expect(codeOf("<div><NO_LAZY /></div>")).toBe("L1038");
   });
 
   test("can only be used once", () => {
-    expect(codeOf("<NOLAZY />\n<NOLAZY />")).toBe("L1040");
+    expect(codeOf("<NO_LAZY />\n<NO_LAZY />")).toBe("L1040");
   });
 
   test("takes no children", () => {
-    expect(codeOf("<NOLAZY>x</NOLAZY>")).toBe("L1041");
+    expect(codeOf("<NO_LAZY>x</NO_LAZY>")).toBe("L1041");
+  });
+
+  test("the old <NOLAZY /> spelling is an error at the top level", () => {
+    expect(codeOf("<NOLAZY />\n<p>Hi</p>")).toBe("L1050");
   });
 });

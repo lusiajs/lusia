@@ -12,7 +12,7 @@ export interface FallbackBlock {
 }
 
 export interface Markers {
-  /** The markup without <FALLBACK> and <NOLAZY />. Their lines stay as line breaks. */
+  /** The markup without <FALLBACK> and <NO_LAZY />. Their lines stay as line breaks. */
   markup: string;
   fallback: FallbackBlock | null;
   nolazy: boolean;
@@ -24,7 +24,8 @@ interface Span {
 }
 
 const FALLBACK = "FALLBACK";
-const NOLAZY = "NOLAZY";
+const NO_LAZY = "NO_LAZY";
+const OLD_NO_LAZY = "NOLAZY";
 const EVENT_ATTR = /\son[a-z]+=\{/;
 
 function failAt(
@@ -49,7 +50,7 @@ function closeOf(tags: Tag[], open: number, name: string): number {
   return -1;
 }
 
-/** Removes <FALLBACK> and <NOLAZY /> from the markup and checks them. Only top-level markers are allowed. */
+/** Removes <FALLBACK> and <NO_LAZY /> from the markup and checks them. Only top-level markers are allowed. */
 export function extractMarkers(markup: string, file: string): Markers {
   const expressions: number[] = [];
   const tags = readTags(markup, expressions);
@@ -76,8 +77,10 @@ export function extractMarkers(markup: string, file: string): Markers {
       fallback = { content: markup.slice(tag.end, closeTag.start), line: lineAt(markup, tag.end) };
       removed.push({ start: tag.start, end: closeTag.end });
       i = close;
-    } else if (tag.name === NOLAZY) {
-      if (depth > 0) throw failAt(markup, file, tag.start, "L1038", { tag: NOLAZY });
+    } else if (tag.name === OLD_NO_LAZY && depth === 0) {
+      throw failAt(markup, file, tag.start, "L1050");
+    } else if (tag.name === NO_LAZY) {
+      if (depth > 0) throw failAt(markup, file, tag.start, "L1038", { tag: NO_LAZY });
       if (nolazy) throw failAt(markup, file, tag.start, "L1040");
       if (!tag.selfClosing) throw failAt(markup, file, tag.start, "L1041");
       nolazy = true;

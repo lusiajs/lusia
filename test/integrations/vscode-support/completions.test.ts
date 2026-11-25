@@ -322,7 +322,7 @@ describe("flow and element completions", () => {
       "CONTENT",
       "HTML",
       "FALLBACK",
-      "NOLAZY",
+      "NO_LAZY",
     ]);
     expect(flow.find((item) => item.label === "IF")?.insertText).toBe("IF {$1}>\n\t$0\n</IF>");
   });

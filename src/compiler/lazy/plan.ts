@@ -21,7 +21,7 @@ export function importsWithSplits(
     .join("\n");
 }
 
-/** The names of the imports to split, under the mode's rule. `<NOLAZY />` files are never split. */
+/** The names of the imports to split, under the mode's rule. `<NO_LAZY />` files are never split. */
 export function namesToSplit(
   lazy: LazyOptions,
   imports: LusiaImport[],

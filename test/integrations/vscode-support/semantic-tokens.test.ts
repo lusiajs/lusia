@@ -21,7 +21,7 @@ const CONSTRUCTS = `<script>
   <CONTENT />
   <HTML>{raw}</HTML>
   <FALLBACK>x</FALLBACK>
-  <NOLAZY><Badge /></NOLAZY>
+  <NO_LAZY><Badge /></NO_LAZY>
 </IF>
 <style>
   .card { color: red; }
@@ -92,9 +92,9 @@ describe("semantic tokens", () => {
       ["HTML", "keyword"],
       ["FALLBACK", "keyword"],
       ["FALLBACK", "keyword"],
-      ["NOLAZY", "keyword"],
+      ["NO_LAZY", "keyword"],
       ["Badge", "class"],
-      ["NOLAZY", "keyword"],
+      ["NO_LAZY", "keyword"],
       ["IF", "keyword"],
     ]);
   });

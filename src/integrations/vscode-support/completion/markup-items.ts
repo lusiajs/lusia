@@ -11,7 +11,7 @@ const FLOW_TAGS: Record<string, string> = {
   CONTENT: "Children given to this component",
   HTML: "Insert an expression as HTML",
   FALLBACK: "Shown while this component's code loads",
-  NOLAZY: "Keep this component in the file that imports it",
+  NO_LAZY: "Keep this component in the file that imports it",
 };
 
 const FLOW_TAG_BODIES: Record<string, string> = {
@@ -23,7 +23,7 @@ const FLOW_TAG_BODIES: Record<string, string> = {
   CONTENT: "CONTENT />",
   HTML: "HTML>{$1}</HTML>",
   FALLBACK: "FALLBACK>\n\t$0\n</FALLBACK>",
-  NOLAZY: "NOLAZY />",
+  NO_LAZY: "NO_LAZY />",
 };
 
 const EVENT_NAMES = [

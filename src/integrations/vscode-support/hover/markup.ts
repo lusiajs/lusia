@@ -38,10 +38,10 @@ const FLOW_TAG_IDS: Record<string, string> = {
   CONTENT: "content",
   HTML: "html",
   FALLBACK: "fallback",
-  NOLAZY: "nolazy",
+  NO_LAZY: "nolazy",
 };
 
-const FLOW_TAG_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NOLAZY)(?=[\s/>])/g;
+const FLOW_TAG_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NO_LAZY)(?=[\s/>])/g;
 
 function flowTagHover(text: string, offset: number): HoverResult | undefined {
   for (const match of text.matchAll(FLOW_TAG_NAME)) {

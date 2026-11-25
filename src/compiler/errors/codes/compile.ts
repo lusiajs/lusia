@@ -152,12 +152,12 @@ export const COMPILE_CODES = {
     hint: "Keep one <FALLBACK> block, and move its content into it.",
   },
   L1040: {
-    message: "<NOLAZY /> can only be used once",
-    hint: "Remove the extra <NOLAZY /> from this file.",
+    message: "<NO_LAZY /> can only be used once",
+    hint: "Remove the extra <NO_LAZY /> from this file.",
   },
   L1041: {
-    message: "<NOLAZY /> takes no children",
-    hint: "Write it as <NOLAZY /> with no content between the tags.",
+    message: "<NO_LAZY /> takes no children",
+    hint: "Write it as <NO_LAZY /> with no content between the tags.",
   },
   L1042: {
     message: "$what is not allowed in <FALLBACK>",
@@ -190,5 +190,9 @@ export const COMPILE_CODES = {
   L1049: {
     message: "SCREEN.$name is not a screen size",
     hint: "Use one of: $names. Sizes come from screens in lusia.config.ts.",
+  },
+  L1050: {
+    message: "<NOLAZY /> was renamed to <NO_LAZY />",
+    hint: "Write <NO_LAZY /> instead.",
   },
 } as const satisfies Record<string, ErrorCode>;

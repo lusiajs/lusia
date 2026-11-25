@@ -5,7 +5,7 @@ export type LazyMode = (typeof LAZY_MODES)[number];
 export type LazyPrefetch = (typeof LAZY_PREFETCH)[number];
 
 export interface ChildInfo {
-  /** The file has <NOLAZY />, so it is never split. */
+  /** The file has <NO_LAZY />, so it is never split. */
   nolazy: boolean;
   /** The file has a <FALLBACK> block. */
   fallback: boolean;

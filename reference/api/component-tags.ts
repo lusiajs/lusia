@@ -95,16 +95,16 @@ export const componentTagEntries: ApiEntry[] = [
   },
   {
     id: "nolazy",
-    name: "<NOLAZY />",
+    name: "<NO_LAZY />",
     kind: "markup",
     group: "components",
-    signature: "<NOLAZY />",
+    signature: "<NO_LAZY />",
     summary: "Keeps this component in the page that imports it, never in its own file.",
     bullets: [
       "Write it at the top level of the file. It takes no children.",
       "Use it in a component that is needed on the first render.",
       "It wins over the lazy.mode setting in lusia.config.json.",
     ],
-    example: `<NOLAZY />\n\n<header>...</header>`,
+    example: `<NO_LAZY />\n\n<header>...</header>`,
   },
 ];

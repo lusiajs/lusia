@@ -20,7 +20,7 @@ export function componentSource(example: string, shape: ExampleShape): string {
   return wrapMarkup(example.slice(0, index), example.slice(index));
 }
 
-// The markup stays at the top level: FALLBACK and NOLAZY must be top-level.
+// The markup stays at the top level: FALLBACK and NO_LAZY must be top-level.
 function wrapMarkup(code: string, markup: string): string {
   return `<script>\n${code.trim()}\n</script>\n\n${markup.trim()}\n`;
 }
