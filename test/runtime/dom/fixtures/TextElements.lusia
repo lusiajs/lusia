@@ -1,0 +1,11 @@
+<script>
+  import { props } from "lusiajs";
+
+  const { id, note } = props({ id: "", note: "" });
+</script>
+
+<head>
+  <title>Post {id.value} - Site</title>
+</head>
+
+<textarea>{note.value}</textarea>

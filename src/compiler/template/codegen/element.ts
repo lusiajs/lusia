@@ -26,6 +26,11 @@ function attrCall({ name, parts }: AttrBinding, ctx: GenContext): string {
   return `__attr(__node as Element, ${JSON.stringify(name)}, () => ${value}, __cleanups);`;
 }
 
+/** The whole text of a title or textarea, kept in sync like an attribute. */
+function textCall(parts: AttrPart[], ctx: GenContext): string {
+  return `__bindTextContent(__node as Element, () => ${attrValue(parts, ctx)}, __cleanups);`;
+}
+
 function eventCall({ type, listen, expr }: EventBinding): string {
   const call = listen ? "__listenEvent" : "__listen";
   return `${call}(__node as Element, ${JSON.stringify(type)}, (${markedCode(expr)}), __cleanups);`;
@@ -55,6 +60,7 @@ export function elementBinder(binding: ElementBinding, ctx: GenContext): string 
     ...binding.events.map(eventCall),
     ...binding.binds.map((bind) => bindCall(bind, ctx)),
   ];
+  if (binding.text !== undefined) calls.push(textCall(binding.text, ctx));
   if (binding.animate !== undefined) calls.push(animateCall(binding.animate, ctx));
   return `(__node, __cleanups, __leaves) => {\n  ${calls.join("\n  ")}\n}`;
 }

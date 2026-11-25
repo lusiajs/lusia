@@ -15,6 +15,17 @@ export function bindText(marker: Node, read: () => unknown, cleanups: Cleanup[])
   cleanups.push(watch(() => (node.data = toText(read()))));
 }
 
+/** Keep an element's text in sync with `read()`. A textarea also gets it as its value. */
+export function bindTextContent(el: Element, read: () => unknown, cleanups: Cleanup[]): void {
+  cleanups.push(
+    watch(() => {
+      const text = toText(read());
+      el.textContent = text;
+      if (el instanceof HTMLTextAreaElement) el.value = text;
+    }),
+  );
+}
+
 /** Keep an attribute in sync with `read()`; null/false removes it. */
 export function attr(el: Element, name: string, read: () => unknown, cleanups: Cleanup[]): void {
   cleanups.push(

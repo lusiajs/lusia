@@ -1,4 +1,4 @@
-import type { AttrBinding, BindBinding, EventBinding } from "./attribute.ts";
+import type { AttrBinding, AttrPart, BindBinding, EventBinding } from "./attribute.ts";
 import type { Expr } from "./expression.ts";
 
 export interface ElementBinding {
@@ -7,4 +7,6 @@ export interface ElementBinding {
   events: EventBinding[];
   binds: BindBinding[];
   animate?: Expr;
+  /** The whole text of a title or textarea, when it has an expression. */
+  text?: AttrPart[];
 }

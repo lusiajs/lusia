@@ -1,8 +1,9 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "#runtime/markers.ts";
 import { componentCheck, elementCheck } from "../check/checks.ts";
 import { compileElement } from "./element.ts";
+import { isTextElement, readTextContent } from "./text-content.ts";
 import { readHtml, HTML_TAG } from "./html.ts";
-import { readAttributes, type AttrCheck } from "./attributes.ts";
+import { hasExpression, readAttributes, type AttrCheck } from "./attributes.ts";
 import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "../blocks.ts";
 import { Cursor } from "./cursor.ts";
 import { CONTENT_TAG, claimContent } from "./content.ts";
@@ -10,7 +11,7 @@ import { componentBinding } from "./component.ts";
 import { readComponentChildren } from "./children.ts";
 import { withScopeClass } from "../marking.ts";
 import type { ScanScope } from "./scope.ts";
-import type { AttrBinding } from "../types/attribute.ts";
+import type { AttrBinding, AttrPart } from "../types/attribute.ts";
 import type { Binding, Template } from "../types/template.ts";
 
 const TAG_NAME_END = /[\s>/]/;
@@ -91,6 +92,7 @@ class TemplateScanner {
     const check: AttrCheck = isComponent ? componentCheck : elementCheck(name);
     const { attrs, selfClosing } = readAttributes(c, name, start, check);
     if (isComponent) this.addComponent(name, attrs, selfClosing, start);
+    else if (isTextElement(name) && !selfClosing) this.addTextElement(name, attrs, start);
     else this.addElement(name, attrs, selfClosing);
   }
 
@@ -105,9 +107,21 @@ class TemplateScanner {
     this.html += `<!--${TEXT_MARKER}-->`;
   }
 
-  private addElement(name: string, attrs: AttrBinding[], selfClosing: boolean): void {
+  private addTextElement(name: string, attrs: AttrBinding[], start: number): void {
+    const { parts, raw } = readTextContent(this.cursor, name, start);
+    this.addElement(name, attrs, false, parts);
+    this.html += hasExpression(parts) ? "" : raw;
+    this.html += `</${name}>`;
+  }
+
+  private addElement(
+    name: string,
+    attrs: AttrBinding[],
+    selfClosing: boolean,
+    text?: AttrPart[],
+  ): void {
     const scoped = this.scope.classes ? withScopeClass(attrs, this.scope.classes) : attrs;
-    const { statics, binding } = compileElement(scoped);
+    const { statics, binding } = compileElement(scoped, text);
     if (binding) this.bindings.push(binding);
     const marker = binding ? ` ${ELEMENT_MARKER}` : "";
     this.html += `<${name}${statics}${marker}${selfClosing ? " />" : ">"}`;
