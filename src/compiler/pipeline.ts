@@ -4,13 +4,14 @@ import { importsWithSplits } from "./lazy/plan.ts";
 import type { LazyOptions } from "./lazy/options.ts";
 import { splitImports } from "./parse/imports.ts";
 import { parse, type Section } from "./parse/sections.ts";
-import { generate } from "./template/codegen/generate.ts";
+import { generate, type NoSsrParts } from "./template/codegen/generate.ts";
 import { scriptRange } from "./template/check/script-range.ts";
 import { compileTemplate } from "./template/scan/scanner.ts";
 import type { StyleResult } from "./style/sass.ts";
 import { extractSourceMap } from "./sourcemap/extract.ts";
 import { withScreenMedia } from "./style/screen-style.ts";
 import { DEFAULT_SCREENS, type Screens } from "#runtime/screen/screens.ts";
+import { basename } from "node:path";
 
 export interface CompileOptions {
   /** Dev builds keep runtime error locations. Default false. */
@@ -19,6 +20,8 @@ export interface CompileOptions {
   lazy?: LazyOptions;
   /** Screen sizes for `<style>` inside `<IF {SCREEN.X}>`. Defaults to PHONE, TABLET and DESKTOP. */
   screens?: Screens;
+  /** The text the component id is hashed from. Defaults to the file path. */
+  idKey?: string;
 }
 
 export interface CompileResult {
@@ -52,6 +55,7 @@ export interface PipelineOptions {
   styles: StyleCompiler;
   lazy?: LazyOptions;
   screens?: Screens;
+  idKey?: string;
 }
 
 /** The shared compile steps. The Node build and the browser build differ only in the style step. */
@@ -61,7 +65,7 @@ export function compileParts(
   options: PipelineOptions,
 ): CompileResult {
   const parsed = parse(source, file);
-  const id = hash(file);
+  const id = hash(options.idKey ?? file);
   const screens = options.screens ?? DEFAULT_SCREENS;
   const styles = parsed.styles.map((style, index) =>
     withScreenMedia(options.styles(style, index, id), style, screens, file),
@@ -79,6 +83,7 @@ export function compileParts(
     parsed.script?.attrs,
     parsed.markup,
     parsed.head?.content,
+    parsed.nossr,
   ]);
   const imports = importsWithSplits(
     statements,
@@ -97,6 +102,7 @@ export function compileParts(
     bodyLine: parsed.script?.line ?? 1,
     template,
     head,
+    noSsr: noSsrParts(parsed.nossr, parsed.fallback !== null, file),
     css,
     id,
     scopes,
@@ -107,6 +113,11 @@ export function compileParts(
   });
   const { code, map } = extractSourceMap(generated, file, source);
   return { code, css, id, map, deps, sassMs, styleBlocks, scriptAndMarkup };
+}
+
+function noSsrParts(nossr: boolean, hasFallback: boolean, file: string): NoSsrParts | undefined {
+  if (!nossr) return undefined;
+  return hasFallback ? { fallbackSpecifier: `./${basename(file)}?fallback` } : {};
 }
 
 function styleBlockTiming(index: number, style: StyleResult): StyleBlockTiming {

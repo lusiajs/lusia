@@ -4,6 +4,8 @@ import type { Leave } from "../component/leave.ts";
 import { runtimeError } from "../../errors.ts";
 import { memoizeLoad, whenIdle, whenNear, type LazyLoad } from "./lazy-load.ts";
 import { placementPrefetch } from "./placement-prefetch.ts";
+import { placeServerLoad } from "./lazy-server.ts";
+import { isServerRender } from "../../ssr/flag.ts";
 
 export type { LazyLoad } from "./lazy-load.ts";
 export type LazyPrefetch = "idle" | "view" | "none";
@@ -35,6 +37,7 @@ export function lazyComponent(
   };
   if (prefetch === "idle") whenIdle(() => void fetch().catch(() => {}));
   const place: Place = (parent, anchor, host, leaves) => {
+    if (isServerRender()) return placeServerLoad(fetch, parent, anchor, host, leaves);
     const prefetch = placementPrefetch(host.scope, loader.prefetch);
     if (loaded && prefetch !== "view") return loaded.place(parent, anchor, host, leaves);
     return placeLoading(loader, prefetch, parent, anchor, host, leaves);

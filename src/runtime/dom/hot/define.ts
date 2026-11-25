@@ -1,14 +1,14 @@
 import type { Cleanup } from "../template/bindings.ts";
-import type {
-  Component,
-  ComponentOptions,
-  Host,
-  Instance,
-  Props,
-  Render,
+import {
+  componentFrom,
+  type Component,
+  type ComponentOptions,
+  type Host,
+  type Render,
 } from "../component/component.ts";
-import { treeClassesOf } from "../template/classes.ts";
-import { leaveThen, type Leave } from "../component/leave.ts";
+import type { Leave } from "../component/leave.ts";
+import { isServerRender } from "../../ssr/flag.ts";
+import { placeSkipped } from "../../ssr/skip.ts";
 import {
   createInstance,
   mountInstance,
@@ -34,18 +34,14 @@ export function hotComponent(
   if (!definitionOf(id)) setDefinition(id, definition);
 
   const place = (parent: Node, anchor: Node | null, host: Host, leaves: Leave[]): Cleanup => {
+    if (options.noSsr && isServerRender()) {
+      return placeSkipped(options.fallback, parent, anchor, host, leaves);
+    }
     const instance = mountComponent(id, host, leaves, parent, anchor);
     return () => unmountInstance(instance);
   };
 
-  const component = (target: Element, props: Props = {}): Instance => {
-    const leaves: Leave[] = [];
-    const inherited = treeClassesOf(target);
-    const instance = mountComponent(id, { props, bound: {}, inherited }, leaves, target, null);
-    return { root: target, detach: () => leaveThen(leaves, () => unmountInstance(instance)) };
-  };
-
-  return Object.assign(component, { id, definition, place });
+  return Object.assign(componentFrom(place), { id, definition });
 }
 
 function mountComponent(

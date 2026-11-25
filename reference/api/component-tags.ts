@@ -108,6 +108,21 @@ export const componentTagEntries: ApiEntry[] = [
     example: `<NO_LAZY />\n\n<header>...</header>`,
   },
   {
+    id: "nossr",
+    name: "<NO_SSR />",
+    kind: "markup",
+    group: "components",
+    signature: "<NO_SSR />",
+    summary:
+      "Skips this component when pages are built on the server. Its <FALLBACK> shows instead.",
+    bullets: [
+      "Write it at the top level of the file. It takes no children.",
+      "Use it for parts that need the browser, such as an editor, so the page build leaves them out.",
+      "The browser renders the component normally after the page loads.",
+    ],
+    example: `<NO_SSR />\n\n<FALLBACK>\n  <p>Loading editor...</p>\n</FALLBACK>`,
+  },
+  {
     id: "head",
     name: "<head>",
     kind: "markup",

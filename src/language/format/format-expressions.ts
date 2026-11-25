@@ -8,7 +8,7 @@ export interface ProtectedMarkup {
 const QUOTES = new Set(["'", '"', "`"]);
 const PLACEHOLDER = /^LUSIAEXPR(\d+)X/;
 
-const FLOW_OPEN = /<(?:IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NO_LAZY)(?=[\s/>])/y;
+const FLOW_OPEN = /<(?:IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NO_LAZY|NO_SSR)(?=[\s/>])/y;
 const FLOW_CLOSE = /<\/(?:IF|ELSEIF|ELSE|EACH|FOR|HTML|FALLBACK)\s*>/y;
 
 export function protectExpressions(markup: string): ProtectedMarkup {

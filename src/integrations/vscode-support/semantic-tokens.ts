@@ -44,6 +44,7 @@ const FLOW_TAGS: ReadonlySet<string> = new Set([
   "HTML",
   "FALLBACK",
   "NO_LAZY",
+  "NO_SSR",
 ]);
 const BLOCK_ATTRIBUTES: ReadonlyMap<string, ReadonlySet<string>> = new Map([
   ["EACH", new Set(["as", "index", "key"])],

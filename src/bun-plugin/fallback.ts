@@ -1,7 +1,7 @@
 import { fallbackSource } from "#compiler/index.ts";
 import type { BunPlugin } from "bun";
 import { dirname, resolve } from "node:path";
-import { compileFile } from "./compile.ts";
+import { compileFallbackFile } from "./compile.ts";
 
 type PluginBuild = Parameters<BunPlugin["setup"]>[0];
 
@@ -16,7 +16,7 @@ export function setupFallback(build: PluginBuild, dev: boolean): void {
   }));
   build.onLoad({ filter: /.*/, namespace: NAMESPACE }, async ({ path }) => {
     const source = await Bun.file(path).text();
-    const result = compileFile(fallbackSource(source, path), path, dev);
+    const result = compileFallbackFile(fallbackSource(source, path), path, dev);
     return { contents: result.code, loader: "ts" };
   });
 }

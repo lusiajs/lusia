@@ -95,6 +95,30 @@ describe("<NO_LAZY />", () => {
   });
 });
 
+describe("<NO_SSR />", () => {
+  test("is removed from the markup and sets nossr", () => {
+    const parsed = parse("<NO_SSR />\n<p>Hi</p>", "Card.lusia");
+    expect(parsed.nossr).toBe(true);
+    expect(parsed.markup).toBe("<p>Hi</p>");
+  });
+
+  test("is false when absent", () => {
+    expect(parse("<p>Hi</p>", "Card.lusia").nossr).toBe(false);
+  });
+
+  test("cannot sit inside another element", () => {
+    expect(codeOf("<div><NO_SSR /></div>")).toBe("L1038");
+  });
+
+  test("can only be used once", () => {
+    expect(codeOf("<NO_SSR />\n<NO_SSR />")).toBe("L1052");
+  });
+
+  test("takes no children", () => {
+    expect(codeOf("<NO_SSR>x</NO_SSR>")).toBe("L1053");
+  });
+});
+
 describe("<head>", () => {
   test("its content is kept apart from the markup, and its line is kept", () => {
     const parsed = parse(

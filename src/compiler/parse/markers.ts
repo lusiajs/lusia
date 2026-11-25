@@ -12,11 +12,12 @@ export interface MarkupBlock {
 }
 
 export interface Markers {
-  /** The markup without <FALLBACK>, <head> and <NO_LAZY />. Their lines stay as line breaks. */
+  /** The markup without <FALLBACK>, <head>, <NO_LAZY /> and <NO_SSR />. Their lines stay as line breaks. */
   markup: string;
   fallback: MarkupBlock | null;
   head: MarkupBlock | null;
   nolazy: boolean;
+  nossr: boolean;
 }
 
 interface Span {
@@ -27,6 +28,7 @@ interface Span {
 const FALLBACK = "FALLBACK";
 const HEAD = "head";
 const NO_LAZY = "NO_LAZY";
+const NO_SSR = "NO_SSR";
 const OLD_NO_LAZY = "NOLAZY";
 const EVENT_ATTR = /\son[a-z]+=\{/;
 
@@ -37,7 +39,11 @@ function failAt(
   code: ErrorCodeName,
   values?: Values,
 ): LusiaError {
-  const span = { file, line: lineAt(markup, index), column: columnAt(markup, index) };
+  const span = {
+    file,
+    line: lineAt(markup, index),
+    column: columnAt(markup, index),
+  };
   return lusiaError(code, values, span);
 }
 
@@ -64,11 +70,14 @@ function blockAt(
   const close = closeOf(tags, open, name);
   if (close === -1) throw failAt(markup, file, tag.start, "L1001", { tag: name });
   const closeTag = tags[close]!;
-  const block = { content: markup.slice(tag.end, closeTag.start), line: lineAt(markup, tag.end) };
+  const block = {
+    content: markup.slice(tag.end, closeTag.start),
+    line: lineAt(markup, tag.end),
+  };
   return { block, close };
 }
 
-/** Removes <FALLBACK>, <head> and <NO_LAZY /> from the markup and checks them. Only top-level markers are allowed. */
+/** Removes <FALLBACK>, <head>, <NO_LAZY /> and <NO_SSR /> from the markup and checks them. Only top-level markers are allowed. */
 export function extractMarkers(markup: string, file: string): Markers {
   const expressions: number[] = [];
   const tags = readTags(markup, expressions);
@@ -76,6 +85,7 @@ export function extractMarkers(markup: string, file: string): Markers {
   let fallback: MarkupBlock | null = null;
   let head: MarkupBlock | null = null;
   let nolazy = false;
+  let nossr = false;
   let depth = 0;
   for (let i = 0; i < tags.length; i++) {
     const tag = tags[i]!;
@@ -109,11 +119,17 @@ export function extractMarkers(markup: string, file: string): Markers {
       if (!tag.selfClosing) throw failAt(markup, file, tag.start, "L1041");
       nolazy = true;
       removed.push({ start: tag.start, end: tag.end });
+    } else if (tag.name === NO_SSR) {
+      if (depth > 0) throw failAt(markup, file, tag.start, "L1038", { tag: NO_SSR });
+      if (nossr) throw failAt(markup, file, tag.start, "L1052");
+      if (!tag.selfClosing) throw failAt(markup, file, tag.start, "L1053");
+      nossr = true;
+      removed.push({ start: tag.start, end: tag.end });
     } else {
       depth = nextDepth(depth, tag);
     }
   }
-  return { markup: blank(markup, removed), fallback, head, nolazy };
+  return { markup: blank(markup, removed), fallback, head, nolazy, nossr };
 }
 
 function checkFallbackContent(
@@ -132,12 +148,16 @@ function checkFallbackContent(
       });
     }
     if (EVENT_ATTR.test(markup.slice(tag.start, tag.end))) {
-      throw failAt(markup, file, tag.start, "L1042", { what: "An event such as onclick" });
+      throw failAt(markup, file, tag.start, "L1042", {
+        what: "An event such as onclick",
+      });
     }
   }
   const expression = expressions.find((index) => index > from && index < to);
   if (expression !== undefined) {
-    throw failAt(markup, file, expression, "L1042", { what: "An expression in {braces}" });
+    throw failAt(markup, file, expression, "L1042", {
+      what: "An expression in {braces}",
+    });
   }
 }
 

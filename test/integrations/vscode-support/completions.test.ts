@@ -90,7 +90,11 @@ describe("markup completions", () => {
     const animate = completionsAt(text, text.length, noProps).find(
       (item) => item.label === "animate",
     );
-    expect(animate).toMatchObject({ insertText: "animate={$1}", snippet: true, kind: "keyword" });
+    expect(animate).toMatchObject({
+      insertText: "animate={$1}",
+      snippet: true,
+      kind: "keyword",
+    });
   });
 });
 
@@ -323,6 +327,7 @@ describe("flow and element completions", () => {
       "HTML",
       "FALLBACK",
       "NO_LAZY",
+      "NO_SSR",
     ]);
     expect(flow.find((item) => item.label === "IF")?.insertText).toBe("IF {$1}>\n\t$0\n</IF>");
   });
@@ -382,7 +387,10 @@ describe("flow and element completions", () => {
     const onclick = completionsAt(text, text.length, noProps).find(
       (item) => item.label === "onclick",
     );
-    expect(onclick).toMatchObject({ insertText: "onclick={$1}", snippet: true });
+    expect(onclick).toMatchObject({
+      insertText: "onclick={$1}",
+      snippet: true,
+    });
   });
 });
 

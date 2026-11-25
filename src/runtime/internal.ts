@@ -36,4 +36,5 @@ export { setAnimateConfig } from "./animate/options/config.ts";
 export { setScreens } from "./screen/screens-store.ts";
 export { animateConfigFromNames } from "./animate/options/config-names.ts";
 export { startRoutes } from "./router/start.ts";
+export { settledRenders } from "./ssr/hold.ts";
 export type { RoutePages } from "./router/start.ts";

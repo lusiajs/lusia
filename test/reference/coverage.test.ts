@@ -19,7 +19,7 @@ const UNDOCUMENTED: Record<string, string> = {
 };
 
 // Tags the compiler reads that are not in RESERVED_TAGS. Private in src/compiler/parse/markers.ts.
-const MARKER_TAGS = ["FALLBACK", "NO_LAZY"];
+const MARKER_TAGS = ["FALLBACK", "NO_LAZY", "NO_SSR"];
 
 const ANIMATE_KEYS = [...ITEM_KEYS, ...VIEW_KEYS, ...HOVER_KEYS, ...SCROLL_KEYS, ...SPACE_KEYS];
 

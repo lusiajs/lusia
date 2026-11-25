@@ -26,6 +26,8 @@ export interface ParsedFile {
   /** The <head> block: its markup is rendered into the document head. */
   head: MarkupBlock | null;
   nolazy: boolean;
+  /** The file has <NO_SSR />: the page build skips it and writes its <FALLBACK> instead. */
+  nossr: boolean;
 }
 
 interface SectionMatch {
@@ -105,7 +107,10 @@ function branchesOfStyles(source: string, sections: SectionMatch[], file: string
   const starts = sections
     .filter((section) => section.kind === "style")
     .map((section) => section.start);
-  const skip = sections.map((section) => ({ start: section.start, end: section.end }));
+  const skip = sections.map((section) => ({
+    start: section.start,
+    end: section.end,
+  }));
   return styleBranches(source, starts, skip, file);
 }
 
@@ -118,6 +123,7 @@ export function parse(source: string, file: string): ParsedFile {
     fallback: null,
     head: null,
     nolazy: false,
+    nossr: false,
   };
   let markup = "";
   let last = 0;
@@ -126,7 +132,10 @@ export function parse(source: string, file: string): ParsedFile {
   for (const section of sections) {
     const { kind, start, end } = section;
     if (kind === "style") {
-      result.styles.push({ ...toSection(source, section), branches: branches.shift()! });
+      result.styles.push({
+        ...toSection(source, section),
+        branches: branches.shift()!,
+      });
     } else {
       if (result.script) throw lusiaError("L1002", {}, spanAt(source, start, file));
       result.script = toSection(source, section);
@@ -139,6 +148,7 @@ export function parse(source: string, file: string): ParsedFile {
   result.fallback = markers.fallback;
   result.head = markers.head;
   result.nolazy = markers.nolazy;
+  result.nossr = markers.nossr;
   result.markup = markers.markup.trim();
   result.markupLine = lineAt(
     markers.markup,

@@ -6,7 +6,10 @@ import { attributeNameAt, wordAt } from "#language/parse/word.ts";
 import type { HoverResult } from "../hover.ts";
 import { openTagAt, tagNameAt, type OpenTag } from "#language/parse/tag.ts";
 
-const STYLE_TAG_IDS: Record<string, string> = { scoped: "style-scoped", global: "style-global" };
+const STYLE_TAG_IDS: Record<string, string> = {
+  scoped: "style-scoped",
+  global: "style-global",
+};
 
 export function markupHover(
   text: string,
@@ -39,9 +42,11 @@ const FLOW_TAG_IDS: Record<string, string> = {
   HTML: "html",
   FALLBACK: "fallback",
   NO_LAZY: "nolazy",
+  NO_SSR: "nossr",
 };
 
-const FLOW_TAG_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NO_LAZY)(?=[\s/>])/g;
+const FLOW_TAG_NAME =
+  /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NO_LAZY|NO_SSR)(?=[\s/>])/g;
 
 function flowTagHover(text: string, offset: number): HoverResult | undefined {
   for (const match of text.matchAll(FLOW_TAG_NAME)) {
@@ -81,7 +86,11 @@ function componentHover(
 ): HoverResult | undefined {
   const componentTag = tagNameAt(text, offset);
   if (!componentTag || !findComponentImport(text, componentTag.name)) return undefined;
-  return { kind: "component", name: componentTag.name, props: propsOf(componentTag.name) };
+  return {
+    kind: "component",
+    name: componentTag.name,
+    props: propsOf(componentTag.name),
+  };
 }
 
 function styleTagHover(text: string, offset: number): HoverResult | undefined {

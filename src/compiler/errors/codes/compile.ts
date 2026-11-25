@@ -199,4 +199,12 @@ export const COMPILE_CODES = {
     message: "<head> can only be used once",
     hint: "Keep one <head> block, and move its content into it.",
   },
+  L1052: {
+    message: "<NO_SSR /> can only be used once",
+    hint: "Remove the extra <NO_SSR /> from this file.",
+  },
+  L1053: {
+    message: "<NO_SSR /> takes no children",
+    hint: "Write it as <NO_SSR /> with no content between the tags.",
+  },
 } as const satisfies Record<string, ErrorCode>;

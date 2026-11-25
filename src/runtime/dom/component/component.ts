@@ -7,6 +7,8 @@ import { collectAttachHooks, runAttach, type AttachHook } from "./lifecycle.ts";
 import { attachHead } from "./head.ts";
 import { runtimeError } from "../../errors.ts";
 import { childScope, currentScope, inScope, keepScope, type Scope } from "../../config/scope.ts";
+import { isServerRender } from "../../ssr/flag.ts";
+import { placeSkipped } from "../../ssr/skip.ts";
 
 export type Props = Record<string, () => unknown>;
 
@@ -28,6 +30,9 @@ export interface Host {
 
 export interface ComponentOptions {
   head?: Render;
+  /** Set by <NO_SSR />: a server render skips the component and shows `fallback` instead. */
+  noSsr?: boolean;
+  fallback?: Component;
 }
 
 export interface Rendered {
@@ -112,6 +117,9 @@ export function defineComponent(
   options: ComponentOptions = {},
 ): Component {
   return componentFrom((parent, anchor, host, leaves) => {
+    if (options.noSsr && isServerRender()) {
+      return placeSkipped(options.fallback, parent, anchor, host, leaves);
+    }
     injectStyle(id, css);
     const cleanups: Cleanup[] = [];
     const { fragment, attachHooks } = renderWith(render, host, cleanups, leaves);

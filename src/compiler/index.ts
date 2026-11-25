@@ -21,5 +21,6 @@ export function compile(source: string, file: string, options: CompileOptions = 
     styles: (style, index, id) => compileStyleResult(style, file, id, index, options.screens),
     lazy: options.lazy,
     screens: options.screens,
+    idKey: options.idKey,
   });
 }

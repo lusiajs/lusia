@@ -4,6 +4,11 @@ import { GenContext, type GenOptions } from "./context.ts";
 import type { Template } from "../types/template.ts";
 import type { ScopeClasses } from "../../style/scope-classes.ts";
 
+/** Set when the file has <NO_SSR />. `fallbackSpecifier` is the file's own `?fallback` import, when it has a <FALLBACK>. */
+export interface NoSsrParts {
+  fallbackSpecifier?: string;
+}
+
 export interface ComponentParts extends GenOptions {
   imports: string;
   body: string;
@@ -12,6 +17,7 @@ export interface ComponentParts extends GenOptions {
   template: Template;
   /** The <head> block. Its nodes are placed in the document head while the component is. */
   head?: Template;
+  noSsr?: NoSsrParts;
   css: string;
   id: string;
   scopes: ScopeClasses;
@@ -76,6 +82,7 @@ export function generate({
   bodyLine,
   template,
   head,
+  noSsr,
   css,
   id,
   scopes,
@@ -89,18 +96,37 @@ export function generate({
   const headFragment = head ? ctx.fragment(head) : undefined;
   return [
     imports,
+    ...fallbackImport(noSsr),
     RUNTIME_IMPORT,
     ...(dev ? [HOT_IMPORT] : []),
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
     renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment, headFragment),
     ...(head ? [RENDER_HEAD] : []),
-    exportLine(id, dev, head !== undefined),
+    exportLine(id, dev, head !== undefined, noSsr),
   ].join("\n");
 }
 
-function exportLine(id: string, dev: boolean, hasHead: boolean): string {
+function fallbackImport(noSsr: NoSsrParts | undefined): string[] {
+  if (!noSsr?.fallbackSpecifier) return [];
+  return [`import __Fallback from ${JSON.stringify(noSsr.fallbackSpecifier)};`];
+}
+
+function optionsOf(hasHead: boolean, noSsr: NoSsrParts | undefined): string {
+  const entries = [
+    ...(hasHead ? ["head: __renderHead"] : []),
+    ...(noSsr ? ["noSsr: true"] : []),
+    ...(noSsr?.fallbackSpecifier ? ["fallback: __Fallback"] : []),
+  ];
+  return entries.length > 0 ? `, { ${entries.join(", ")} }` : "";
+}
+
+function exportLine(
+  id: string,
+  dev: boolean,
+  hasHead: boolean,
+  noSsr: NoSsrParts | undefined,
+): string {
   const define = dev ? "__hotComponent" : "__defineComponent";
-  const options = hasHead ? ", { head: __renderHead }" : "";
-  return `export default ${define}(${JSON.stringify(id)}, __css, __render${options});`;
+  return `export default ${define}(${JSON.stringify(id)}, __css, __render${optionsOf(hasHead, noSsr)});`;
 }
