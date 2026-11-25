@@ -1,10 +1,14 @@
 import { expressionEnd } from "#language/format/format-expressions.ts";
+import { tagEnd } from "#language/format/flow-placeholders.ts";
 import { tagAttributes, type AttributeName } from "#language/lint/attributes.ts";
 import { scriptImports } from "#language/parse/imports.ts";
 import { blankSections } from "#language/parse/sections.ts";
 
 export const TOKEN_TYPES = [
-  "keyword",
+  "lusiaBranch",
+  "lusiaLoop",
+  "lusiaSlot",
+  "lusiaHint",
   "decorator",
   "event",
   "parameter",
@@ -34,17 +38,17 @@ interface RawToken {
   modifiers: TokenModifier[];
 }
 
-const FLOW_TAGS: ReadonlySet<string> = new Set([
-  "IF",
-  "ELSEIF",
-  "ELSE",
-  "EACH",
-  "FOR",
-  "CONTENT",
-  "HTML",
-  "FALLBACK",
-  "NO_LAZY",
-  "NO_SSR",
+const FLOW_TAGS: ReadonlyMap<string, TokenType> = new Map([
+  ["IF", "lusiaBranch"],
+  ["ELSEIF", "lusiaBranch"],
+  ["ELSE", "lusiaBranch"],
+  ["EACH", "lusiaLoop"],
+  ["FOR", "lusiaLoop"],
+  ["CONTENT", "lusiaSlot"],
+  ["HTML", "lusiaSlot"],
+  ["FALLBACK", "lusiaSlot"],
+  ["NO_LAZY", "lusiaHint"],
+  ["NO_SSR", "lusiaHint"],
 ]);
 const BLOCK_ATTRIBUTES: ReadonlyMap<string, ReadonlySet<string>> = new Map([
   ["EACH", new Set(["as", "index", "key"])],
@@ -70,6 +74,8 @@ function tagTokens(markup: string, components: ReadonlySet<string>): RawToken[] 
     const closing = tag[1] === "/";
     const name = tag[2] ?? "";
     const nameStart = (tag.index ?? 0) + (closing ? 2 : 1);
+    const flow = FLOW_TAGS.get(name);
+    if (flow) tokens.push(...flowBracketTokens(markup, tag.index ?? 0, nameStart, flow));
     const nameToken = tagNameToken(name, nameStart, components);
     if (nameToken) tokens.push(nameToken);
     if (!closing) tokens.push(...tagAttributeTokens(markup, nameStart + name.length, name));
@@ -82,9 +88,21 @@ function tagNameToken(
   start: number,
   components: ReadonlySet<string>,
 ): RawToken | undefined {
-  if (FLOW_TAGS.has(name)) return token(start, name.length, "keyword");
+  const flow = FLOW_TAGS.get(name);
+  if (flow) return token(start, name.length, flow);
   if (components.has(name)) return token(start, name.length, "class");
   return undefined;
+}
+
+/** `<` or `</` before a flow tag name, and its `>` or `/>`, take the tag's color. */
+function flowBracketTokens(markup: string, open: number, nameStart: number, type: TokenType): RawToken[] {
+  const tokens = [token(open, nameStart - open, type)];
+  const end = tagEnd(markup, open);
+  if (end === -1) return tokens;
+  const selfClose = markup.charAt(end - 1) === "/";
+  const closeStart = selfClose ? end - 1 : end;
+  tokens.push(token(closeStart, end + 1 - closeStart, type));
+  return tokens;
 }
 
 function tagAttributeTokens(markup: string, nameEnd: number, tagName: string): RawToken[] {
