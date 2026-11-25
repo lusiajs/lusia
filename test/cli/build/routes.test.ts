@@ -84,6 +84,25 @@ describe("runBuild with routes", () => {
     expect(await readFile(join(outdir, "guide", "index.html"), "utf8")).toBe(root);
     expect(await readFile(join(outdir, "404.html"), "utf8")).toBe(root);
   });
+
+  test("route pages load their assets from the site root", async () => {
+    const outdir = join(workRoot, "dist-root-assets");
+    expect(
+      await runBuild({
+        dir: ROUTES_APP,
+        outdir,
+        minify: true,
+        cache: cacheOf({}, false),
+        routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
+        lazy: { mode: "smart", prefetch: "idle" },
+        quiet: true,
+      }),
+    ).toBe(0);
+    for (const page of ["guide/index.html", "404.html"]) {
+      const html = await readFile(join(outdir, page), "utf8");
+      expect(html).toMatch(/<script type="module"[^>]*src="\/chunk-/);
+    }
+  });
 });
 
 describe("dev server client routes", () => {

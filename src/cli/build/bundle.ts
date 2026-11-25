@@ -37,7 +37,10 @@ export async function bundleApp({
   ...plugin
 }: BundleOptions): Promise<Bun.BuildOutput> {
   const external = cache.externals();
+  const hasRoutes = Object.keys(routes ?? {}).length > 0;
   return Bun.build({
+    // Route pages live in sub folders, so asset links must start at the site root.
+    ...(hasRoutes ? { publicPath: "/" } : {}),
     entrypoints: [entryPath(dir)],
     minify,
     metafile: true,
