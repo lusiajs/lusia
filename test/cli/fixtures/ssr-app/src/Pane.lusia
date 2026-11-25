@@ -1,0 +1,7 @@
+<NO_SSR />
+
+<FALLBACK>
+  <p>loading editor</p>
+</FALLBACK>
+
+<p>editor body</p>

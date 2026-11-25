@@ -12,6 +12,7 @@ export type Command =
       outdir: string;
       minify: boolean;
       routes: Record<string, string>;
+      ssr: boolean;
       quiet: boolean;
       lazy: LazySettings;
       animate: AnimateConfig;

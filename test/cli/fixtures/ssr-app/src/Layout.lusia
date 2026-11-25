@@ -1,0 +1,9 @@
+<main class="layout">
+  <CONTENT />
+</main>
+
+<style>
+  .layout {
+    color: rgb(18, 52, 86);
+  }
+</style>

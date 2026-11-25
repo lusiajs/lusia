@@ -1,0 +1,9 @@
+<script>
+  import Layout from "../Layout.lusia";
+  import Pane from "../Pane.lusia";
+</script>
+
+<Layout>
+  <h1>Editor page</h1>
+  <Pane />
+</Layout>

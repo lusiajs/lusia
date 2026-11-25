@@ -1,0 +1,11 @@
+<script>
+  import Layout from "../Layout.lusia";
+</script>
+
+<head>
+  <title>Home</title>
+</head>
+
+<Layout>
+  <h1>Welcome home</h1>
+</Layout>

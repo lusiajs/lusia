@@ -61,6 +61,7 @@ async function parseBuild(args: string[]): Promise<Command> {
     outdir: outdirOf(dir, values.outdir, config),
     minify: values["no-minify"] ? false : (config.minify ?? true),
     routes: config.routes ?? {},
+    ssr: config.ssr ?? true,
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
     animate: config.animate ?? {},

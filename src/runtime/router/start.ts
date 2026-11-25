@@ -1,5 +1,5 @@
-import { attach } from "../dom/component/attach.ts";
 import type { Component, Instance } from "../dom/component/component.ts";
+import { attachPage } from "./attach-page.ts";
 import { findRoute } from "./find.ts";
 import { pathState } from "./location.ts";
 import { routeKeys } from "./params.ts";
@@ -32,7 +32,7 @@ export function startRoutes(pages: RoutePages, target: Element): Promise<void> {
     if (id !== navigation || !loaded) return;
     await detachCurrent();
     if (id !== navigation) return;
-    current = attach(loaded.default, target);
+    current = attachPage(loaded.default, target);
     scrollToHash();
   }
 

@@ -75,6 +75,7 @@ describe("runBuild with routes", () => {
         minify: true,
         cache: cacheOf({}, false),
         routes: { "/guide": "src/pages/Guide.lusia", "*": "src/pages/Home.lusia" },
+        ssr: false,
         lazy: { mode: "smart", prefetch: "idle" },
         quiet: true,
       }),

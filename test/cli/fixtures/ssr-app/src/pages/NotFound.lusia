@@ -1,0 +1,7 @@
+<script>
+  import Layout from "../Layout.lusia";
+</script>
+
+<Layout>
+  <p>Nothing at this address</p>
+</Layout>

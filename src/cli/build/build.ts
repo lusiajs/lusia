@@ -9,6 +9,7 @@ import { colorEnabled } from "../log/color.ts";
 import { createLogger } from "../log/log.ts";
 import { copyPublic } from "./public.ts";
 import { writeRouteIndexes } from "./routes.ts";
+import { prerenderRoutes } from "./ssr/prerender.ts";
 import { writeScreenTypes } from "../types/screen-types.ts";
 import { fileRows, formatReport } from "./report.ts";
 import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./timings.ts";
@@ -22,6 +23,8 @@ export interface BuildOptions {
   outdir: string;
   minify: boolean;
   routes?: Record<string, string>;
+  /** Render each route page to HTML. Default true. */
+  ssr?: boolean;
   quiet?: boolean;
   lazy: LazySettings;
   animate?: AnimateConfig;
@@ -73,6 +76,20 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   await writeOutputs(outdir, result.outputs);
   await writeRouteIndexes(outdir, options.routes ?? {});
   addStep(steps, "write", now() - writeStart);
+
+  if (options.ssr !== false && Object.keys(options.routes ?? {}).length > 0) {
+    try {
+      await prerenderRoutes({
+        dir,
+        outdir,
+        routes: options.routes ?? {},
+        settings: { lazy: options.lazy, animate: options.animate, screens: options.screens },
+      });
+    } catch (error) {
+      log.error(error instanceof Error ? error.message : String(error));
+      return 1;
+    }
+  }
 
   const copyStart = now();
   await copyPublic(dir, outdir);

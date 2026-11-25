@@ -72,12 +72,12 @@
     "check": "bun scripts/check.ts"
   },
   "dependencies": {
+    "@happy-dom/global-registrator": "^15.11.0",
     "sass": "^1.80.0",
     "sass-embedded": "^1",
     "sucrase": "3.35.1"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^15.11.0",
     "@types/bun": "latest",
     "dts-bundle-generator": "^10.0.0",
     "playwright": "1.63.0",
