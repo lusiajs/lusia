@@ -1,16 +1,16 @@
 <script>
-  import { variable } from "lusiajs";
+	import { variable } from "lusiajs";
 
-  const name = variable("Ada");
-  const isDone = variable(false);
+	const name = variable("Ada");
+	const isDone = variable(false);
 
-  function rename() {
-    name.value = "Grace";
-  }
+	function rename() {
+		name.value = "Grace";
+	}
 
-  function toggle() {
-    isDone.value = !isDone.value;
-  }
+	function toggle() {
+		isDone.value = !isDone.value;
+	}
 </script>
 
 <p>Hi {name}</p>

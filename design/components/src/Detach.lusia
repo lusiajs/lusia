@@ -1,30 +1,30 @@
 <script>
-  import { attach, variable, type Instance } from "lusiajs";
-  import OnDetach from "./OnDetach.lusia";
+	import { attach, variable, type Instance } from "lusiajs";
+	import OnDetach from "./OnDetach.lusia";
 
-  const slot = variable<Element | null>(null);
-  const status = variable("Not attached.");
-  let panel: Instance | null = null;
+	const slot = variable<Element | null>(null);
+	const status = variable("Not attached.");
+	let panel: Instance | null = null;
 
-  function mount() {
-    if (panel || !slot.value) return;
-    panel = attach(OnDetach, slot.value);
-    status.value = "Attached.";
-  }
+	function mount() {
+		if (panel || !slot.value) return;
+		panel = attach(OnDetach, slot.value);
+		status.value = "Attached.";
+	}
 
-  async function remove() {
-    if (!panel) return;
-    const leaving = panel;
-    panel = null;
-    status.value = "Leaving...";
-    await leaving.detach();
-    status.value = "Removed.";
-  }
+	async function remove() {
+		if (!panel) return;
+		const leaving = panel;
+		panel = null;
+		status.value = "Leaving...";
+		await leaving.detach();
+		status.value = "Removed.";
+	}
 </script>
 
 <div>
-  <button onclick={mount} type="button">Attach</button>
-  <button onclick={remove} type="button">Detach and wait</button>
-  <p>{status}</p>
-  <div bind-element={slot}></div>
+	<button onclick={mount} type="button">Attach</button>
+	<button onclick={remove} type="button">Detach and wait</button>
+	<p>{status}</p>
+	<div bind-element={slot}></div>
 </div>

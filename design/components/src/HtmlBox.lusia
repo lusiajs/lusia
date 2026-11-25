@@ -1,14 +1,14 @@
 <script>
-  import { variable } from "lusiajs";
+	import { variable } from "lusiajs";
 
-  const note = variable("<b>Bold</b> text");
+	const note = variable("<b>Bold</b> text");
 
-  function setItalic() {
-    note.value = "<i>Italic</i> text";
-  }
+	function setItalic() {
+		note.value = "<i>Italic</i> text";
+	}
 </script>
 
 <div>
-  <button onclick={setItalic} type="button">Set italic</button>
-  <p><HTML>{note}</HTML></p>
+	<button onclick={setItalic} type="button">Set italic</button>
+	<p><HTML>{note}</HTML></p>
 </div>

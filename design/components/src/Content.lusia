@@ -1,15 +1,15 @@
 <script>
-  import { variable } from "lusiajs";
-  import Card from "./Card.lusia";
+	import { variable } from "lusiajs";
+	import Card from "./Card.lusia";
 
-  const clicks = variable(0);
+	const clicks = variable(0);
 
-  function addClick() {
-    clicks.value++;
-  }
+	function addClick() {
+		clicks.value++;
+	}
 </script>
 
 <Card title="Inbox">
-  <p>{clicks} clicks, counted by the parent</p>
-  <button onclick={addClick} type="button">Click</button>
+	<p>{clicks} clicks, counted by the parent</p>
+	<button onclick={addClick} type="button">Click</button>
 </Card>

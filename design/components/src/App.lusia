@@ -1,72 +1,72 @@
 <script>
-  import Attach from "./Attach.lusia";
-  import Content from "./Content.lusia";
-  import ComponentTag from "./ComponentTag.lusia";
-  import Detach from "./Detach.lusia";
-  import FileTree from "./FileTree.lusia";
-  import HtmlBox from "./HtmlBox.lusia";
-  import OnAttach from "./OnAttach.lusia";
-  import OnDetach from "./OnDetach.lusia";
-  import Props from "./Props.lusia";
+	import Attach from "./Attach.lusia";
+	import Content from "./Content.lusia";
+	import ComponentTag from "./ComponentTag.lusia";
+	import Detach from "./Detach.lusia";
+	import FileTree from "./FileTree.lusia";
+	import HtmlBox from "./HtmlBox.lusia";
+	import OnAttach from "./OnAttach.lusia";
+	import OnDetach from "./OnDetach.lusia";
+	import Props from "./Props.lusia";
 </script>
 
 <h1>Components playground</h1>
 
 <section>
-  <h2>props()</h2>
-  <Props label="Hello" />
-  <Props />
+	<h2>props()</h2>
+	<Props label="Hello" />
+	<Props />
 </section>
 
 <section>
-  <h2>attach()</h2>
-  <Attach />
+	<h2>attach()</h2>
+	<Attach />
 </section>
 
 <section>
-  <h2>onAttach()</h2>
-  <OnAttach />
+	<h2>onAttach()</h2>
+	<OnAttach />
 </section>
 
 <section>
-  <h2>detach()</h2>
-  <Detach />
+	<h2>detach()</h2>
+	<Detach />
 </section>
 
 <section>
-  <h2>onDetach()</h2>
-  <OnDetach />
+	<h2>onDetach()</h2>
+	<OnDetach />
 </section>
 
 <section>
-  <h2>&lt;HTML&gt;</h2>
-  <HtmlBox />
+	<h2>&lt;HTML&gt;</h2>
+	<HtmlBox />
 </section>
 
 <section>
-  <h2>&lt;Name /&gt;</h2>
-  <ComponentTag />
+	<h2>&lt;Name /&gt;</h2>
+	<ComponentTag />
 </section>
 
 <section>
-  <h2>Recursive components</h2>
-  <FileTree />
+	<h2>Recursive components</h2>
+	<FileTree />
 </section>
 
 <section>
-  <h2>&lt;CONTENT /&gt;</h2>
-  <Content />
+	<h2>&lt;CONTENT /&gt;</h2>
+	<Content />
 </section>
 
 <style global>
-  section {
-    display: grid;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
+	section {
+		display: grid;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
 
-  h2 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
+	h2 {
+		margin: 0;
+		font-size: 1.1rem;
+	}
 </style>

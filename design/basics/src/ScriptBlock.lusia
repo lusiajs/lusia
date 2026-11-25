@@ -1,11 +1,11 @@
 <script>
-  import { variable } from "lusiajs";
+	import { variable } from "lusiajs";
 
-  const count = variable(0);
+	const count = variable(0);
 
-  function increment() {
-    count.value++;
-  }
+	function increment() {
+		count.value++;
+	}
 </script>
 
 <button onclick={increment}>Clicked {count} times</button>
