@@ -57,6 +57,31 @@ describe("expressions in title and textarea", () => {
     ]);
   });
 
+  test("character references next to an expression are decoded", () => {
+    const { bindings } = compileTemplate("<title>Tom &amp; Jerry {x} &#39;&#x41;&#66;&lt;</title>", FILE);
+    expect(bindings).toEqual([
+      {
+        kind: "element",
+        attrs: [],
+        events: [],
+        binds: [],
+        text: ["Tom & Jerry ", { code: "x", line: 1, column: 25 }, " 'AB<"],
+      },
+    ]);
+  });
+
+  test("an attribute with an expression decodes its character references", () => {
+    const { bindings } = compileTemplate('<a title="Tom &amp; {x}"></a>', FILE);
+    expect(bindings).toEqual([
+      {
+        kind: "element",
+        attrs: [{ name: "title", parts: ["Tom & ", { code: "x", line: 1, column: 22 }] }],
+        events: [],
+        binds: [],
+      },
+    ]);
+  });
+
   test("a title without its close tag is an error", () => {
     expect(() => compileTemplate("<title>{id}", FILE)).toThrow();
   });

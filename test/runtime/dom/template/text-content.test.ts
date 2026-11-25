@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { variable } from "#runtime/variable/variable.ts";
 import TextElements from "../fixtures/TextElements.lusia";
+import TextEntities from "../fixtures/TextEntities.lusia";
 import { host, mount, resetMounts } from "../fixtures/mount.ts";
 
 afterEach(() => {
@@ -30,5 +31,19 @@ describe("expressions in title and textarea", () => {
     note.value = "second";
 
     expect(area.value).toBe("second");
+  });
+
+  test("character references next to an expression are decoded", () => {
+    const id = variable("a");
+    const note = variable("x");
+    const el = host();
+    mount(TextEntities, el, { id: () => id.value, note: () => note.value });
+
+    expect(document.title).toBe("Tom & Jerry a");
+    expect(el.querySelector("textarea")!.value).toBe("AB x");
+
+    id.value = "b";
+
+    expect(document.title).toBe("Tom & Jerry b");
   });
 });

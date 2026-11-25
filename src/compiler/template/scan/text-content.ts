@@ -1,5 +1,6 @@
 import type { AttrPart } from "../types/attribute.ts";
 import type { Cursor } from "./cursor.ts";
+import { decodeEntities } from "./entities.ts";
 
 /** Plain-text elements: their content is not parsed as markup, so `{expr}` binds the whole text. */
 const TEXT_ELEMENTS = new Set(["title", "textarea"]);
@@ -26,13 +27,13 @@ export function readTextContent(c: Cursor, name: string, start: number): TextCon
       literal += c.src[c.pos++];
       continue;
     }
-    if (literal) parts.push(literal);
+    if (literal) parts.push(decodeEntities(literal));
     literal = "";
     parts.push(c.readExpression());
   }
   if (!c.startsWith(close)) c.fail("L1009", { name }, start);
   const raw = c.src.slice(from, c.pos);
   c.pos += close.length;
-  if (literal) parts.push(literal);
+  if (literal) parts.push(decodeEntities(literal));
   return { parts, raw };
 }

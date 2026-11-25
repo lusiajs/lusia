@@ -3,6 +3,7 @@ import type { Values } from "#compiler/errors/create.ts";
 import type { Cursor } from "./cursor.ts";
 import type { AttrBinding, AttrPart } from "../types/attribute.ts";
 import type { Expr } from "../types/expression.ts";
+import { decodeEntities } from "./entities.ts";
 
 export type Fail = (code: ErrorCodeName, values?: Values) => never;
 
@@ -89,5 +90,9 @@ function readAttributeValue(cursor: Cursor): AttrPart[] {
   }
   cursor.pos++;
   if (literal) parts.push(literal);
-  return parts;
+  return hasExpression(parts) ? parts.map(decodePart) : parts;
+}
+
+function decodePart(part: AttrPart): AttrPart {
+  return typeof part === "string" ? decodeEntities(part) : part;
 }
