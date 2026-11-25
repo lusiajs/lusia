@@ -1,0 +1,66 @@
+import type { ApiEntry } from "./types.ts";
+
+export const routerEntries: ApiEntry[] = [
+  {
+    id: "path",
+    name: "PATH",
+    kind: "value",
+    group: "routing",
+    signature: "const PATH: Variable<string> & { match(pattern: string): boolean }",
+    summary: "The pathname of the current page. Set it to go to another page.",
+    bullets: [
+      "Read it with .value or .get(). It changes when a link, the back button or a set moves to another page.",
+      "Set .value to go to a path. A query or hash in the value goes into the address bar. PATH holds only the path.",
+      "Each set adds a browser history entry, then the page changes.",
+      "Works without routes. It reads the address when the page loads.",
+    ],
+    example: `<script>\n  import { PATH } from "lusiajs";\n</script>\n\n<button onclick={() => (PATH.value = "/guide?step=2#intro")}>Guide</button>\n<p>You are on {PATH.value}</p>`,
+  },
+  {
+    id: "path-match",
+    name: "PATH.match()",
+    kind: "function",
+    group: "routing",
+    signature: "PATH.match(pattern: string): boolean",
+    summary: "True when the current path matches the pattern.",
+    bullets: [
+      "Uses the same rules as the routes config. A trailing slash is ignored.",
+      "A :name segment matches one non-empty segment. /guide/:id matches /guide/42 but not /guide.",
+      '"*" matches any path.',
+      "Reactive: in markup it updates when the page changes.",
+    ],
+    example: `<script>\n  import { PATH } from "lusiajs";\n</script>\n\n<a href="/guide" aria-current={PATH.match("/guide") ? "page" : null}>Guide</a>`,
+  },
+  {
+    id: "params",
+    name: "PARAMS",
+    kind: "value",
+    group: "routing",
+    signature: "const PARAMS: ComputedVariable<Record<string, string>>",
+    summary: "The values in the current address: the :name segments of the page, then the query.",
+    bullets: [
+      "For a page at /user/:id, PARAMS.value.id is the id segment of the address.",
+      "Query values come from ?name=value. They update when the query changes.",
+      "When a route value and a query value have the same name, the route value wins.",
+      "Read-only. Set PATH to go to another page.",
+      "Without routes, it holds only the query values.",
+    ],
+    example: `<script>\n  import { PARAMS } from "lusiajs";\n</script>\n\n<p>User {PARAMS.value.id}</p>`,
+  },
+  {
+    id: "config-routes",
+    name: "routes",
+    kind: "value",
+    group: "routing",
+    signature: "routes: Record<string, string>",
+    summary: "Maps each page address to its page file. Each page loads when the reader opens it.",
+    bullets: [
+      'Keys start with /. A segment can be :name, as in /user/:id. The key "*" is the page for any other address.',
+      "Values are page files, relative to the app folder. Each file must end with .lusia and exist.",
+      "An exact key wins over a :name key. Then the :name keys win in order, and then the * key.",
+      'Each address with no :name gets its own index.html in the build. "*" becomes 404.html.',
+      "Set it in lusia.config. The old list form is an error.",
+    ],
+    example: `// lusia.config.ts\nimport { defineConfig } from "lusiajs/config";\n\nexport default defineConfig({\n  routes: {\n    "/": "src/pages/Home.lusia",\n    "/guide": "src/pages/Guide.lusia",\n    "/user/:id": "src/pages/User.lusia",\n    "*": "src/pages/NotFound.lusia",\n  },\n});`,
+  },
+];

@@ -1,6 +1,6 @@
 export type ApiKind = "function" | "type" | "markup" | "style" | "value";
 export type ApiGroup =
-  "basics" | "reactivity" | "events" | "flow" | "components" | "styling" | "motion";
+  "basics" | "reactivity" | "events" | "flow" | "components" | "styling" | "motion" | "routing";
 
 export interface ApiMember {
   members?: ApiMember[];

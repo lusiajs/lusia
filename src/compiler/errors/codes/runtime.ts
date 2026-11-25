@@ -7,6 +7,7 @@ import { RUNTIME_COMPONENT_CODES } from "./runtime/component.ts";
 import { RUNTIME_CONFIG_CODES } from "./runtime/config.ts";
 import { RUNTIME_DOM_CODES } from "./runtime/dom.ts";
 import { RUNTIME_LAZY_CODES } from "./runtime/lazy.ts";
+import { RUNTIME_ROUTER_CODES } from "./runtime/router.ts";
 import { RUNTIME_SCREEN_CODES } from "./runtime/screen.ts";
 import { RUNTIME_VARIABLE_CODES } from "./runtime/variable.ts";
 
@@ -20,5 +21,6 @@ export const RUNTIME_CODES = {
   ...RUNTIME_ANIMATE_TRIGGER_CODES,
   ...RUNTIME_VARIABLE_CODES,
   ...RUNTIME_LAZY_CODES,
+  ...RUNTIME_ROUTER_CODES,
   ...RUNTIME_SCREEN_CODES,
 } as const satisfies Record<string, ErrorCode>;

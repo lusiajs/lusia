@@ -11,6 +11,7 @@ const GROUPS = new Set([
   "components",
   "styling",
   "motion",
+  "routing",
 ]);
 
 const presetMemberNames = () =>
