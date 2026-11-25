@@ -1,0 +1,20 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const loggedIn = variable(false);
+
+  function logIn() {
+    loggedIn.value = true;
+  }
+
+  function toggle() {
+    loggedIn.value = !loggedIn.value;
+  }
+</script>
+
+<button onclick={toggle}>Switch</button>
+<IF {loggedIn}>
+  <p>Welcome back.</p>
+<ELSE>
+  <button onclick={logIn}>Log in</button>
+</IF>

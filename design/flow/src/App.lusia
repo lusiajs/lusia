@@ -1,0 +1,34 @@
+<script>
+  import EachBlock from "./EachBlock.lusia";
+  import ElseBlock from "./ElseBlock.lusia";
+  import ElseIfBlock from "./ElseIfBlock.lusia";
+  import ForBlock from "./ForBlock.lusia";
+  import IfBlock from "./IfBlock.lusia";
+</script>
+
+<h1>Flow playground</h1>
+
+<section>
+  <h2>{"<IF>"} with IfBlock</h2>
+  <IfBlock />
+</section>
+
+<section>
+  <h2>{"<ELSEIF>"} with ElseIfBlock</h2>
+  <ElseIfBlock />
+</section>
+
+<section>
+  <h2>{"<ELSE>"} with ElseBlock</h2>
+  <ElseBlock />
+</section>
+
+<section>
+  <h2>{"<EACH>"} with EachBlock</h2>
+  <EachBlock />
+</section>
+
+<section>
+  <h2>{"<FOR>"} with ForBlock</h2>
+  <ForBlock />
+</section>

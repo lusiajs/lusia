@@ -1,0 +1,20 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const name = variable("Ada");
+  const isDone = variable(false);
+
+  function rename() {
+    name.value = "Grace";
+  }
+
+  function toggle() {
+    isDone.value = !isDone.value;
+  }
+</script>
+
+<p>Hi {name}</p>
+<p>Name length: {name.value.length}</p>
+<button onclick={rename}>Rename</button>
+<button onclick={toggle}>Toggle save</button>
+<button disabled={isDone}>Save</button>

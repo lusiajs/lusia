@@ -1,0 +1,16 @@
+<script>
+  import Expression from "./Expression.lusia";
+  import ScriptBlock from "./ScriptBlock.lusia";
+</script>
+
+<h1>Basics playground</h1>
+
+<section>
+  <h2>{"{expr}"} with Expression</h2>
+  <Expression />
+</section>
+
+<section>
+  <h2>{"<script>"} with Script</h2>
+  <ScriptBlock />
+</section>

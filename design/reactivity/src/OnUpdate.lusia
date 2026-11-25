@@ -1,0 +1,22 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const count = variable(0);
+  const log = variable("No update yet");
+
+  const stop = count.onUpdate((now, before) => {
+    log.value = before + " to " + now;
+  });
+
+  function increment() {
+    count.value++;
+  }
+
+  function stopWatching() {
+    stop();
+  }
+</script>
+
+<p>{log}</p>
+<button onclick={increment}>Increment {count}</button>
+<button onclick={stopWatching}>Stop watching</button>

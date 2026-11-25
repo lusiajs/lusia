@@ -1,0 +1,24 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const count = variable(0);
+  const log = variable("Not run yet");
+
+  function logCount() {
+    log.value = "count is " + count.value;
+  }
+
+  const stop = variable.autoRun(logCount);
+
+  function increment() {
+    count.value++;
+  }
+
+  function stopLogging() {
+    stop();
+  }
+</script>
+
+<p>{log}</p>
+<button onclick={increment}>Increment</button>
+<button onclick={stopLogging}>Stop logging</button>

@@ -1,0 +1,13 @@
+<script>
+  import { variable, type ViewEvent } from "lusiajs";
+
+  const seen = variable("Not seen");
+
+  function showView(event: ViewEvent) {
+    seen.value = event.in ? "Seen" : "Not seen";
+  }
+</script>
+
+<section on:view={showView}>
+  <p>{seen}</p>
+</section>

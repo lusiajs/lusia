@@ -1,0 +1,52 @@
+<script>
+  import BindElement from "./BindElement.lusia";
+  import BindProp from "./BindProp.lusia";
+  import BindValue from "./BindValue.lusia";
+  import Click from "./Click.lusia";
+  import EventValue from "./EventValue.lusia";
+  import KeepRunning from "./KeepRunning.lusia";
+  import Listen from "./Listen.lusia";
+  import OnName from "./OnName.lusia";
+</script>
+
+<h1>Events playground</h1>
+
+<section>
+  <h2>{"onclick={fn}"} with Click</h2>
+  <Click />
+</section>
+
+<section>
+  <h2>{"on:name={fn}"} with OnName</h2>
+  <OnName />
+</section>
+
+<section>
+  <h2>{"bind-value={variable}"} with BindValue</h2>
+  <BindValue />
+</section>
+
+<section>
+  <h2>{"bind-<prop>={variable}"} with BindProp</h2>
+  <BindProp />
+</section>
+
+<section>
+  <h2>{"bind-element={variable}"} with BindElement</h2>
+  <BindElement />
+</section>
+
+<section>
+  <h2>{"listen()"} with Listen</h2>
+  <Listen />
+</section>
+
+<section>
+  <h2>{"EVENT"} with EventValue</h2>
+  <EventValue />
+</section>
+
+<section>
+  <h2>{"keepRunning()"} with KeepRunning</h2>
+  <KeepRunning />
+</section>

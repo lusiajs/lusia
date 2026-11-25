@@ -1,0 +1,14 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const rows = variable(3);
+
+  function addRow() {
+    rows.value++;
+  }
+</script>
+
+<button onclick={addRow}>Add row</button>
+<FOR {i} from={0} to={rows.value}>
+  <p>Row {i + 1}</p>
+</FOR>

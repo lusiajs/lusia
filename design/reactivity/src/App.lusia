@@ -1,0 +1,34 @@
+<script>
+  import AutoRun from "./AutoRun.lusia";
+  import Compute from "./Compute.lusia";
+  import OnUpdate from "./OnUpdate.lusia";
+  import Variable from "./Variable.lusia";
+  import Watch from "./Watch.lusia";
+</script>
+
+<h1>Reactivity playground</h1>
+
+<section>
+  <h2>{"variable()"} with Variable</h2>
+  <Variable />
+</section>
+
+<section>
+  <h2>{"variable.compute()"} with Compute</h2>
+  <Compute />
+</section>
+
+<section>
+  <h2>{"variable.autoRun()"} with AutoRun</h2>
+  <AutoRun />
+</section>
+
+<section>
+  <h2>{"variable.watch()"} with Watch</h2>
+  <Watch />
+</section>
+
+<section>
+  <h2>{"count.onUpdate()"} with OnUpdate</h2>
+  <OnUpdate />
+</section>

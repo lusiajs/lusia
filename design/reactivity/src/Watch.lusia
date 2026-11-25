@@ -1,0 +1,23 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const first = variable("Ada");
+  const last = variable("Lovelace");
+  const log = variable("Not changed yet");
+
+  const stop = variable.watch([first, last], () => {
+    log.value = "name is " + first.value + " " + last.value;
+  });
+
+  function changeFirst() {
+    first.value = "Grace";
+  }
+
+  function stopWatching() {
+    stop();
+  }
+</script>
+
+<p>{log}</p>
+<button onclick={changeFirst}>Change first name</button>
+<button onclick={stopWatching}>Stop watching</button>

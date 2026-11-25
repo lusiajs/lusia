@@ -1,0 +1,16 @@
+<script>
+  import { listen, onAttach, variable } from "lusiajs";
+
+  const message = variable("Waiting");
+
+  onAttach((root) => {
+    const card = root.querySelector("article")!;
+    listen(card, "click", () => {
+      message.value = "Card clicked";
+    });
+  });
+</script>
+
+<article>
+  <p>{message}</p>
+</article>

@@ -1,0 +1,21 @@
+<script>
+  import { EVENT, keepRunning, listen, onAttach } from "lusiajs";
+
+  let stopWatching = () => {};
+
+  onAttach((root) => {
+    const section = root.querySelector("section")!;
+    keepRunning(() => {
+      stopWatching = listen(section, EVENT.VIEW, ({ in: visible }) => {
+        console.log("Section visible:", visible);
+      });
+    });
+  });
+
+  function stop() {
+    stopWatching();
+  }
+</script>
+
+<section>Logs its view state</section>
+<button onclick={stop}>Stop watching</button>

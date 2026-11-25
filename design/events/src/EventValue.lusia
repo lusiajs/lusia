@@ -1,0 +1,16 @@
+<script>
+  import { EVENT, listen, onAttach, variable, type SizeEvent } from "lusiajs";
+
+  const width = variable(0);
+
+  onAttach((root) => {
+    const card = root.querySelector("article")!;
+    listen(card, EVENT.SIZE, (event: SizeEvent) => {
+      width.value = Math.round(event.width);
+    });
+  });
+</script>
+
+<article>
+  <p>Width: {width}px</p>
+</article>

@@ -1,0 +1,8 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const done = variable(false);
+</script>
+
+<input type="checkbox" bind-checked={done} />
+<p>{done.value ? "Done" : "Not done"}</p>

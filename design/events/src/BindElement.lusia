@@ -1,0 +1,12 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const field = variable<HTMLInputElement | null>(null);
+
+  function focusField() {
+    field.value?.focus();
+  }
+</script>
+
+<input bind-element={field} />
+<button onclick={focusField}>Focus</button>

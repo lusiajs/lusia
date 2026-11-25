@@ -1,0 +1,12 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const count = variable(0);
+  const double = variable.compute(() => count.value * 2);
+
+  function increment() {
+    count.value++;
+  }
+</script>
+
+<button onclick={increment}>Count {count}, double {double}</button>

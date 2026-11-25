@@ -1,0 +1,20 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const score = variable(72);
+
+  function setScore(value: number) {
+    score.value = value;
+  }
+</script>
+
+<button onclick={() => setScore(95)}>Score 95</button>
+<button onclick={() => setScore(72)}>Score 72</button>
+<button onclick={() => setScore(40)}>Score 40</button>
+<IF {score.value >= 90}>
+  <p>A</p>
+<ELSEIF {score.value >= 70}>
+  <p>C</p>
+<ELSE>
+  <p>Try again</p>
+</IF>
