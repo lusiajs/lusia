@@ -63,6 +63,8 @@
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
+    "design": "bun scripts/design.ts dev",
+    "design:build": "bun scripts/design.ts build",
     "test": "bun test --parallel=6 ./test/ ./examples/",
     "format": "bun fmt",
     "format:check": "bun fmt --check",

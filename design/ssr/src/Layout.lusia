@@ -1,0 +1,27 @@
+<header>
+  <a href="/">Home</a>
+  <a href="/editor">Editor</a>
+</header>
+
+<main>
+  <CONTENT />
+</main>
+
+<style global>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+  }
+</style>
+
+<style>
+  header {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f4f0ff;
+  }
+  main {
+    padding: 1rem;
+  }
+</style>

@@ -1,0 +1,43 @@
+<script>
+  import { PATH } from "lusiajs";
+</script>
+
+<header>
+  <a href="/" aria-current={PATH.match("/") ? "page" : null}>Home</a>
+  <a href="/guide" aria-current={PATH.match("/guide") ? "page" : null}>Guide</a>
+  <a href="/blog/hello">Post: hello</a>
+  <a href="/blog/news">Post: news</a>
+  <a href="/missing">Missing page</a>
+</header>
+
+<main>
+  <CONTENT />
+</main>
+
+<footer>Shared footer from Layout.lusia</footer>
+
+<style global>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+  }
+</style>
+
+<style>
+  header {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+  main {
+    padding: 1rem;
+  }
+  [aria-current="page"] {
+    font-weight: 700;
+  }
+  footer {
+    padding: 1rem;
+    color: #777;
+  }
+</style>

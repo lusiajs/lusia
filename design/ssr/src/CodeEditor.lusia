@@ -1,0 +1,27 @@
+<script>
+  import { onAttach } from "lusiajs";
+
+  let box: HTMLTextAreaElement;
+
+  onAttach((root) => {
+    box = root.querySelector("textarea")!;
+    box.value = "Only the browser renders this editor.";
+  });
+</script>
+
+<NO_SSR />
+
+<FALLBACK>
+  <p class="loading">Editor loads in the browser...</p>
+</FALLBACK>
+
+<textarea rows="6"></textarea>
+
+<style>
+  textarea {
+    width: 100%;
+  }
+  .loading {
+    color: #777;
+  }
+</style>

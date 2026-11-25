@@ -1,0 +1,13 @@
+<script>
+  import Layout from "../Layout.lusia";
+</script>
+
+<head>
+  <title>Home - Routes playground</title>
+  <meta name="description" content="The home page sets its own title and description." />
+</head>
+
+<Layout>
+  <h1>Home</h1>
+  <p>Each page wraps itself in Layout, so the header, footer and shared styles live in one place.</p>
+</Layout>

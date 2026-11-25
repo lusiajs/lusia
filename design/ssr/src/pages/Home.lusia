@@ -1,0 +1,22 @@
+<script>
+  import { variable } from "lusiajs";
+  import Layout from "../Layout.lusia";
+
+  const count = variable(0);
+
+  function add() {
+    count.value += 1;
+  }
+</script>
+
+<head>
+  <title>Home - SSR playground</title>
+  <meta name="description" content="This text is in the built HTML, so crawlers read it without JS." />
+</head>
+
+<Layout>
+  <h1>Built on the server side</h1>
+  <p>Run bun run design:build ssr, then open design/ssr/dist/index.html: this text is already there.</p>
+  <button onclick={add}>Clicked {count} times</button>
+  <p>The button works after hydrate: the same nodes go live, nothing is rebuilt.</p>
+</Layout>

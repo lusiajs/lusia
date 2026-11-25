@@ -1,0 +1,14 @@
+<script>
+  import CodeEditor from "../CodeEditor.lusia";
+  import Layout from "../Layout.lusia";
+</script>
+
+<head>
+  <title>Editor - SSR playground</title>
+</head>
+
+<Layout>
+  <h1>Editor</h1>
+  <p>The heading and this text are in the built HTML. The editor below has NO_SSR, so the built HTML shows its FALLBACK instead.</p>
+  <CodeEditor />
+</Layout>

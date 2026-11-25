@@ -1,0 +1,12 @@
+<script>
+  import Layout from "../Layout.lusia";
+</script>
+
+<head>
+  <title>Not found - SSR playground</title>
+</head>
+
+<Layout>
+  <h1>Page not found</h1>
+  <p>Built as dist/404.html.</p>
+</Layout>

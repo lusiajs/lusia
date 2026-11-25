@@ -1,0 +1,19 @@
+<script>
+  import { PARAMS, PATH } from "lusiajs";
+  import Layout from "../Layout.lusia";
+
+  function openOther() {
+    PATH.value = "/blog/other?tab=api";
+  }
+</script>
+
+<head>
+  <title>Post {PARAMS.value.id} - Routes playground</title>
+</head>
+
+<Layout>
+  <h1>Post: {PARAMS.value.id}</h1>
+  <p>Path: {PATH.value}</p>
+  <p>Query tab: {PARAMS.value.tab ?? "none"}</p>
+  <button onclick={openOther}>Go to /blog/other?tab=api from code</button>
+</Layout>

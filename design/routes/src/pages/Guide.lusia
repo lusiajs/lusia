@@ -1,0 +1,12 @@
+<script>
+  import Layout from "../Layout.lusia";
+</script>
+
+<head>
+  <title>Guide - Routes playground</title>
+</head>
+
+<Layout>
+  <h1>Guide</h1>
+  <p>This page sets only a title. The description comes from index.html.</p>
+</Layout>
