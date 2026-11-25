@@ -1,0 +1,17 @@
+<script>
+  import { variable } from "lusiajs";
+  import LazyPanel from "./LazyPanel.lusia";
+
+  const shown = variable(false);
+
+  function toggle() {
+    shown.value = !shown.value;
+  }
+</script>
+
+<div>
+  <button onclick={toggle} type="button">Toggle panel</button>
+  <IF {shown}>
+    <LazyPanel />
+  </IF>
+</div>

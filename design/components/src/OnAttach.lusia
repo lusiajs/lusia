@@ -1,0 +1,16 @@
+<script>
+  import { onAttach, variable } from "lusiajs";
+
+  const clicks = variable(0);
+
+  onAttach((root) => {
+    const button = root.querySelector("button")!;
+    const add = () => {
+      clicks.value++;
+    };
+    button.addEventListener("click", add);
+    return () => button.removeEventListener("click", add);
+  });
+</script>
+
+<button type="button">Clicked {clicks} times (DOM listener)</button>

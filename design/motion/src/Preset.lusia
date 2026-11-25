@@ -1,0 +1,5 @@
+<script>
+  import { ON, PRESET } from "lusiajs";
+</script>
+
+<div class="box" animate={{ play: PRESET.SLIDE_UP, on: ON.VIEW, duration: 500 }}>Slide up</div>

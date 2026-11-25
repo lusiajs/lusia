@@ -1,0 +1,9 @@
+<script>
+  import { ON } from "lusiajs";
+</script>
+
+<div class="box" animate={{
+  on: ON.MOUSE_MOVE,
+  play: ({ x, y }) => ({ transform: `rotateX(${(0.5 - y) * 20}deg) rotateY(${(x - 0.5) * 20}deg)` }),
+  duration: 300,
+}}>Move the mouse over the card</div>

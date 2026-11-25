@@ -1,0 +1,36 @@
+<script>
+  import AlwaysLoaded from "./AlwaysLoaded.lusia";
+  import LazyConfig from "./LazyConfig.lusia";
+  import LazyToggle from "./LazyToggle.lusia";
+</script>
+
+<h1>Lazy playground</h1>
+
+<section>
+  <h2>&lt;FALLBACK&gt;</h2>
+  <LazyToggle />
+</section>
+
+<section>
+  <h2>&lt;NO_LAZY /&gt;</h2>
+  <AlwaysLoaded />
+</section>
+
+<section>
+  <h2>lazy config</h2>
+  <LazyConfig />
+</section>
+
+<style global>
+  section {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+</style>

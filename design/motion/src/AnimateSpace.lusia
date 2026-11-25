@@ -1,0 +1,17 @@
+<script>
+  import { ON, variable } from "lusiajs";
+
+  const items = variable(["One", "Two", "Three"]);
+  const fadeOut = { 0: { opacity: 1 }, 1: { opacity: 0 } };
+
+  function removeLast() {
+    items.value = items.value.slice(0, -1);
+  }
+</script>
+
+<button onclick={removeLast} type="button">Remove last</button>
+<ul>
+  <EACH {items} as={item} key={item}>
+    <li animate={{ play: fadeOut, on: ON.DETACH, options: { animateSpace: true } }}>{item}</li>
+  </EACH>
+</ul>

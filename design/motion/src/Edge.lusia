@@ -1,0 +1,9 @@
+<script>
+  import { EDGE, ON } from "lusiajs";
+
+  const fadeOut = { 0: { opacity: 1 }, 1: { opacity: 0 } };
+</script>
+
+<div class="spacer"></div>
+<div class="box" animate={{ play: fadeOut, on: ON.SCROLL, options: { start: [EDGE.TOP, EDGE.CENTER], end: [EDGE.BOTTOM, EDGE.TOP] } }}>Fades while you scroll</div>
+<div class="spacer"></div>

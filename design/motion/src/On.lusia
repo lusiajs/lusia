@@ -1,0 +1,7 @@
+<script>
+  import { ON } from "lusiajs";
+
+  const fadeUp = { 0: { opacity: 0, translate: "0px 24px" }, 1: { opacity: 1, translate: "0px 0px" } };
+</script>
+
+<div class="box" animate={{ play: fadeUp, on: ON.VIEW }}>Plays when it scrolls into view</div>

@@ -1,0 +1,78 @@
+<script>
+  import GlobalBlock from "./GlobalBlock.lusia";
+  import GlobalStyle from "./GlobalStyle.lusia";
+  import InlineGlobal from "./InlineGlobal.lusia";
+  import ScopedBlock from "./ScopedBlock.lusia";
+  import ScopedStyle from "./ScopedStyle.lusia";
+  import ScreenConfig from "./ScreenConfig.lusia";
+  import ScreenIf from "./ScreenIf.lusia";
+  import ScreenMixin from "./ScreenMixin.lusia";
+  import ScreenStyleIf from "./ScreenStyleIf.lusia";
+  import StyleBlock from "./StyleBlock.lusia";
+</script>
+
+<h1>Styling playground</h1>
+
+<section>
+  <h2>&lt;style&gt;</h2>
+  <StyleBlock />
+</section>
+
+<section>
+  <h2>&lt;style scoped&gt;</h2>
+  <ScopedStyle />
+</section>
+
+<section>
+  <h2>&lt;style global&gt;</h2>
+  <GlobalStyle />
+</section>
+
+<section>
+  <h2>@scoped</h2>
+  <ScopedBlock />
+</section>
+
+<section>
+  <h2>@global</h2>
+  <GlobalBlock />
+</section>
+
+<section>
+  <h2>:global()</h2>
+  <InlineGlobal />
+</section>
+
+<section>
+  <h2>SCREEN</h2>
+  <ScreenIf />
+</section>
+
+<section>
+  <h2>&lt;style&gt; inside IF on SCREEN</h2>
+  <ScreenStyleIf />
+</section>
+
+<section>
+  <h2>@include screen()</h2>
+  <ScreenMixin />
+</section>
+
+<section>
+  <h2>screens</h2>
+  <ScreenConfig />
+</section>
+
+<style global>
+  section {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+</style>

@@ -1,0 +1,16 @@
+<script>
+  import { interpolate, variable } from "lusiajs";
+
+  const mix = interpolate("0px", "100px");
+  const half = mix(0.5);
+  const progress = variable(0);
+  const moved = variable.compute(() => mix(progress.value));
+
+  function toggle() {
+    progress.value = progress.value === 0 ? 1 : 0;
+  }
+</script>
+
+<button onclick={toggle} type="button">Toggle</button>
+<p>mix(0.5) is {half}</p>
+<div class="box" style="translate: {moved}">Moves with progress</div>

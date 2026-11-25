@@ -1,0 +1,15 @@
+<script>
+  import { SCREEN } from "lusiajs";
+</script>
+
+<p class="card">Card</p>
+
+<IF {SCREEN.PHONE}>
+  <style>
+    .card { padding: 8px; }
+  </style>
+<ELSE>
+  <style>
+    .card { padding: 24px; }
+  </style>
+</IF>

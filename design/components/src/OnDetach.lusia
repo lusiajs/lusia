@@ -1,0 +1,9 @@
+<script>
+  import { onDetach } from "lusiajs";
+
+  onDetach(() => {
+    console.log("OnDetach: removed");
+  });
+</script>
+
+<p>This box logs to the console when it is detached.</p>

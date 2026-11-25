@@ -1,0 +1,17 @@
+<script>
+  import { variable } from "lusiajs";
+  import Badge from "./Badge.lusia";
+
+  const mail = variable(0);
+  const label = variable.compute(() => (mail.value === 0 ? "No mail" : `${mail.value} new`));
+
+  function addMail() {
+    mail.value++;
+  }
+</script>
+
+<div>
+  <button onclick={addMail} type="button">Add mail</button>
+  <p>Reactive prop: <Badge label={label} /></p>
+  <p>Static props: <Badge label="Static" tone="warn" /></p>
+</div>

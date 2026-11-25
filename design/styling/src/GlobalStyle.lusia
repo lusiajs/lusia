@@ -1,0 +1,8 @@
+<p class="global-note">Styled by a global style block</p>
+
+<style global>
+  .global-note {
+    color: steelblue;
+    font-weight: 700;
+  }
+</style>

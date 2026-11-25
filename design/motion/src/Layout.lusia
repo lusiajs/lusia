@@ -1,0 +1,15 @@
+<script>
+  import { ON, variable } from "lusiajs";
+
+  const right = variable(false);
+  const place = variable.compute(() => (right.value ? "flex-end" : "flex-start"));
+
+  function toggle() {
+    right.value = !right.value;
+  }
+</script>
+
+<button onclick={toggle} type="button">Move box</button>
+<div class="track" style="justify-content: {place}">
+  <div class="box" animate={{ on: ON.MOVE, duration: 600 }}>Box</div>
+</div>

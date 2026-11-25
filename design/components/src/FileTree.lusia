@@ -1,0 +1,16 @@
+<script>
+  import { variable } from "lusiajs";
+  import Folder from "./Folder.lusia";
+
+  const root = variable({
+    name: "src",
+    children: [
+      { name: "App.lusia" },
+      { name: "components", children: [{ name: "Badge.lusia" }, { name: "Card.lusia" }] },
+    ],
+  });
+</script>
+
+<ul>
+  <Folder item={root} />
+</ul>

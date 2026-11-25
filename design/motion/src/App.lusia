@@ -1,0 +1,143 @@
+<script>
+  import AnimateBasic from "./AnimateBasic.lusia";
+  import AnimateOptions from "./AnimateOptions.lusia";
+  import AnimateSpace from "./AnimateSpace.lusia";
+  import Controller from "./Controller.lusia";
+  import Edge from "./Edge.lusia";
+  import Ease from "./Ease.lusia";
+  import Glide from "./Glide.lusia";
+  import HoverArea from "./HoverArea.lusia";
+  import Interpolate from "./Interpolate.lusia";
+  import Layout from "./Layout.lusia";
+  import Midway from "./Midway.lusia";
+  import MotionConfig from "./MotionConfig.lusia";
+  import MouseMove from "./MouseMove.lusia";
+  import On from "./On.lusia";
+  import Preset from "./Preset.lusia";
+  import Scope from "./Scope.lusia";
+  import SetConfig from "./SetConfig.lusia";
+</script>
+
+<h1>Motion playground</h1>
+
+<section>
+  <h2>animate</h2>
+  <AnimateBasic />
+</section>
+
+<section>
+  <h2>Layout</h2>
+  <Layout />
+</section>
+
+<section>
+  <h2>Mouse move</h2>
+  <MouseMove />
+</section>
+
+<section>
+  <h2>Glide to an element</h2>
+  <Glide />
+</section>
+
+<section>
+  <h2>EASE</h2>
+  <Ease />
+</section>
+
+<section>
+  <h2>lusia.config</h2>
+  <MotionConfig />
+</section>
+
+<section>
+  <h2>ON</h2>
+  <On />
+</section>
+
+<section>
+  <h2>controller()</h2>
+  <Controller />
+</section>
+
+<section>
+  <h2>MIDWAY</h2>
+  <Midway />
+</section>
+
+<section>
+  <h2>EDGE</h2>
+  <Edge />
+</section>
+
+<section>
+  <h2>HOVER_AREA</h2>
+  <HoverArea />
+</section>
+
+<section>
+  <h2>options</h2>
+  <AnimateOptions />
+</section>
+
+<section>
+  <h2>animateSpace</h2>
+  <AnimateSpace />
+</section>
+
+<section>
+  <h2>PRESET</h2>
+  <Preset />
+</section>
+
+<section>
+  <h2>interpolate()</h2>
+  <Interpolate />
+</section>
+
+<section>
+  <h2>setConfig()</h2>
+  <SetConfig />
+</section>
+
+<section>
+  <h2>SCOPE</h2>
+  <Scope />
+</section>
+
+<style global>
+  section {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .box {
+    width: fit-content;
+    padding: 1rem;
+    border: 1px solid #888;
+    border-radius: 8px;
+  }
+
+  .track {
+    display: flex;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .spot {
+    padding: 0.4rem 0.8rem;
+    border: 1px dashed #888;
+    border-radius: 6px;
+  }
+
+  .spacer {
+    height: 60vh;
+  }
+</style>

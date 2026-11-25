@@ -1,0 +1,7 @@
+<script>
+  import { EASE, ON } from "lusiajs";
+
+  const land = { ease: [EASE.STYLE.QUART, EASE.OUT], 0: { translate: "0px 40px" }, 1: { translate: "0px 0px" } };
+</script>
+
+<div class="box" animate={{ play: land, on: ON.VIEW }}>Eased landing</div>

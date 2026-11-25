@@ -1,0 +1,11 @@
+<script>
+  import { SCREEN } from "lusiajs";
+</script>
+
+<IF {SCREEN.PHONE}>
+  <p>Screen: PHONE</p>
+<ELSEIF {SCREEN.TABLET}>
+  <p>Screen: TABLET</p>
+<ELSE>
+  <p>Screen: DESKTOP</p>
+</IF>

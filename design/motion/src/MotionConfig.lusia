@@ -1,0 +1,16 @@
+<script>
+  import { ON, variable } from "lusiajs";
+
+  const fadeIn = { 0: { opacity: 0 }, 1: { opacity: 1 } };
+  const shown = variable(false);
+
+  function toggle() {
+    shown.value = !shown.value;
+  }
+</script>
+
+<div class="box" animate={{ play: fadeIn, on: ON.VIEW }}>No duration here, the config sets 400ms</div>
+<button onclick={toggle} type="button">Toggle box</button>
+<IF {shown}>
+  <div class="box">Attached with the config in and out presets</div>
+</IF>

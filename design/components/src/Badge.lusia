@@ -1,0 +1,21 @@
+<script>
+  import { props } from "lusiajs";
+
+  const { label, tone } = props({ label: "New", tone: "info" });
+</script>
+
+<span class="badge {tone}">{label}</span>
+
+<style scoped>
+  .badge {
+    display: inline-block;
+    padding: 0 0.6rem;
+    border: 1px solid #888;
+    border-radius: 999px;
+
+    &.warn {
+      border-color: tomato;
+      color: tomato;
+    }
+  }
+</style>

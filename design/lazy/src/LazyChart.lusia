@@ -1,0 +1,29 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const bars = variable([40, 70, 55, 90]);
+</script>
+
+<FALLBACK>
+  <p>Loading the chart...</p>
+</FALLBACK>
+
+<div class="chart">
+  <EACH {bars} as={height}>
+    <span style="height: {height}%"></span>
+  </EACH>
+</div>
+
+<style scoped>
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 6rem;
+
+    span {
+      flex: 1;
+      background: steelblue;
+    }
+  }
+</style>

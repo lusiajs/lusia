@@ -1,0 +1,9 @@
+<div class="card">Padding only applies inside this component</div>
+
+<style scoped>
+  .card {
+    padding: 1rem;
+    border: 1px solid #888;
+    border-radius: 8px;
+  }
+</style>

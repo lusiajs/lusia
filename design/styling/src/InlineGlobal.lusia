@@ -1,0 +1,15 @@
+<div class="card">
+  <a href="#top">This link is styled from the scoped card</a>
+</div>
+
+<style scoped>
+  .card {
+    padding: 1rem;
+    border: 1px solid #888;
+    border-radius: 8px;
+
+    :global(a) {
+      color: tomato;
+    }
+  }
+</style>

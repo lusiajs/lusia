@@ -1,0 +1,9 @@
+<script>
+  import { ON, SCOPE, setConfig } from "lusiajs";
+
+  setConfig({ animate: { duration: 200 } }, SCOPE.SCOPED);
+
+  const fadeIn = { 0: { opacity: 0 }, 1: { opacity: 1 } };
+</script>
+
+<div class="box" animate={{ play: fadeIn, on: ON.VIEW }}>Fast, 200ms, only in this component</div>

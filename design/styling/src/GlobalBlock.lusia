@@ -1,0 +1,9 @@
+<p>Select this text to see the global selection color.</p>
+
+<style>
+  @global {
+    ::selection {
+      background: tomato;
+    }
+  }
+</style>

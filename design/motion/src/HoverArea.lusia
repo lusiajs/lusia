@@ -1,0 +1,5 @@
+<script>
+  import { HOVER_AREA, ON, PRESET } from "lusiajs";
+</script>
+
+<div class="box" animate={{ play: PRESET.ZOOM_IN, on: ON.HOVER, options: { area: HOVER_AREA.ELEMENT } }}>Hover this element</div>

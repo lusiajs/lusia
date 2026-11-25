@@ -1,0 +1,17 @@
+<script>
+  import { ON, setConfig, variable } from "lusiajs";
+
+  setConfig({ animate: { duration: 1200 } });
+
+  const fadeIn = { 0: { opacity: 0 }, 1: { opacity: 1 } };
+  const shown = variable(false);
+
+  function toggle() {
+    shown.value = !shown.value;
+  }
+</script>
+
+<button onclick={toggle} type="button">Toggle box</button>
+<IF {shown}>
+  <div class="box" animate={{ play: fadeIn, on: ON.VIEW }}>Slower, 1200ms from setConfig</div>
+</IF>

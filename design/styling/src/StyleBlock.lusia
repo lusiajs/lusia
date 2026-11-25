@@ -1,0 +1,7 @@
+<p class="plain-title">Styled by a plain style block</p>
+
+<style>
+  .plain-title {
+    color: tomato;
+  }
+</style>

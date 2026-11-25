@@ -1,0 +1,12 @@
+<script>
+  import { controller, ON, PRESET } from "lusiajs";
+
+  const ctl = controller();
+
+  async function play() {
+    await ctl.play();
+  }
+</script>
+
+<button onclick={play} type="button">Play</button>
+<div class="box" animate={{ play: PRESET.POP_IN, on: ON.MANUAL, control: ctl }}>Pop</div>

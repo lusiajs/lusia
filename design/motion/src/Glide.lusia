@@ -1,0 +1,23 @@
+<script>
+  import { variable } from "lusiajs";
+
+  const target = variable<Element | null>(null);
+  const first = variable<Element | null>(null);
+  const second = variable<Element | null>(null);
+
+  function glideToFirst() {
+    target.value = first.value;
+  }
+
+  function glideToSecond() {
+    target.value = second.value;
+  }
+</script>
+
+<div class="track">
+  <span class="spot" bind-element={first}>1</span>
+  <span class="spot" bind-element={second}>2</span>
+</div>
+<button onclick={glideToFirst} type="button">Glide to 1</button>
+<button onclick={glideToSecond} type="button">Glide to 2</button>
+<div class="box" animate={{ glide: target, duration: 400 }}>Box</div>

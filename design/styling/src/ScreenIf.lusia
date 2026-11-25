@@ -1,0 +1,9 @@
+<script>
+  import { SCREEN } from "lusiajs";
+</script>
+
+<IF {SCREEN.PHONE}>
+  <p>Small window</p>
+<ELSE>
+  <p>Wide window</p>
+</IF>

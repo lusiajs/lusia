@@ -1,0 +1,32 @@
+<script>
+  import { props, variable } from "lusiajs";
+  import Folder from "./Folder.lusia";
+
+  interface Item {
+    name: string;
+    children?: Item[];
+  }
+
+  const { item } = props({ item: { name: "" } as Item });
+  const open = variable(true);
+  const children = variable.compute(() => item.value.children ?? []);
+
+  function toggle() {
+    open.value = !open.value;
+  }
+</script>
+
+<li>
+  <IF {item.value.children}>
+    <button type="button" onclick={toggle}>{item.value.name}</button>
+    <IF {open}>
+      <ul>
+        <EACH {children} as={child} key={child.name}>
+          <Folder item={child} />
+        </EACH>
+      </ul>
+    </IF>
+  <ELSE>
+    <span>{item.value.name}</span>
+  </IF>
+</li>

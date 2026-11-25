@@ -1,0 +1,17 @@
+<script>
+  import { variable } from "lusiajs";
+  import LazyChart from "./LazyChart.lusia";
+
+  const shown = variable(false);
+
+  function toggle() {
+    shown.value = !shown.value;
+  }
+</script>
+
+<div>
+  <button onclick={toggle} type="button">Toggle chart</button>
+  <IF {shown}>
+    <LazyChart />
+  </IF>
+</div>

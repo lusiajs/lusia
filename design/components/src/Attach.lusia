@@ -1,0 +1,26 @@
+<script>
+  import { attach, variable, type Instance } from "lusiajs";
+  import OnAttach from "./OnAttach.lusia";
+
+  const slot = variable<Element | null>(null);
+  const attached = variable(0);
+  const instances: Instance[] = [];
+
+  function attachCounter() {
+    if (!slot.value) return;
+    instances.push(attach(OnAttach, slot.value));
+    attached.value = instances.length;
+  }
+
+  function detachLast() {
+    instances.pop()?.detach();
+    attached.value = instances.length;
+  }
+</script>
+
+<div>
+  <button onclick={attachCounter} type="button">Attach a counter</button>
+  <button onclick={detachLast} type="button">Detach last counter</button>
+  <p>Attached counters: {attached}</p>
+  <div bind-element={slot}></div>
+</div>

@@ -1,0 +1,17 @@
+<div class="card">
+  <h4>Only the @scoped rule is scoped</h4>
+</div>
+
+<style>
+  h4 {
+    margin: 0;
+  }
+
+  @scoped {
+    .card {
+      padding: 1rem;
+      border: 1px solid #888;
+      border-radius: 8px;
+    }
+  }
+</style>
