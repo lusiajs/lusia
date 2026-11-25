@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { ELEMENT_MARKER } from "lusiajs/markers";
 import { compileTemplate } from "#compiler/template/scan/scanner.ts";
+import { compile } from "#compiler/index.ts";
 
 const FILE = "Post.lusia";
 
@@ -85,4 +86,9 @@ describe("expressions in title and textarea", () => {
   test("a title without its close tag is an error", () => {
     expect(() => compileTemplate("<title>{id}", FILE)).toThrow();
   });
+});
+
+test("a static attribute with an entity is escaped once", () => {
+  const { code } = compile(`<p title="A &amp; B">x</p>`, "t.lusia", { dev: false });
+  expect(code).toContain('title=\\"A &amp; B\\"');
 });

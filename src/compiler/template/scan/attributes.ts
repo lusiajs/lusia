@@ -32,7 +32,7 @@ export function attrExpression(attrs: AttrBinding[], name: string): Expr | undef
 
 export function formatStaticAttr({ name, parts }: AttrBinding): string {
   if (parts.length === 0) return name;
-  return `${name}="${escapeAttr(parts.join(""))}"`;
+  return `${name}="${escapeAttr(decodeEntities(parts.join("")))}"`;
 }
 
 function escapeAttr(value: string): string {
